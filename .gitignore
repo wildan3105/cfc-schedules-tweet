@@ -42,3 +42,4 @@ yarn.lock
 
 # JS files
 *.js
+*.js.map
