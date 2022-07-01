@@ -1,0 +1,5 @@
+# eslint config itself
+.eslintrc.js
+
+# ignore build folder
+build
