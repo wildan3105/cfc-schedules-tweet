@@ -21,9 +21,3 @@ Send tweets ahead of Chelsea FC's match!
 
 #ChelseaFC #CFCFixture
 ```
-
-
-### Progress:
-- [ ] Find the right format of tweet (info + emoji)
-- [ ] Fetch Chelsea FC's upcoming fixtures in one month via Google API / other API
-- [ ] 
