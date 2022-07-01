@@ -1,0 +1,20 @@
+{
+  "name": "cfc-schedules-tweet",
+  "version": "0.0.1",
+  "description": "Send tweet ahead of CFC's match",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "0.27.2",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.1",
+    "oauth-1.0a": "^2.2.6"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.0.0"
+  }
+}
