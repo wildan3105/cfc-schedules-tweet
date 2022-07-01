@@ -17,12 +17,7 @@
     "tsc": "tsc",
     "dev": "ts-node-dev --respawn app/app.ts",
     "prod": "tsc && node ./build/app.js",
-    "lint": "eslint ."
-  },
-  "husky": {
-      "hooks": {
-          "pre-commit": "npm run lint"
-      }
+    "lint": "eslint ./**/*.ts"
   },
   "author": "",
   "license": "ISC",
