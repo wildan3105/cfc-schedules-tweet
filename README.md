@@ -9,3 +9,21 @@ Send tweets ahead of Chelsea FC's match!
     - date/time
     - stadium
     - competition
+
+### Example of the tweet
+```Markdown
+[MatchDay!]
+#UCL 
+🆚 Chelsea vs Real Madrid
+🏟️ Stamford Bridge
+📅 March 20, 2022
+⏱️ 2AM GMT+7
+
+#ChelseaFC #CFCFixture
+```
+
+
+### Progress:
+- [ ] Find the right format of tweet (info + emoji)
+- [ ] Fetch Chelsea FC's upcoming fixtures in one month via Google API / other API
+- [ ] 
