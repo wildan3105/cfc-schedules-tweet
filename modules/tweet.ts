@@ -7,7 +7,7 @@ export class Tweet {
         this.baseURL = process.env.BASE_URL;
     }
       
-    async sendTweet(text?: string) {
+    async sendTweet(text: string) {
         const request = {
             url: this.baseURL + '/2/tweets',
             method: 'POST',

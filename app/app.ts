@@ -21,8 +21,11 @@ app.post('/send', async function (req, res) {
   const content = req.body.text;
   try {
     await tweetController.sendTweet(content);
-    res.send('ok!')
+    res.send({
+      status: 'ok! done'
+    })
   } catch (e) {
+    console.log(e);
     throw e;
   }
 })
