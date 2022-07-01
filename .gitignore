@@ -43,8 +43,8 @@ build/**/*
 yarn.lock
 
 # JS files
-*.js
-*.js.map
+./*.js
+./*.js.map
 
 # VS code-related files
 *.code-workspace
