@@ -5,8 +5,8 @@ dotenv.config();
 import express = require('express');
 import bodyParser = require('body-parser');
 import { Tweet } from '../modules/tweet';
+import { Content } from '../interfaces/tweet';
 
-// Create a new express application instance
 const app: express.Application = express();
 app.use(bodyParser.json({ limit: '5mb', type: 'application/json' }));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,19 +18,18 @@ app.get('/', function (req, res) {
 });
 
 app.post('/send', async function (req, res) {
-  const content = req.body.text;
+  const content: Content = req.body.content;
   try {
     await tweetController.sendTweet(content);
     res.send({
-      status: 'ok! done'
+      status: 'ok'
     })
   } catch (e) {
-    console.log(e);
     throw e;
   }
 })
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+app.listen(process.env.PORT || 3000, function () {
+  console.log('App is listening on port 3000!');
 });
 

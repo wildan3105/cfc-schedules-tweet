@@ -15,12 +15,17 @@
   },
   "scripts": {
     "tsc": "tsc",
-    "dev": "ts-node-dev --respawn --transpileOnly ./app/app.ts",
-    "prod": "tsc && node ./build/app.js"
+    "dev": "ts-node-dev --respawn app/app.ts",
+    "prod": "tsc && node ./build/app.js",
+    "lint": "eslint ."
   },
+  "pre-commit": [ "lint" ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^18.0.0"
+    "@types/node": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "@typescript-eslint/parser": "^5.30.0",
+    "eslint": "^8.18.0"
   }
 }
