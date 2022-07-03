@@ -1,4 +1,11 @@
-// period of running: monthly (1st each month)
+/*
+- goal(s):
+    - call Serp API
+    - set the key-value in redis
+- period of running: monthly
+- cron syntax: 0 0 1 * *
+*/
+
 import dotenv = require('dotenv');
 import { HTTP } from '../modules/http';
 
@@ -16,7 +23,7 @@ async function fetch() {
  */
  (async ()=> {
     try {
-        const data: unknown = await fetch();
+        const data = await fetch();
         console.log(data)
     } catch(e) {
         console.log(`error is`, e)

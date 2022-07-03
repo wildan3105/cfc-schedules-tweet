@@ -4,8 +4,6 @@ import { Content } from '../interfaces/tweet';
 import { ChelseaQuery } from '../constants/query';
 
 export class HTTP {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    constructor() {}
       
     async post(content: Content) {
         const request = {
