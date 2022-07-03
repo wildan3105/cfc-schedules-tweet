@@ -20,3 +20,4 @@ Send tweets ahead of Chelsea FC's match!
 ```
 
 ### High-level flow
+![](./diagram.png)
