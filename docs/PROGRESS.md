@@ -3,7 +3,9 @@
 ### General
 - [x] Find the right format of tweet (info + emoji)
 - [x] Fetch Chelsea FC's upcoming fixtures in one month via Serpapi
-
+- [ ] Setup redis locally
+- [ ] Feed data into redis (set the cache duration etc.) from match-fetcher
+ 
 ### External APIs
 
 ### Data structure
@@ -12,12 +14,16 @@
 ### Cronjob
 - [ ] Create a cron that runs monthly
 - [ ] Call `serpapi` then store it in redis
-- [ ] 
+- [ ]  
 
 ### Persistent storage (redis)
 - 
 
 ### Pub/sub
+
+### Deployment
+
+### Testing
 
 ### Misc
 - [ ] Handle `TBD` schedule
