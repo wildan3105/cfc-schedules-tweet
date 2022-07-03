@@ -3,10 +3,10 @@ interface Teams {
     thumbnail?: string;
 }
 
-export interface Schdule {
+export interface Schedule {
+    teams: Teams[];
+    competition: string;
     date: string;
     time: string;
-    teams: Teams;
-    tourname?: string;
     stage?: string;
 }
