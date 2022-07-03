@@ -9,8 +9,19 @@ import dotenv = require('dotenv');
 
 dotenv.config();
 
-async function fetch() {
-    return 'ok'
+import { RedisStorage } from '../modules/redis';
+
+const redisConfig = {
+    redisURL: process.env.REDIS_URL
+};
+
+const Redis = new RedisStorage(redisConfig);
+
+async function fetchMatches() {
+    await Redis.init();
+    const expectPong = await Redis.get();
+
+    console.log(expectPong);
 }
 
 /**
@@ -18,8 +29,7 @@ async function fetch() {
  */
  (async ()=> {
     try {
-        const data = await fetch();
-        console.log(data)
+        await fetchMatches();
     } catch(e) {
         console.log(`error is`, e)
         process.exit(1);
