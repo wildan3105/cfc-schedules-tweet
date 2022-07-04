@@ -1,7 +1,7 @@
-import dotenv = require('dotenv');
+import { injectEnv } from '../libs/inject-env';
 import Redis from 'ioredis';
 
-dotenv.config();
+injectEnv();
 
 async function subscribeMessage(channel: string) {
     try {
@@ -17,6 +17,7 @@ async function subscribeMessage(channel: string) {
 
 (async ()=> {
     try {
+        console.log(process.env.REDIS_URL)
         await subscribeMessage('fixtures');
     } catch(e) {
         console.log(`error is`, e)

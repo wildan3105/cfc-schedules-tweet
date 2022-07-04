@@ -1,6 +1,6 @@
-import dotenv = require('dotenv');
+import { injectEnv } from '../libs/inject-env';
 
-dotenv.config();
+injectEnv();
 
 import express = require('express');
 import bodyParser = require('body-parser');

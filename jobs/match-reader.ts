@@ -5,10 +5,11 @@
 - period of running: hourly
 - cron syntax: 0 * * * *
 */
-import dotenv = require('dotenv');
 import { RedisStorage } from '../modules/redis';
+import { publishMessage } from '../events/pub';
+import { injectEnv } from '../libs/inject-env';
 
-dotenv.config();
+injectEnv();
 
 const redisConfig = {
     redisURL: process.env.REDIS_URL
@@ -24,10 +25,12 @@ async function getMatches() {
     await Redis.init();
     const matches = JSON.parse(await Redis.get('matches'));
 
-    // await Redis.publish();
-    console.log(matches);
-
-    await Redis.close();
+    setInterval(async () => {
+        await publishMessage({
+            channel: 'fixtures',
+            message: JSON.stringify(matches)
+        })
+    }, 1000);
 }
 
 /**

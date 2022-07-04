@@ -64,4 +64,8 @@ export class RedisStorage {
         return this.redisClient.publish(channel, message);
       }
 
+      public async subscribe(channel: string) {
+        return this.redisClient.subscribe(channel);
+      }
+
 }

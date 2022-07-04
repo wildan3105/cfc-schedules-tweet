@@ -6,11 +6,11 @@
 - cron syntax: 0 0 1 * *
 */
 
-import dotenv = require('dotenv');
-dotenv.config();
-
+import { injectEnv } from '../libs/inject-env';
 import { HTTP } from '../modules/http';
 import { RedisStorage } from '../modules/redis';
+
+injectEnv();
 
 const redisConfig = {
     redisURL: process.env.REDIS_URL

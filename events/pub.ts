@@ -1,7 +1,7 @@
-import dotenv = require('dotenv');
+import { injectEnv } from '../libs/inject-env';
 import { RedisStorage } from '../modules/redis';
 
-dotenv.config();
+injectEnv();
 
 const redisConfig = {
     redisURL: process.env.REDIS_URL
@@ -23,7 +23,7 @@ export async function publishMessage(body: IMessage) {
     try {
         await publishMessage({
             channel: 'fixtures',
-            message: 'ARSCHE'
+            message: 'ddd'
         });
     } catch(e) {
         console.log(`error is`, e)
