@@ -23,6 +23,11 @@
     "sub": "ts-node-dev ./events/sub.ts",
     "lint": "eslint ./**/*.ts"
   },
+  "husky": {
+    "hooks": {
+        "pre-push": "npm run lint"
+    }
+  },  
   "author": "",
   "license": "ISC",
   "devDependencies": {

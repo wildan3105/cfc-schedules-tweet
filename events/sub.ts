@@ -1,5 +1,6 @@
-import { injectEnv } from '../libs/inject-env';
 import Redis from 'ioredis';
+
+import { injectEnv } from '../libs/inject-env';
 
 injectEnv();
 

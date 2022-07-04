@@ -1,5 +1,6 @@
 import oauth1a = require('oauth-1.0a');
 import legacyCrypto = require('crypto');
+
 import { Content } from '../interfaces/tweet';
 
 export class Oauth1Helper {

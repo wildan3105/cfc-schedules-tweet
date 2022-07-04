@@ -1,11 +1,11 @@
-import { injectEnv } from '../libs/inject-env';
-
-injectEnv();
-
 import express = require('express');
 import bodyParser = require('body-parser');
+
+import { injectEnv } from '../libs/inject-env';
 import { HTTP } from '../modules/http';
 import { Content } from '../interfaces/tweet';
+
+injectEnv();
 
 const app: express.Application = express();
 app.use(bodyParser.json({ limit: '5mb', type: 'application/json' }));
