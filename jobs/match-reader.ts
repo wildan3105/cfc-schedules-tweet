@@ -6,10 +6,9 @@
 - cron syntax: 0 * * * *
 */
 import dotenv = require('dotenv');
+import { RedisStorage } from '../modules/redis';
 
 dotenv.config();
-
-import { RedisStorage } from '../modules/redis';
 
 const redisConfig = {
     redisURL: process.env.REDIS_URL
@@ -17,11 +16,18 @@ const redisConfig = {
 
 const Redis = new RedisStorage(redisConfig);
 
-async function fetchMatches() {
-    await Redis.init();
-    const expectPong = await Redis.get();
+// async function callPublisher(channel: string, msg: string) {
+//     await Redis.publish(channel, msg);
+// }
 
-    console.log(expectPong);
+async function getMatches() {
+    await Redis.init();
+    const matches = JSON.parse(await Redis.get('matches'));
+
+    // await Redis.publish();
+    console.log(matches);
+
+    await Redis.close();
 }
 
 /**
@@ -29,7 +35,7 @@ async function fetchMatches() {
  */
  (async ()=> {
     try {
-        await fetchMatches();
+        await getMatches();
     } catch(e) {
         console.log(`error is`, e)
         process.exit(1);

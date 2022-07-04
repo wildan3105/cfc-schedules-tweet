@@ -24,13 +24,10 @@ export class RedisStorage {
       }
     
       private async waitToConnect() {
-        console.log('wait to connect?')
         return new Promise<void>(resolve => {
           this.redisClient.on("connect", () => {
             this.isInitialized = true;
 
-            console.log('connected!');
-    
             return resolve();
           });
         });
@@ -48,14 +45,23 @@ export class RedisStorage {
       }
     
       public async close(): Promise<void> {
-        this.redisClient.disconnect();
+        this.redisClient.quit();
       }
     
       public initialized(): boolean {
         return this.isInitialized;
       }
       
-      public async get() {
-        return this.redisClient.get('ping')
+      public async get(key: string) {
+        return this.redisClient.get(key);
       }
+
+      public async set(key: string, value: string | number) {
+        return this.redisClient.set(key, value, "EX", 1000000); // 1000 seconds
+      }
+
+      public async publish(channel: string, message: string) {
+        return this.redisClient.publish(channel, message);
+      }
+
 }

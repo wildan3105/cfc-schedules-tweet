@@ -3,8 +3,8 @@
 ### General
 - [x] Find the right format of tweet (info + emoji)
 - [x] Fetch Chelsea FC's upcoming fixtures in one month via Serpapi
-- [ ] Setup redis locally
-- [ ] Feed data into redis (set the cache duration etc.) from match-fetcher
+- [x] Setup redis locally
+- [x] Feed data into redis (set the cache duration etc.) from match-fetcher
  
 ### External APIs
 

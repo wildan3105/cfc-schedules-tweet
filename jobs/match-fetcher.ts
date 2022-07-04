@@ -7,15 +7,26 @@
 */
 
 import dotenv = require('dotenv');
-import { HTTP } from '../modules/http';
-
 dotenv.config();
+
+import { HTTP } from '../modules/http';
+import { RedisStorage } from '../modules/redis';
+
+const redisConfig = {
+    redisURL: process.env.REDIS_URL
+};
+
+const Redis = new RedisStorage(redisConfig);
 
 const httpController = new HTTP();
 
-async function fetch() {
+async function fetchAndSet() {
+    await Redis.init();
     const data = await httpController.get();
-    return data.data;
+    const games = data.data.sports_results.games;
+
+    await Redis.set('matches', JSON.stringify(games));
+    await Redis.close();
 }
 
 /**
@@ -23,7 +34,7 @@ async function fetch() {
  */
  (async ()=> {
     try {
-        const data = await fetch();
+        const data = await fetchAndSet();
         console.log(data)
     } catch(e) {
         console.log(`error is`, e)

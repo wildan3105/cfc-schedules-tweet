@@ -19,6 +19,8 @@
     "prod": "tsc && node ./build/app.js",
     "match-fetcher": "ts-node-dev ./jobs/match-fetcher.ts",
     "match-reader": "ts-node-dev ./jobs/match-reader.ts",
+    "pub": "ts-node-dev ./events/pub.ts",
+    "sub": "ts-node-dev ./events/sub.ts",
     "lint": "eslint ./**/*.ts"
   },
   "author": "",
