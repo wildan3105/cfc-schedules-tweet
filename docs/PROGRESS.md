@@ -1,29 +1,34 @@
 ## Progress
 
-### General
-- [x] Find the right format of tweet (info + emoji)
-- [x] Fetch Chelsea FC's upcoming fixtures in one month via Serpapi
-- [x] Setup redis locally
-- [x] Feed data into redis (set the cache duration etc.) from match-fetcher
- 
-### External APIs
+### Match fetcher block
+**Scope**: 
+> serp api until feed data into redis feeding
 
-### Data structure
-- [ ] Tweet based on the data retrieval in the correct format (new line each content)
+**Progress**: 
+- [ ] HTTP module to integrate with SERPAPI
+- [ ] Cronjob to call SERPAPI monthly
+- [ ] Feed redis with key `fixtures` (including format the data)
 
-### Cronjob
-- [ ] Create a cron that runs monthly
-- [ ] Call `serpapi` then store it in redis
-- [ ]  
+### Match reader block
+**Scope**: 
+> redis key-value store (TTL, invalidation, etc.) until calling the publisher
 
-### Persistent storage (redis)
-- 
+**Progress**: 
 
-### Pub/sub
+### Match pub/sub block
+**Scope**:
+> pub/sub mechanism and all its logic
 
-### Deployment
+**Progress**:
+- [ ]
 
-### Testing
+### Match twitter block
+**Scope**:
+> sending and styling the tweets
 
-### Misc
-- [ ] Handle `TBD` schedule
+**Progress**:
+- [ ]
+
+### Other (deployment, testing, contribution guideline, etc.)
+**Progress**:
+- [ ]
