@@ -21,7 +21,7 @@
     "lint": "eslint ./**/*.ts"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "**/*": "npx prettier --write ."
   },
   "husky": {
     "hooks": {
