@@ -8,6 +8,7 @@
 import { RedisStorage } from '../modules/redis';
 import { publishMessage } from '../events/pub';
 import { injectEnv } from '../libs/inject-env';
+import { RedisTerms } from '../constants/redis';
 
 injectEnv();
 
@@ -17,26 +18,17 @@ const redisConfig = {
 
 const Redis = new RedisStorage(redisConfig);
 
-// async function callPublisher(channel: string, msg: string) {
-//     await Redis.publish(channel, msg);
-// }
-
 async function getMatches() {
     await Redis.init();
-    const matches = JSON.parse(await Redis.get('matches'));
+    const matches = JSON.parse(await Redis.get(RedisTerms.keyName));
 
-    setInterval(async () => {
-        await publishMessage({
-            channel: 'fixtures',
-            message: JSON.stringify(matches)
-        })
-    }, 1000);
+    await publishMessage({
+        channel: 'fixtures',
+        message: JSON.stringify(matches)
+    });
 }
 
-/**
- * Self executing anonymous function using TS.
- */
- (async ()=> {
+(async ()=> {
     try {
         await getMatches();
     } catch(e) {

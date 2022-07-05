@@ -22,40 +22,12 @@ const Redis = new RedisStorage(redisConfig);
 
 const httpController = new HTTP();
 
-async function fetchAndSet() {
+async function fetchAndSet(): Promise<void> {
     await Redis.init();
-    // const data = await httpController.get();
-    // const fixtures = data.sports_results.games;
-    const fixtures = [
-        {
-            teams: [
-                {
-                    name: "Chelsea"
-                },
-                {
-                    name: "Real Madrid"
-                }
-            ],
-            date: "Jul 20",
-            time: "7:00 PM"
-        },
-        {
-            teams: [
-                {
-                    name: "Tottenham"
-                },
-                {
-                    name: "Chelsea FC"
-                }
-            ],
-            date: "Sat, Jul 28",
-            time: "8:00 PM",
-            tournament: "Premier League"
-        }
-    ]
-    const convertedData = await serpApiToRedis(fixtures);
 
-    console.log(convertedData)
+    const data = await httpController.get();
+    const fixtures = data.sports_results.games;
+    const convertedData = await serpApiToRedis(fixtures);
 
     await Redis.set(RedisTerms.keyName, JSON.stringify(convertedData));
     await Redis.close();
