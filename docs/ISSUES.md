@@ -3,6 +3,7 @@
 ### Productivity
 
 - [ ] Restart upon code changes is still not working for `ts-node-dev`
+- [ ] `npm run format` is only running after committing the code so need to re-add and re-commit
 
 ### Functionality
 
