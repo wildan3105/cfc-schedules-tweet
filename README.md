@@ -10,9 +10,9 @@ Send tweets ahead of Chelsea FC's match!
 ### Example of the tweet
 ```Markdown
 [MatchDay!]
-#UCL 
+#UCL // descope for now. no info for competition from the serp api
 🆚 Chelsea vs Real Madrid
-🏟️ Stamford Bridge
+🏟️ Stamford Bridge // descope for now. no info for stadium from the serp api
 📅 March 20, 2022
 ⏱️ 2AM GMT+7
 
