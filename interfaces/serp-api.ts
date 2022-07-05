@@ -3,10 +3,13 @@ interface Teams {
     thumbnail?: string;
 }
 
-export interface Schedule {
+interface SingleFixture {
     teams: Teams[];
-    competition: string;
+    participants?: string;
     date: string;
     time: string;
     stage?: string;
+    tournament?: string;
 }
+
+export type MultipleFixtures = Array<SingleFixture>

@@ -1,4 +1,4 @@
-export const Competition: {[key: string]: string} = {
+export const Tournament: {[key: string]: string} = {
     PL: "#PL",
     UCL: "#UCL",
     FACUP: "#FACup",

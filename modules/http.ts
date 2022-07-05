@@ -35,7 +35,7 @@ export class HTTP {
                     }
                 }
             );
-            return response;
+            return response.data;
         } catch (e) {
             console.error(e);
         }

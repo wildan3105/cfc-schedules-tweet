@@ -5,9 +5,10 @@
 > serp api until feed data into redis feeding
 
 **Progress**: 
-- [ ] HTTP module to integrate with SERPAPI
-- [ ] Cronjob to call SERPAPI monthly
-- [ ] Feed redis with key `fixtures` (including format the data)
+- [x] HTTP module to integrate with SERPAPI
+- [x] Cronjob to call SERPAPI monthly
+- [ ] Format the data to feed into redis
+- [ ] Feed redis with certain key
 
 ### Match reader block
 **Scope**: 

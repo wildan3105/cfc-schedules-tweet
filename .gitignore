@@ -42,6 +42,7 @@ yarn.lock
 # JS files
 ./*.js
 ./*.js.map
+*.js
 
 # VS code-related files
 *.code-workspace

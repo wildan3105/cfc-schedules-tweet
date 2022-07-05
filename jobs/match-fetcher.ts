@@ -9,6 +9,8 @@
 import { injectEnv } from '../libs/inject-env';
 import { HTTP } from '../modules/http';
 import { RedisStorage } from '../modules/redis';
+import { RedisTerms } from '../constants/redis';
+import { serpApiToRedis } from '../libs/data-conversion';
 
 injectEnv();
 
@@ -22,22 +24,48 @@ const httpController = new HTTP();
 
 async function fetchAndSet() {
     await Redis.init();
-    const data = await httpController.get();
-    const games = data.data.sports_results.games;
+    // const data = await httpController.get();
+    // const fixtures = data.sports_results.games;
+    const fixtures = [
+        {
+            teams: [
+                {
+                    name: "Chelsea"
+                },
+                {
+                    name: "Real Madrid"
+                }
+            ],
+            date: "Jul 20",
+            time: "7:00 PM"
+        },
+        {
+            teams: [
+                {
+                    name: "Tottenham"
+                },
+                {
+                    name: "Chelsea FC"
+                }
+            ],
+            date: "Sat, Jul 28",
+            time: "8:00 PM",
+            tournament: "Premier League"
+        }
+    ]
+    const convertedData = await serpApiToRedis(fixtures);
 
-    await Redis.set('matches', JSON.stringify(games));
+    console.log(convertedData)
+
+    await Redis.set(RedisTerms.keyName, JSON.stringify(convertedData));
     await Redis.close();
 }
 
-/**
- * Self executing anonymous function using TS.
- */
- (async ()=> {
+(async ()=> {
     try {
-        const data = await fetchAndSet();
-        console.log(data)
+        await fetchAndSet();
     } catch(e) {
-        console.log(`error is`, e)
+        console.log(`an error occured`, e)
         process.exit(1);
     }
 })();
