@@ -8,6 +8,7 @@ interface SingleFixture {
     participants?: string;
     date: string;
     time: string;
+    date_time?: Date;
     stage?: string;
     tournament?: string;
 }
