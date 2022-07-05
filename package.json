@@ -28,6 +28,12 @@
       "pre-push": "npm run test"
     }
   },
+  "lint-staged": {
+    "*.{ts}": [
+      "prettier --config .prettierrc.json --write './**/*.ts'",
+      "git add"
+    ]
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
