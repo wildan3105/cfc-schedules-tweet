@@ -2,7 +2,7 @@ import axios, { AxiosRequestHeaders } from "axios";
 
 import { Oauth1Helper } from './oauth';
 import { Content } from '../interfaces/tweet';
-import { ChelseaQuery } from '../constants/query';
+import { Team } from '../constants/team';
 
 export class HTTP {
       
@@ -31,7 +31,7 @@ export class HTTP {
                 {
                     params: {
                         api_key: process.env.SERPAPI_KEY,
-                        q: ChelseaQuery
+                        q: Team.query
                     }
                 }
             );

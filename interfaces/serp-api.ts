@@ -1,4 +1,4 @@
-interface Teams {
+export interface Teams {
     name: string;
     thumbnail?: string;
 }
@@ -11,6 +11,7 @@ interface SingleFixture {
     date_time?: Date;
     stage?: string;
     tournament?: string;
+    stadium?: string;
 }
 
 export type MultipleFixtures = Array<SingleFixture>

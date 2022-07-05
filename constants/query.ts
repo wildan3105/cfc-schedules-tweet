@@ -1,1 +1,0 @@
-export const ChelseaQuery = "chelsea+fc+fixtures";
