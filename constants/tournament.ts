@@ -4,5 +4,5 @@ export const Tournament: { [key: string]: string } = {
   FACUP: "#FACup",
   CARABAOCUP: "#CarabaoCup",
   FRIENDLY: "#FriendlyMatch",
-  OTHER: "#OtherMatch",
+  OTHER: "#OtherMatch"
 };

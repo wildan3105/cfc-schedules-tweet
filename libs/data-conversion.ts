@@ -2,11 +2,7 @@ import { MultipleFixtures, Teams } from "../interfaces/serp-api";
 import { Tournament } from "../constants/tournament";
 import { MonthIndex } from "../constants/months";
 import { Team } from "../constants/team";
-import {
-  Time,
-  defaultTimeFormat,
-  TBDFormat,
-} from "../constants/time-conversion";
+import { Time, defaultTimeFormat, TBDFormat } from "../constants/time-conversion";
 
 interface TimeFormat {
   time: string;
@@ -15,15 +11,14 @@ interface TimeFormat {
 
 function cleanseDate(date: string): string {
   const splittedDate = date.split(",");
-  const clean =
-    splittedDate.length > 1 ? splittedDate[1].trim() : splittedDate[0];
+  const clean = splittedDate.length > 1 ? splittedDate[1].trim() : splittedDate[0];
   return clean;
 }
 
 function convertTo24HourFormat(time: string): TimeFormat {
   const meridiems = ["AM", "PM"];
 
-  if (meridiems.some((v) => time.includes(v))) {
+  if (meridiems.some(v => time.includes(v))) {
     const meridiem = time.split(":")[1].slice(3, 5);
     const minutes = time.split(":")[1].slice(0, 2);
 
@@ -34,17 +29,17 @@ function convertTo24HourFormat(time: string): TimeFormat {
 
     return {
       time: `${hours}:${minutes}`,
-      isNonLocalGMT: true,
+      isNonLocalGMT: true
     };
   } else if (time === TBDFormat) {
     return {
       time: defaultTimeFormat,
-      isNonLocalGMT: false,
+      isNonLocalGMT: false
     };
   }
   return {
     time,
-    isNonLocalGMT: false,
+    isNonLocalGMT: false
   };
 }
 
@@ -75,14 +70,12 @@ function convertDateTimeToUTC(date: string, time: string): Date {
 }
 
 function getStadiumName(teams: Teams[]): string {
-  const stadiumName = teams[0].name.includes(Team.name)
-    ? Team.stadium
-    : "Opponent's Stadium";
+  const stadiumName = teams[0].name.includes(Team.name) ? Team.stadium : "Opponent's Stadium";
   return stadiumName;
 }
 
 export async function serpApiToRedis(fixtures: MultipleFixtures) {
-  fixtures.forEach((elem) => {
+  fixtures.forEach(elem => {
     elem.participants = `${elem.teams[0].name} vs ${elem.teams[1].name}`;
     (elem.tournament = elem.tournament || Tournament.OTHER),
       (elem.date_time = convertDateTimeToUTC(elem.date, elem.time)),

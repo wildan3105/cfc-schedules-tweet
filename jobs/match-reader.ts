@@ -14,7 +14,7 @@ import { calculateDateDiffsInHours } from "../libs/calculation";
 injectEnv();
 
 const redisConfig = {
-  redisURL: process.env.REDIS_URL,
+  redisURL: process.env.REDIS_URL
 };
 
 const Redis = new RedisStorage(redisConfig);
@@ -36,15 +36,12 @@ async function getMatchesAndPublish() {
   const now = new Date();
   const upcomingMatch = new Date(matches[0].date_time);
 
-  const diffInHours = await calculateDateDiffsInHours(
-    upcomingMatch as never,
-    now as never
-  );
+  const diffInHours = await calculateDateDiffsInHours(upcomingMatch as never, now as never);
 
   if (diffInHours <= 24) {
     await publishMessage({
       channel: RedisTerms.topicName,
-      message: JSON.stringify(matches),
+      message: JSON.stringify(matches)
     });
   }
 }

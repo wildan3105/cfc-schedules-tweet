@@ -9,7 +9,7 @@ export class HTTP {
     const request = {
       url: process.env.TWITTER_BASE_URL + "/2/tweets",
       method: "POST",
-      body: content,
+      body: content
     };
 
     const authHeader = Oauth1Helper.getAuthHeaderForRequest(
@@ -24,15 +24,12 @@ export class HTTP {
 
   async get() {
     try {
-      const response = await axios.get(
-        process.env.SERPAPI_BASE_URL + "/search",
-        {
-          params: {
-            api_key: process.env.SERPAPI_KEY,
-            q: Team.query,
-          },
+      const response = await axios.get(process.env.SERPAPI_BASE_URL + "/search", {
+        params: {
+          api_key: process.env.SERPAPI_KEY,
+          q: Team.query
         }
-      );
+      });
       return response.data;
     } catch (e) {
       console.error(e);

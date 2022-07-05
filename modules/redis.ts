@@ -24,7 +24,7 @@ export class RedisStorage {
   }
 
   private async waitToConnect() {
-    return new Promise<void>((resolve) => {
+    return new Promise<void>(resolve => {
       this.redisClient.on("connect", () => {
         this.isInitialized = true;
 

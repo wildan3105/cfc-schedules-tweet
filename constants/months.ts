@@ -10,5 +10,5 @@ export const MonthIndex: { [key: string]: number } = {
   Sep: 8,
   Oct: 9,
   Nov: 10,
-  Dec: 11,
+  Dec: 11
 };

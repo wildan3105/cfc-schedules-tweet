@@ -4,7 +4,7 @@ import { RedisStorage } from "../modules/redis";
 injectEnv();
 
 const redisConfig = {
-  redisURL: process.env.REDIS_URL,
+  redisURL: process.env.REDIS_URL
 };
 
 const Redis = new RedisStorage(redisConfig);

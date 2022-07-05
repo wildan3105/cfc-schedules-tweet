@@ -15,7 +15,7 @@ import { serpApiToRedis } from "../libs/data-conversion";
 injectEnv();
 
 const redisConfig = {
-  redisURL: process.env.REDIS_URL,
+  redisURL: process.env.REDIS_URL
 };
 
 const Redis = new RedisStorage(redisConfig);
@@ -29,11 +29,7 @@ async function fetchAndSet(): Promise<void> {
   const fixtures = data.sports_results.games;
   const convertedData = await serpApiToRedis(fixtures);
 
-  await Redis.set(
-    RedisTerms.keyName,
-    JSON.stringify(convertedData),
-    defaultTTLInSeconds
-  );
+  await Redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
   await Redis.close();
 }
 
