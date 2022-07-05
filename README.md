@@ -3,11 +3,13 @@
 Send tweets ahead of Chelsea FC's match!
 
 ### Feature(s)
+
 1. Send a tweet ahead of Chelsea FC's match:
-    - one day before the match
-    - one hour before the match
+   - one day before the match
+   - one hour before the match
 
 ### Example of the tweet
+
 ```Markdown
 [MatchDay!]
 #UCL // descope for now. no info for competition from the serp api
@@ -20,4 +22,5 @@ Send tweets ahead of Chelsea FC's match!
 ```
 
 ### High-level flow
+
 ![](./diagram.png)

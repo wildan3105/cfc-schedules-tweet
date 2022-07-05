@@ -1,10 +1,13 @@
 ## Progress
 
 ### Match fetcher block
-**Scope**: 
+
+**Scope**:
+
 > serp api until feed data into redis feeding
 
-**Progress**: 
+**Progress**:
+
 - [x] HTTP module to integrate with SERPAPI
 - [x] Cronjob to call SERPAPI monthly
 - [x] Format the data to feed into redis
@@ -14,31 +17,42 @@
 - [ ] Check for the duplicates entry (previous & following run)
 
 ### Match reader block
-**Scope**: 
+
+**Scope**:
+
 > redis key-value store (TTL, invalidation, etc.) until calling the publisher
+
 - [ ] Cronjob to (1st version) run every 5mins
-- [ ] Publish an event for 
-    - [ ] day-1 before the match
-    - [ ] hour-1 before the match and then remove the particular match from the redis key
+- [ ] Publish an event for
+  - [ ] day-1 before the match
+  - [ ] hour-1 before the match and then remove the particular match from the redis key
 - [ ] Integration with `match-fetcher` block (simulate it!)
 
-**Progress**: 
+**Progress**:
 
 ### Match pub/sub block
+
 **Scope**:
+
 > pub/sub mechanism and all its logic
 
 **Progress**:
+
 - [ ]
 
 ### Match twitter block
+
 **Scope**:
+
 > sending and styling the tweets
 
 **Progress**:
+
 - [ ]
 
 ### Other (deployment, testing, contribution guideline, etc.)
+
 **Progress**:
+
 - [ ] Add logger (pino) to increase service's observability
-- [ ] Use docker-compose for deployment 
+- [ ] Use docker-compose for deployment

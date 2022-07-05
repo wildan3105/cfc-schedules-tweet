@@ -3,6 +3,6 @@
     "target": "es5",
     "module": "commonjs",
     "sourceMap": true,
-    "outDir": "./build"                 /* Redirect output structure to the directory. */
+    "outDir": "./build" /* Redirect output structure to the directory. */
   }
 }

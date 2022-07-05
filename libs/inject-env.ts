@@ -1,5 +1,5 @@
-import dotenv = require('dotenv');
+import dotenv = require("dotenv");
 
 export function injectEnv() {
-    return dotenv.config();
+  return dotenv.config();
 }
