@@ -11,3 +11,6 @@
 ### Code
 
 - [ ] Use `RedisStorage` from its class rather than initiating it on its own from `./event/sub.ts`
+
+### Observability
+- [ ] App is silently fail when connection to redis isn't established properly (not connected yet)
