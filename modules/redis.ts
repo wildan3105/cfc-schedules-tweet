@@ -56,8 +56,8 @@ export class RedisStorage {
         return this.redisClient.get(key);
       }
 
-      public async set(key: string, value: string | number) {
-        return this.redisClient.set(key, value, "EX", 1000000); // 1000 seconds
+      public async set(key: string, value: string | number, ttl_value: number) {
+        return this.redisClient.set(key, value, "EX", ttl_value); // in seconds
       }
 
       public async publish(channel: string, message: string) {
