@@ -9,7 +9,7 @@
 import { injectEnv } from '../libs/inject-env';
 import { HTTP } from '../modules/http';
 import { RedisStorage } from '../modules/redis';
-import { RedisTerms } from '../constants/redis';
+import { RedisTerms, defaultTTLInSeconds } from '../constants/redis';
 import { serpApiToRedis } from '../libs/data-conversion';
 
 injectEnv();
@@ -29,7 +29,7 @@ async function fetchAndSet(): Promise<void> {
     const fixtures = data.sports_results.games;
     const convertedData = await serpApiToRedis(fixtures);
 
-    await Redis.set(RedisTerms.keyName, JSON.stringify(convertedData));
+    await Redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
     await Redis.close();
 }
 
