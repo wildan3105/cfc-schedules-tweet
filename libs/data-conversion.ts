@@ -84,7 +84,3 @@ export async function serpApiToRedis(fixtures: MultipleFixtures) {
 
   return fixtures;
 }
-
-export async function RedisToTweet() {
-  return "ok";
-}

@@ -13,7 +13,7 @@
 - [x] Format the data to feed into redis
 - [x] Feed redis with certain key
 - [x] Make sure key is set correctly (TTL for now)
-- [ ] Make sure key is always exist // can be ensured by running job more frequently than the key's TTL
+- [x] Make sure key is always exist // can be ensured by running job more frequently than the key's TTL
 - [ ] Check for the duplicates entry (previous & following run)
 
 ### Match reader block
