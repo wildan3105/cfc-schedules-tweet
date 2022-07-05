@@ -18,14 +18,12 @@
     "match-reader": "ts-node-dev ./jobs/match-reader.ts",
     "pub": "ts-node-dev --respawn --exit-child --watch src events/pub.ts",
     "sub": "ts-node-dev ./events/sub.ts",
-    "lint": "eslint ./**/*.ts"
-  },
-  "lint-staged": {
-    "**/*": "npx prettier --write ."
+    "lint": "eslint ./**/*.ts",
+    "format": "prettier --config .prettierrc.json --write '*.ts'"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "prettier --write --ignore-unknown"
+        "pre-commit": "npm run format"
     }
   },
   "author": "",
