@@ -1,8 +1,13 @@
 import Redis from 'ioredis';
 
 import { injectEnv } from '../libs/inject-env';
+import { RedisTerms } from '../constants/redis';
 
 injectEnv();
+
+function sendTweet(): Promise<void> { return }
+
+function routeReminder(): Promise<void> { return }
 
 async function subscribeMessage(channel: string) {
     try {
@@ -10,6 +15,7 @@ async function subscribeMessage(channel: string) {
         redisClient.subscribe(channel);
         redisClient.on('message', (channel, message) => {
             console.log(channel, message);
+            // send a tweet
         })
     } catch (e) {
         console.log(e);
@@ -18,8 +24,7 @@ async function subscribeMessage(channel: string) {
 
 (async ()=> {
     try {
-        console.log(process.env.REDIS_URL)
-        await subscribeMessage('fixtures');
+        await subscribeMessage(RedisTerms.topicName);
     } catch(e) {
         console.log(`error is`, e)
         process.exit(1);

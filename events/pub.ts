@@ -19,15 +19,3 @@ export async function publishMessage(body: IMessage) {
     await Redis.publish(body.channel, body.message);
     await Redis.close();
 }
-
-(async ()=> {
-    try {
-        await publishMessage({
-            channel: 'fixtures',
-            message: 'ddd'
-        });
-    } catch(e) {
-        console.log(`error is`, e)
-        process.exit(1);
-    }
-})();
