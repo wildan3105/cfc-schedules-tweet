@@ -5,7 +5,7 @@ export async function calculateDateDiffsInHours(
   nowDate: never
 ): Promise<number> {
   const diffInHours = Number(
-    ((upcomingDate - nowDate) / milisIntoHours).toFixed(0)
+    ((upcomingDate - nowDate) / anHourInMilis).toFixed(0)
   );
   return diffInHours;
 }
