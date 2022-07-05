@@ -1,6 +1,5 @@
 const milisIntoHours = 36e5;
 
-
 export async function calculateDateDiffsInHours(
   upcomingDate: never,
   nowDate: never
