@@ -38,7 +38,7 @@ async function getMatchesAndPublish() {
 
   const diffInHours = await calculateDateDiffsInHours(now, upcomingMatch);
 
-  console.log(diffInHours)
+  console.log(diffInHours);
 
   if (diffInHours <= 24) {
     await publishMessage({
