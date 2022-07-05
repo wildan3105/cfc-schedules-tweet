@@ -1,8 +1,7 @@
-import type {Config} from 'jest';
+import type { Config } from "jest";
 
 export default async (): Promise<Config> => {
   return {
-    verbose: true,
-    collectCoverage: true
+    verbose: true, collectCoverage: true
   };
 };
