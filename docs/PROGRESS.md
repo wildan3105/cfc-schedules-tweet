@@ -22,11 +22,11 @@
 
 > redis key-value store (TTL, invalidation, etc.) until calling the publisher
 
-- [ ] Cronjob to (1st version) run every 5mins
-- [ ] Publish an event for
-  - [ ] day-1 before the match
-  - [ ] hour-1 before the match and then remove the particular match from the redis key
-- [ ] Integration with `match-fetcher` block (simulate it!)
+- [x] Cronjob to (1st version) run every 5mins
+- [x] Publish an event for
+  - [x] day-1 before the match
+  - [x] hour-1 before the match and then remove the particular match from the redis key
+- [x] Integration with `match-fetcher` block (simulate it using 24mins and 1mins before the match!)
 
 **Progress**:
 
