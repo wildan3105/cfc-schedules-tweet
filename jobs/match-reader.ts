@@ -60,7 +60,7 @@ async function getMatchesAndPublish() {
 (async () => {
   try {
     setInterval(async () => {
-      console.log(`publish add ${new Date()}`)
+      console.log(`publish add ${new Date()}`);
       await getMatchesAndPublish();
     }, 4000);
   } catch (e) {

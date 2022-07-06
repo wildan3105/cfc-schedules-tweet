@@ -15,7 +15,7 @@ interface ITweet {
     stadium: string;
     participants: string;
     date_time: string;
-  }
+  };
 }
 
 async function sendTweet(tweetContent: ITweet): Promise<void> {
@@ -24,7 +24,7 @@ async function sendTweet(tweetContent: ITweet): Promise<void> {
     stadium: tweetContent.message.stadium,
     participants: tweetContent.message.participants + ` ${new Date()}`,
     date_time: new Date(tweetContent.message.date_time)
-  }
+  };
   const transformedTweetContent = await transformToTweetableContent(contentToTransform);
   const tweetMsg = {
     text: transformedTweetContent
@@ -42,7 +42,7 @@ async function subscribeMessage(channel: string) {
   try {
     const redisClient = new Redis(process.env.REDIS_URL);
     redisClient.subscribe(channel);
-    redisClient.on("message", async (message) => {
+    redisClient.on("message", async message => {
       const cleansed = JSON.parse(message);
       await sendTweet(cleansed);
     });

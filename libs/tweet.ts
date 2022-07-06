@@ -18,8 +18,8 @@ function transformToReadableDate(date: Date): string {
 
 function transformToReadableTime(date: Date): string {
   const currentHour = date.getHours();
-  const currentMinutes = date.getMinutes() < 10 ? `0${date.getMinutes()}`: date.getMinutes();
-  return `${currentHour}:${currentMinutes}`
+  const currentMinutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+  return `${currentHour}:${currentMinutes}`;
 }
 
 export async function transformToTweetableContent(message: ITweetBody): Promise<string> {
