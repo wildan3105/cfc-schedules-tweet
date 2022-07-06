@@ -19,7 +19,7 @@
     "pub": "ts-node-dev --respawn --exit-child --watch src events/pub.ts",
     "sub": "ts-node-dev ./events/sub.ts",
     "lint": "eslint ./**/*.ts",
-    "format": "prettier --config .prettierrc.json --write './**/*.ts'",
+    "format": "prettier --config .prettierrc --write './**/*.ts'",
     "test": "jest ./**/*.test.ts"
   },
   "husky": {
