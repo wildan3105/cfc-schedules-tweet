@@ -84,3 +84,10 @@ export async function serpApiToRedis(fixtures: MultipleFixtures) {
 
   return fixtures;
 }
+
+export const exportedForTesting = {
+  getStadiumName,
+  convertDateTimeToUTC,
+  convertTo24HourFormat,
+  cleanseDate
+};
