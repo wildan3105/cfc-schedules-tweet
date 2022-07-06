@@ -46,3 +46,8 @@ export async function transformToTweetableContent(message: ITweetBody): Promise<
 
   return Object.values(transformed).join("\n").toString() as string;
 }
+
+export const exportedForTesting = {
+  transformToReadableDate,
+  transformToReadableTime
+};
