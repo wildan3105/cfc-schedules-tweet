@@ -3,14 +3,33 @@ import Redis from "ioredis";
 import { injectEnv } from "../libs/inject-env";
 import { RedisTerms } from "../constants/redis";
 import { HTTP } from "../modules/http";
+import { transformToTweetableContent } from "../libs/tweet";
 
 const httpController = new HTTP();
 
 injectEnv();
 
-async function sendTweet(content): Promise<void> {
-  // call `sendTweet` here
-  await httpController.post(content);
+interface ITweet {
+  hours_to_match: number;
+  message: {
+    stadium: string;
+    participants: string;
+    date_time: string;
+  }
+}
+
+async function sendTweet(tweetContent: ITweet): Promise<void> {
+  const contentToTransform = {
+    hours_to_match: tweetContent.hours_to_match,
+    stadium: tweetContent.message.stadium,
+    participants: tweetContent.message.participants + ` ${new Date()}`,
+    date_time: new Date(tweetContent.message.date_time)
+  }
+  const transformedTweetContent = await transformToTweetableContent(contentToTransform);
+  const tweetMsg = {
+    text: transformedTweetContent
+  };
+  await httpController.post(tweetMsg);
 }
 
 function routeReminder(): void {
@@ -23,13 +42,9 @@ async function subscribeMessage(channel: string) {
   try {
     const redisClient = new Redis(process.env.REDIS_URL);
     redisClient.subscribe(channel);
-    redisClient.on("message", async (channel, message) => {
+    redisClient.on("message", async (message) => {
       const cleansed = JSON.parse(message);
-      const tweetMsg = {
-        text: cleansed.participants
-      };
-      await sendTweet(tweetMsg);
-      // send a tweet
+      await sendTweet(cleansed);
     });
   } catch (e) {
     console.log(e);
