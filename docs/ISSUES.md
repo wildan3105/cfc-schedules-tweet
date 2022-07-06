@@ -3,7 +3,7 @@
 ### Productivity
 
 - [ ] Restart upon code changes is still not working for `ts-node-dev`
-- [ ] `npm run format` is only running after committing the code so need to re-add and re-commit
+- [x] `npm run format` is only running after committing the code so need to re-add and re-commit -> workaround: run prettier on-save in my local
 - [ ] Github workflow for unit test is still failed, error as follows: 
 ```bash
 > cfc-schedules-tweet@0.0.1 test /home/runner/work/cfc-schedules-tweet/cfc-schedules-tweet
