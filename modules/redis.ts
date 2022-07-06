@@ -67,4 +67,8 @@ export class RedisStorage {
   public async subscribe(channel: string) {
     return this.redisClient.subscribe(channel);
   }
+
+  public async getTTL(key: string) {
+    return this.redisClient.ttl(key);
+  }
 }

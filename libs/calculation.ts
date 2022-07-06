@@ -6,6 +6,6 @@ export async function calculateDateDiffsInHours(
 ): Promise<number> {
   const upcomingDateInMilis = Date.parse(upcomingDate as unknown as string);
   const nowDateInMilis = Date.parse(nowDate as unknown as string);
-  const diffInHours = Number(((upcomingDateInMilis - nowDateInMilis) / anHourInMilis).toFixed(0));
+  const diffInHours = Math.ceil(Number((upcomingDateInMilis - nowDateInMilis) / anHourInMilis));
   return diffInHours;
 }

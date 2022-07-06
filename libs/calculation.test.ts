@@ -12,3 +12,5 @@ test("test the negative difference between now and upcoming date", async () => {
   const data = await calculateDateDiffsInHours(secondDate, firstDate);
   expect(data).toBe(-10);
 });
+
+// add more test for rounding up
