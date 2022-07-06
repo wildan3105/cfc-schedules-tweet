@@ -1,4 +1,5 @@
 import { transformToTweetableContent, exportedForTesting } from "./tweet";
+import { Emojis } from "../enums/emojis";
 
 const fixedDate = new Date(2022, 10, 10, 10, 10, 10);
 const templateBody = {
@@ -35,6 +36,10 @@ describe("tweet-related libs testing", () => {
     };
     const data = await transformToTweetableContent(body);
     expect(typeof data).toBe("string");
+    expect(data).toContain(Emojis.date);
+    expect(data).toContain(Emojis.stadium);
+    expect(data).toContain(Emojis.time);
+    expect(data).toContain(Emojis.versus);
   });
 
   test("transformToTweetableContent - 24 hours before the match", async () => {
