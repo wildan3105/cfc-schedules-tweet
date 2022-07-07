@@ -17,8 +17,8 @@ Send tweets ahead of Chelsea FC's match!
 #UCL // descope for now. no info for competition from the serp api
 🆚 Chelsea vs Real Madrid
 🏟️ Stamford Bridge // update to either `Stamford Bridge` or `Opponent's Stadium`
-📅 March 20, 2022
-⏱️ 2AM GMT+7
+📅 March 21, 2022
+⏱️ 21:00
 
 #ChelseaFC #CFCFixture
 ```
@@ -27,11 +27,11 @@ Send tweets ahead of Chelsea FC's match!
 
 ```Markdown
 [Matchday !]
-#UCL // descope for now. no info for competition from the serp api
+#UCL // only support if tournament is given. otherwise fallback to `#OtherMatch`
 🆚 Chelsea vs Real Madrid
-🏟️ Stamford Bridge // update to either `Stamford Bridge` or `Opponent's Stadium`
+🏟️ Stamford Bridge // only support `Stamford Bridge` or `Opponent's Stadium` for now
 📅 March 20, 2022
-⏱️ 2AM GMT+7
+⏱️ 21:00
 
 #ChelseaFC #CFCFixture
 ```
