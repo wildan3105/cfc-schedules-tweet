@@ -38,7 +38,6 @@ async function getMatchesAndPublish() {
   const diffInHours = await calculateDateDiffsInHours(now, upcomingMatch);
 
   if (diffInHours <= Time.hoursInADay) {
-    // only publish if upcomingMatch is less or equal 24 hours from now
     const msg: IBody = {
       message: matches[0],
       hours_to_match: diffInHours
