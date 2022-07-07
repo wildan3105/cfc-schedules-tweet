@@ -36,7 +36,9 @@ export class RedisStorage {
   private async listeners() {
     // for future use
     this.redisClient.on("ready", () => {});
-    this.redisClient.on("error", () => {});
+    this.redisClient.on("error", e => {
+      console.log(`an error occured`, e);
+    });
     this.redisClient.on("close", async () => {});
     this.redisClient.on("reconnecting", () => {});
     /* Gets fired after 'close' when no more reconnect is there */
