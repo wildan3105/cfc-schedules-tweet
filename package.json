@@ -2,7 +2,7 @@
   "name": "cfc-schedules-tweet",
   "version": "0.0.1",
   "description": "Send tweet ahead of CFC's match",
-  "main": "index.js",
+  "main": "./build/jobs/match-fetcher.js",
   "dependencies": {
     "axios": "0.27.2",
     "crypto": "^1.0.1",
@@ -11,11 +11,13 @@
     "oauth-1.0a": "^2.2.6",
     "ts-node-dev": "^2.0.0"
   },
+  "engines": {
+    "node": "12.x"
+  },
   "scripts": {
     "build": "tsc",
     "match-fetcher": "ts-node-dev --poll --transpile-only --respawn jobs/match-fetcher.ts --watch **/*.ts",
     "match-reader": "ts-node-dev --poll --transpile-only --respawn jobs/match-reader.ts --watch **/*.ts",
-    "pub": "ts-node-dev --poll --transpile-only --respawn events/pub.ts --watch **/*.ts",
     "sub": "ts-node-dev --poll --transpile-only --respawn events/sub.ts --watch **/*.ts",
     "lint": "eslint ./**/*.ts",
     "format": "prettier --config .prettierrc --write './**/*.ts'",

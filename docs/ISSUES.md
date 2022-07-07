@@ -10,6 +10,7 @@
 ### Functionality
 
 - [ ] Upcoming fixture date time isn't really accurate (due to inconsistency of date & time field from serp API & near-correct conversion of the internal lib) -> aim for MVP
+- [ ] Need to handle `TBD` time more gracefully
 
 ### Code
 
