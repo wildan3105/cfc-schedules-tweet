@@ -4,6 +4,7 @@ import { injectEnv } from "../libs/inject-env";
 import { RedisTerms } from "../constants/redis";
 import { HTTP } from "../modules/http";
 import { transformToTweetableContent } from "../libs/tweet";
+import { remindInNHours } from "../constants/time-conversion";
 
 const httpController = new HTTP();
 
@@ -32,19 +33,22 @@ async function sendTweet(tweetContent: ITweet): Promise<void> {
   await httpController.post(tweetMsg);
 }
 
-function routeReminder(): void {
-  // only send tweet for H-24 & H-1
-  // TODO: timezone conversion here
-  return;
+function shouldSendReminder(reminder_time: number): boolean {
+  if (remindInNHours.includes(reminder_time)) {
+    return true;
+  }
+  return false;
 }
 
 async function subscribeMessage(channel: string) {
   try {
     const redisClient = new Redis(process.env.REDIS_URL);
     redisClient.subscribe(channel);
-    redisClient.on("message", async message => {
+    redisClient.on("message", async (channel, message) => {
       const cleansed = JSON.parse(message);
-      await sendTweet(cleansed);
+      if (shouldSendReminder(cleansed.hours_to_match)) {
+        await sendTweet(cleansed);
+      }
     });
   } catch (e) {
     console.log(e);
@@ -55,7 +59,7 @@ async function subscribeMessage(channel: string) {
   try {
     await subscribeMessage(RedisTerms.topicName);
   } catch (e) {
-    console.log(`error is`, e);
+    console.log(`an error occured`, e);
     process.exit(1);
   }
 })();

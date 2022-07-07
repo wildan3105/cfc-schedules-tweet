@@ -2,8 +2,8 @@ export const testVar = "ok";
 
 export const dummyFixtures = [
   {
-    date: "Sat, Jul 18",
-    time: "7:00 PM",
+    date: "Sat, Jul 7",
+    time: "19:00",
     teams: [{ name: "Chelsea" }, { name: "Club America" }]
   },
   {

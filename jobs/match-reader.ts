@@ -9,7 +9,7 @@ import { RedisStorage } from "../modules/redis";
 import { publishMessage } from "../events/pub";
 import { injectEnv } from "../libs/inject-env";
 import { RedisTerms } from "../constants/redis";
-import { Time } from "../constants/time-conversion";
+import { Time, remindInNHours } from "../constants/time-conversion";
 import { calculateDateDiffsInHours } from "../libs/calculation";
 
 injectEnv();
@@ -46,7 +46,8 @@ async function getMatchesAndPublish() {
       channel: RedisTerms.topicName,
       message: JSON.stringify(msg)
     });
-    if (diffInHours <= Time.remindInAnHour) {
+
+    if (remindInNHours.includes(diffInHours)) {
       // remove the entry from the key
       matches.shift();
       const currentTTL = await Redis.getTTL(RedisTerms.keyName);
@@ -59,9 +60,8 @@ async function getMatchesAndPublish() {
 (async () => {
   try {
     setInterval(async () => {
-      console.log(`publish add ${new Date()}`);
       await getMatchesAndPublish();
-    }, 4000);
+    }, 5000);
   } catch (e) {
     console.log(`an error occured`, e);
     process.exit(1);
