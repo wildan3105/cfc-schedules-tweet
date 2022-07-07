@@ -9,6 +9,11 @@ interface TimeFormat {
   isNonLocalGMT?: boolean;
 }
 
+function getStadiumName(teams: Teams[]): string {
+  const stadiumName = teams[0].name.includes(Team.name) ? Team.stadium : "Opponent's Stadium";
+  return stadiumName;
+}
+
 function cleanseDate(date: string): string {
   const splittedDate = date.split(",");
   const clean = splittedDate.length > 1 ? splittedDate[1].trim() : splittedDate[0];
@@ -67,11 +72,6 @@ function convertDateTimeToUTC(date: string, time: string): Date {
     currentMinutes
   );
   return dateTimeInUTC;
-}
-
-function getStadiumName(teams: Teams[]): string {
-  const stadiumName = teams[0].name.includes(Team.name) ? Team.stadium : "Opponent's Stadium";
-  return stadiumName;
 }
 
 export async function serpApiToRedis(fixtures: MultipleFixtures) {
