@@ -25,7 +25,7 @@ function cleanseDate(date: string): string {
     const splittedDate = date.split(",");
     clean = splittedDate.length > 1 ? splittedDate[1].trim() : splittedDate[0];
   } else {
-    clean = moment(date).format("MMM D");
+    clean = moment(date, momentFormat).format("MMM D");
   }
   return clean;
 }
