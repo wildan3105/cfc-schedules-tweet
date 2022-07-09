@@ -29,7 +29,7 @@ describe("test to ensure getStadiumName is giving the correct result", () => {
 });
 
 describe("test to ensure cleanseDate is giving the correct result", () => {
-  test("cleanseDate to return month and date only when day is provided", () => {
+  test("cleanseDate to return month and date only when format is ddd, MMM D", () => {
     const rawDate = "Sat, Jul 16";
     const cleansedDate = exportedForTesting.cleanseDate(rawDate);
     expect(cleansedDate).toBeDefined();
@@ -37,8 +37,40 @@ describe("test to ensure cleanseDate is giving the correct result", () => {
     expect(cleansedDate).toBe("Jul 16");
   });
 
-  test("cleanseDate to return month and date only when day is not provided", () => {
+  test("cleanseDate to return month and date only when format is MMM D", () => {
     const rawDate = "Jul 15";
+    const cleansedDate = exportedForTesting.cleanseDate(rawDate);
+    expect(cleansedDate).toBeDefined();
+    expect(typeof cleansedDate).toBe("string");
+    expect(cleansedDate).toBe("Jul 15");
+  });
+
+  test("cleanseDate to return month and date only when format is MMM D, YY", () => {
+    const rawDate = "Jul 15, 22";
+    const cleansedDate = exportedForTesting.cleanseDate(rawDate);
+    expect(cleansedDate).toBeDefined();
+    expect(typeof cleansedDate).toBe("string");
+    expect(cleansedDate).toBe("Jul 15");
+  });
+
+  test("cleanseDate to return month and date only when format is D MMM", () => {
+    const rawDate = "15 Jul";
+    const cleansedDate = exportedForTesting.cleanseDate(rawDate);
+    expect(cleansedDate).toBeDefined();
+    expect(typeof cleansedDate).toBe("string");
+    expect(cleansedDate).toBe("Jul 15");
+  });
+
+  test("cleanseDate to return month and date only when format is D MMMM", () => {
+    const rawDate = "15 July";
+    const cleansedDate = exportedForTesting.cleanseDate(rawDate);
+    expect(cleansedDate).toBeDefined();
+    expect(typeof cleansedDate).toBe("string");
+    expect(cleansedDate).toBe("Jul 15");
+  });
+
+  test("cleanseDate to return month and date only when format is ddd, D MMMM", () => {
+    const rawDate = "Sat, 15 July";
     const cleansedDate = exportedForTesting.cleanseDate(rawDate);
     expect(cleansedDate).toBeDefined();
     expect(typeof cleansedDate).toBe("string");

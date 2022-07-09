@@ -1,3 +1,6 @@
+import parseFormat = require("moment-parseformat");
+import moment = require("moment");
+
 import { MultipleFixtures, Teams } from "../interfaces/serp-api";
 import { Tournament } from "../constants/tournament";
 import { MonthIndex } from "../constants/months";
@@ -15,8 +18,15 @@ function getStadiumName(teams: Teams[]): string {
 }
 
 function cleanseDate(date: string): string {
-  const splittedDate = date.split(",");
-  const clean = splittedDate.length > 1 ? splittedDate[1].trim() : splittedDate[0];
+  const excludedMomentFormats = ["MMM YY", "ddd, MMM YY"];
+  const momentFormat = parseFormat(date);
+  let clean;
+  if (excludedMomentFormats.includes(momentFormat)) {
+    const splittedDate = date.split(",");
+    clean = splittedDate.length > 1 ? splittedDate[1].trim() : splittedDate[0];
+  } else {
+    clean = moment(date).format("MMM D");
+  }
   return clean;
 }
 
