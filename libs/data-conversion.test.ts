@@ -65,7 +65,7 @@ describe("convertTo24HourFormat to return the correct format", () => {
     expect(convertedTime.time).toBe("00:00");
   });
 
-  test("convertTo24HourFormat to return correct format when time is written in AM format", () => {
+  test("convertTo24HourFormat to return correct format when time is written in AM format (meridiem in capital case)", () => {
     const time = "12:30 AM";
     const convertedTime = exportedForTesting.convertTo24HourFormat(time);
     expect(convertedTime).toBeDefined();
@@ -74,13 +74,31 @@ describe("convertTo24HourFormat to return the correct format", () => {
     expect(convertedTime.time).toBe("0:30");
   });
 
-  test("convertTo24HourFormat to return correct format when time is written in PM format", () => {
+  test("convertTo24HourFormat to return correct format when time is written in PM format (meridiem in capital case)", () => {
     const time = "11:30 PM";
     const convertedTime = exportedForTesting.convertTo24HourFormat(time);
     expect(convertedTime).toBeDefined();
     expect(typeof convertedTime).toBe("object");
     expect(convertedTime.isNonLocalGMT).toBeTruthy();
     expect(convertedTime.time).toBe("23:30");
+  });
+
+  test("convertTo24HourFormat to return correct format when time is written in am format (meridiem in lower case)", () => {
+    const time = "6:30 am";
+    const convertedTime = exportedForTesting.convertTo24HourFormat(time);
+    expect(convertedTime).toBeDefined();
+    expect(typeof convertedTime).toBe("object");
+    expect(convertedTime.isNonLocalGMT).toBeTruthy();
+    expect(convertedTime.time).toBe("6:30");
+  });
+
+  test("convertTo24HourFormat to return correct format when time is written in pm format (meridiem in lower case)", () => {
+    const time = "5:30 pm";
+    const convertedTime = exportedForTesting.convertTo24HourFormat(time);
+    expect(convertedTime).toBeDefined();
+    expect(typeof convertedTime).toBe("object");
+    expect(convertedTime.isNonLocalGMT).toBeTruthy();
+    expect(convertedTime.time).toBe("17:30");
   });
 });
 

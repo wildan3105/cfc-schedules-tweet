@@ -21,16 +21,16 @@ function cleanseDate(date: string): string {
 }
 
 function convertTo24HourFormat(time: string): TimeFormat {
-  const meridiems = ["AM", "PM"];
+  const meridiems = ["AM", "PM", "am", "pm"];
 
   if (meridiems.some(v => time.includes(v))) {
-    const meridiem = time.split(":")[1].slice(3, 5);
+    const meridiem = time.split(":")[1].slice(3, 5).toLocaleLowerCase();
     const minutes = time.split(":")[1].slice(0, 2);
 
     let hours = Number(time.split(":")[0]);
 
-    if (meridiem == "PM" && hours < Time.offset) hours = hours + Time.offset;
-    if (meridiem == "AM" && hours === Time.offset) hours = hours - Time.offset;
+    if (meridiem == "am" && hours === Time.offset) hours = hours - Time.offset;
+    if (meridiem == "pm" && hours < Time.offset) hours = hours + Time.offset;
 
     return {
       time: `${hours}:${minutes}`,
