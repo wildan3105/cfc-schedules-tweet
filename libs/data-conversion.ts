@@ -21,6 +21,12 @@ function cleanseDate(date: string): string {
   const excludedMomentFormats = ["MMM YY", "ddd, MMM YY"];
   const momentFormat = parseFormat(date);
   let clean;
+  /**
+   * excluded because it's being falsy read
+   * e.g.
+   * Jul 30 being read as MMM YYY instead of MMM D
+   * Sat, Jul 30 being read as ddd, MMM YY instead of ddd, MMM D
+   */
   if (excludedMomentFormats.includes(momentFormat)) {
     const splittedDate = date.split(",");
     clean = splittedDate.length > 1 ? splittedDate[1].trim() : splittedDate[0];
