@@ -20,6 +20,7 @@ function getStadiumName(teams: Teams[]): string {
 function cleanseDate(date: string): string {
   const excludedMomentFormats = ["MMM YY", "ddd, MMM YY"];
   const momentFormat = parseFormat(date);
+  console.log(momentFormat);
   let clean;
   /**
    * excluded because it's being falsy read

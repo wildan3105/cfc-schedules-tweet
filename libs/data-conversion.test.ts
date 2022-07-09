@@ -30,11 +30,11 @@ describe("test to ensure getStadiumName is giving the correct result", () => {
 
 describe("test to ensure cleanseDate is giving the correct result", () => {
   test("cleanseDate to return month and date only when format is ddd, MMM D", () => {
-    const rawDate = "Sat, Jul 16";
+    const rawDate = "Sat, Jul 30";
     const cleansedDate = exportedForTesting.cleanseDate(rawDate);
     expect(cleansedDate).toBeDefined();
     expect(typeof cleansedDate).toBe("string");
-    expect(cleansedDate).toBe("Jul 16");
+    expect(cleansedDate).toBe("Jul 30");
   });
 
   test("cleanseDate to return month and date only when format is MMM D", () => {
@@ -70,11 +70,11 @@ describe("test to ensure cleanseDate is giving the correct result", () => {
   });
 
   test("cleanseDate to return month and date only when format is ddd, D MMMM", () => {
-    const rawDate = "Sat, 15 July";
+    const rawDate = "Sat, 30 July";
     const cleansedDate = exportedForTesting.cleanseDate(rawDate);
     expect(cleansedDate).toBeDefined();
     expect(typeof cleansedDate).toBe("string");
-    expect(cleansedDate).toBe("Jul 15");
+    expect(cleansedDate).toBe("Jul 30");
   });
 });
 
