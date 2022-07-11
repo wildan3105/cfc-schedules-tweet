@@ -1,11 +1,23 @@
+// eslint-disable-next-line no-undef
 module.exports = {
-  apps : [{
-    script: 'index.js',
-    watch: '.'
-  }, {
-    script: './service-worker/',
-    watch: ['./service-worker']
-  }],
+  apps : [
+  {
+    name: 'subscriber',
+    script: 'build/events/sub.js',
+  },
+  {
+    name: 'match-reader-jobs',
+    script: 'build/jobs/match-reader.js',
+    cron_restart: '*/1 * * * *',
+    autorestart: false
+  },
+  {
+    name: 'match-fetcher-jobs',
+    script: 'build/jobs/match-fetcher.js',
+    cron_restart: '*/1 * * * *',
+    autorestart: false
+  }
+],
 
   deploy : {
     production : {
