@@ -2,7 +2,7 @@ import axios, { AxiosRequestHeaders } from "axios";
 
 import { Oauth1Helper } from "./oauth";
 import { Content } from "../interfaces/tweet";
-import { Team } from "../constants/team";
+import { Query } from "../enums/query";
 
 export class HTTP {
   async post(content: Content) {
@@ -27,7 +27,8 @@ export class HTTP {
       const response = await axios.get(process.env.SERPAPI_BASE_URL + "/search", {
         params: {
           api_key: process.env.SERPAPI_KEY,
-          q: Team.query
+          q: Query.club,
+          location: Query.location
         }
       });
       return response.data;
