@@ -35,6 +35,20 @@ async function fetchAndSet(): Promise<void> {
   await Redis.close();
 }
 
+process.on("uncaughtException", e => {
+  setTimeout(() => {
+    console.log(`an error occured [uncaughtException]`, e);
+    process.exit(1);
+  }, 3000);
+});
+
+process.on("unhandledRejection", e => {
+  setTimeout(() => {
+    console.log(`an error occured [unhandledRejection]`, e);
+    process.exit(1);
+  }, 3000);
+});
+
 (async () => {
   try {
     await fetchAndSet();
