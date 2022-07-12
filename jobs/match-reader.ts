@@ -57,11 +57,23 @@ async function getMatchesAndPublish() {
   }
 }
 
+process.on("uncaughtException", e => {
+  setTimeout(() => {
+    console.log(`an error occured [uncaughtException]`, e);
+    process.exit(1);
+  }, 3000);
+});
+
+process.on("unhandledRejection", e => {
+  setTimeout(() => {
+    console.log(`an error occured [unhandledRejection]`, e);
+    process.exit(1);
+  }, 3000);
+});
+
 (async () => {
   try {
-    setInterval(async () => {
-      await getMatchesAndPublish();
-    }, 5000);
+    await getMatchesAndPublish();
   } catch (e) {
     console.log(`an error occured`, e);
     process.exit(1);

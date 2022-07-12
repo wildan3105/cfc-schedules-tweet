@@ -20,3 +20,9 @@ OK
 PONG
 127.0.0.1:6379>
 ```
+
+### Run the jobs locally using `pm2`
+- Syntax:
+```bash
+pm2 start file.js --cron "* * * * *"
+```

@@ -17,7 +17,7 @@ tmp
 coverage
 
 # API keys and secrets
-.env
+.env*
 
 # Dependency directory
 node_modules
@@ -39,10 +39,9 @@ build/**/*
 # ignore yarn.lock
 yarn.lock
 
-# JS files
+# built JS files
 ./*.js
 ./*.js.map
-*.js
 
 # VS code-related files
 *.code-workspace

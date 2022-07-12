@@ -7,11 +7,6 @@ import { MonthIndex } from "../constants/months";
 import { Team } from "../constants/team";
 import { Time, defaultTimeFormat, TBDFormat } from "../constants/time-conversion";
 
-interface TimeFormat {
-  time: string;
-  isNonLocalGMT?: boolean;
-}
-
 function getStadiumName(teams: Teams[]): string {
   const stadiumName = teams[0].name.includes(Team.name) ? Team.stadium : "Opponent's Stadium";
   return stadiumName;
@@ -36,7 +31,7 @@ function cleanseDate(date: string): string {
   return clean;
 }
 
-function convertTo24HourFormat(time: string): TimeFormat {
+function convertTo24HourFormat(time: string): string {
   const meridiems = ["AM", "PM", "am", "pm"];
 
   if (meridiems.some(v => time.includes(v))) {
@@ -48,20 +43,11 @@ function convertTo24HourFormat(time: string): TimeFormat {
     if (meridiem == "am" && hours === Time.offset) hours = hours - Time.offset;
     if (meridiem == "pm" && hours < Time.offset) hours = hours + Time.offset;
 
-    return {
-      time: `${hours}:${minutes}`,
-      isNonLocalGMT: true
-    };
+    return `${hours}:${minutes}`;
   } else if (time === TBDFormat) {
-    return {
-      time: defaultTimeFormat,
-      isNonLocalGMT: false
-    };
+    return defaultTimeFormat;
   }
-  return {
-    time,
-    isNonLocalGMT: false
-  };
+  return time;
 }
 
 function convertDateTimeToUTC(date: string, time: string): Date {
@@ -73,12 +59,8 @@ function convertDateTimeToUTC(date: string, time: string): Date {
   const currentMonth = MonthIndex[cleansedDate.slice(0, 3)];
   const currentDate = Number(cleansedDate.split(" ")[1]);
 
-  const needToAdd12Hours = cleansedTime.isNonLocalGMT ? true : false;
-
-  const currentHours = needToAdd12Hours
-    ? Number(cleansedTime.time.split(":")[0]) + Time.serverToLocaleDiff
-    : Number(cleansedTime.time.split(":")[0]);
-  const currentMinutes = Number(cleansedTime.time.split(":")[1]);
+  const currentHours = Number(cleansedTime.split(":")[0]);
+  const currentMinutes = Number(cleansedTime.split(":")[1]);
 
   const dateTimeInUTC = new Date(
     currentYear,

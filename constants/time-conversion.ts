@@ -1,6 +1,5 @@
 export const Time: { [key: string]: number } = {
   offset: 12,
-  serverToLocaleDiff: 12,
   hoursInADay: 24,
   UTCToLocalTimezone: 7
 };

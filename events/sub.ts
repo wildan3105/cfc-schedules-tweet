@@ -51,7 +51,7 @@ async function subscribeMessage(channel: string) {
       }
     });
   } catch (e) {
-    console.log(e);
+    console.log(`an error occured when subscribing message to ${channel} `, e);
   }
 }
 
