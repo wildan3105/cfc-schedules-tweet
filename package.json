@@ -4,6 +4,7 @@
   "description": "Send tweet ahead of CFC's match",
   "main": "./build/jobs/match-fetcher.js",
   "dependencies": {
+    "@pm2/pm2-version-check": "^1.0.4",
     "axios": "0.27.2",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.1",
