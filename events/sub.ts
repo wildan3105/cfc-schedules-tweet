@@ -45,6 +45,7 @@ async function subscribeMessage(channel: string) {
     const redisClient = new Redis(process.env.REDIS_URL);
     redisClient.subscribe(channel);
     redisClient.on("message", async (channel, message) => {
+      console.log(`listening to topic: ${channel}...`);
       const cleansed = JSON.parse(message);
       if (shouldSendReminder(cleansed.hours_to_match)) {
         await sendTweet(cleansed);
