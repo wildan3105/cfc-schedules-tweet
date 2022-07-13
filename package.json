@@ -24,7 +24,8 @@
     "sub": "ts-node-dev --poll --transpile-only --respawn events/sub.ts --watch **/*.ts",
     "lint": "eslint ./**/*.ts",
     "format": "prettier --config .prettierrc --write './**/*.ts'",
-    "test": "jest ./**/*.test.ts"
+    "test": "jest ./**/*.test.ts",
+    "start": "pm2-runtime start ecosystem.config.js --env production"
   },
   "husky": {
     "hooks": {
