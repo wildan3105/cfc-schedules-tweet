@@ -24,12 +24,15 @@ const Redis = new RedisStorage(redisConfig);
 const httpController = new HTTP();
 
 async function fetchAndSet(): Promise<void> {
+  console.log(`start fetching upcoming matches from external API`);
   await Redis.init();
 
   const data = await httpController.get();
   const fixtures = process.env.ENVIRONMENT === "local" ? dummyFixtures : data.sports_results.games;
 
   const convertedData = await serpApiToRedis(fixtures);
+
+  console.log(convertedData[0]);
 
   await Redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
   await Redis.close();
