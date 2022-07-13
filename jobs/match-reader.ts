@@ -28,14 +28,12 @@ interface IBody {
 async function getMatchesAndPublish() {
   await Redis.init();
   const matches = JSON.parse(await Redis.get(RedisTerms.keyName));
-  /*
-        // this is assuming matches is always available
-        // TODO: make sure the above assumption is correct at all times
-  */
   const now = new Date();
   const upcomingMatch = new Date(matches[0].date_time);
 
   const diffInHours = await calculateDateDiffsInHours(now, upcomingMatch);
+
+  // TODO: calculate in UTC timezone, but publish/subs (?) in local timezone
 
   if (diffInHours <= Time.hoursInADay) {
     const msg: IBody = {
