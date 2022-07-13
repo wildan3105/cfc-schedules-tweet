@@ -4,6 +4,7 @@
   "description": "Send tweet ahead of CFC's match",
   "main": "./build/jobs/match-fetcher.js",
   "dependencies": {
+    "@pm2/pm2-version-check": "^1.0.4",
     "axios": "0.27.2",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.1",
@@ -11,6 +12,7 @@
     "moment": "^2.29.4",
     "moment-parseformat": "^4.0.0",
     "oauth-1.0a": "^2.2.6",
+    "pm2": "^5.2.0",
     "ts-node-dev": "^2.0.0"
   },
   "engines": {
@@ -23,7 +25,8 @@
     "sub": "ts-node-dev --poll --transpile-only --respawn events/sub.ts --watch **/*.ts",
     "lint": "eslint ./**/*.ts",
     "format": "prettier --config .prettierrc --write './**/*.ts'",
-    "test": "jest ./**/*.test.ts"
+    "test": "jest ./**/*.test.ts",
+    "start": "pm2-runtime start ecosystem.config.js --env production"
   },
   "husky": {
     "hooks": {

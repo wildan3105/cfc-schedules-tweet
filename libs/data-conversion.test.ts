@@ -154,6 +154,20 @@ describe("convertDateTimeToUTC to return the correct format", () => {
     expect(convertedDateTimeInUTC).toBeDefined();
     expect(typeof convertedDateTimeInUTC).toBe("object");
   });
+
+  test("convertDateTimeToUTC to return correct format when date_time is in non-local GMT and env is production", () => {
+    const dateTime = {
+      date: "Jul 10",
+      time: "10:00 AM"
+    };
+    process.env.ENVIRONMENT = "production";
+    const convertedDateTimeInUTC = exportedForTesting.convertDateTimeToUTC(
+      dateTime.date,
+      dateTime.time
+    );
+    expect(convertedDateTimeInUTC).toBeDefined();
+    expect(typeof convertedDateTimeInUTC).toBe("object");
+  });
 });
 
 describe("serpApiToRedis to return the correct format of data that'll be fed into redis", () => {
