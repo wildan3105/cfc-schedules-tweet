@@ -9,8 +9,10 @@
 
 ### Functionality
 
-- [ ] Upcoming fixture date time isn't really accurate (due to inconsistency of date & time field from serp API & near-correct conversion of the internal lib) -> aim for MVP
-- [ ] Need to handle `TBD` time more gracefully
+- [x] Upcoming fixture date time isn't really accurate (due to inconsistency of date & time field from serp API & near-correct conversion of the internal lib) -> aim for MVP -> solved by creating internal lib to convert the datetime format
+- [ ] Need to handle `TBD` time more gracefully -> potentially will be solved by running the cron more frequent
+- [ ] Cron runs in UTC (GMT+0), the publishing might not be accurate
+    - [ ] for testing, might need to add more reminders ahead of match (DAY-3/2 and so on)
 
 ### Code
 
