@@ -1,0 +1,1 @@
+worker: node build/events/sub.js
