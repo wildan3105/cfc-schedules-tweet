@@ -42,10 +42,11 @@ function shouldSendReminder(reminder_time: number): boolean {
 
 async function subscribeMessage(channel: string) {
   try {
+    console.log(`ready to receive any new message...`);
     const redisClient = new Redis(process.env.REDIS_URL);
     redisClient.subscribe(channel);
     redisClient.on("message", async (channel, message) => {
-      console.log(`listening to topic: ${channel}...`);
+      console.log(`receiving a new message on to topic: ${channel}...`);
       const cleansed = JSON.parse(message);
       if (shouldSendReminder(cleansed.hours_to_match)) {
         await sendTweet(cleansed);
