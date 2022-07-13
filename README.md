@@ -39,3 +39,8 @@ Send tweets ahead of Chelsea FC's match!
 ### High-level flow
 
 ![](./diagram.png)
+
+### Cron scheduling
+- `match-fetcher` -> runs **every 2 days** to accommodate Day-1 reminder and to keep update the upcoming fixtures
+   - key's TTL: **3 days** -> to ensure key availability in the case of `match-fetcher` fails to set the key once
+- `match-reader`  -> runs **every hour** to give more closer reminder (day-1 and hour-1)
