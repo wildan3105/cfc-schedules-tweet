@@ -26,6 +26,7 @@ interface IBody {
 }
 
 async function getMatchesAndPublish() {
+  console.log(`start get matches and potentially publish`);
   await Redis.init();
   const matches = JSON.parse(await Redis.get(RedisTerms.keyName));
   const now = new Date();
