@@ -8,13 +8,13 @@ module.exports = {
   {
     name: 'match-reader-jobs',
     script: 'build/jobs/match-reader.js',
-    cron_restart: '*/1 * * * *', // hourly, need to specify exact hour to avoid redis downtime
+    cron_restart: '*/1 * * * *', // hourly
     autorestart: false
   },
   {
     name: 'match-fetcher-jobs',
     script: 'build/jobs/match-fetcher.js',
-    cron_restart: '*/1 * * * *', // weekly, need to specify exact day and hour to avoid redis downtime (maintenance window)
+    cron_restart: '0 0 */2 * *', // At 00:00 on every 2nd day-of-month
     autorestart: false
   }
 ],
