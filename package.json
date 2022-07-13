@@ -11,6 +11,7 @@
     "moment": "^2.29.4",
     "moment-parseformat": "^4.0.0",
     "oauth-1.0a": "^2.2.6",
+    "pm2": "^5.2.0",
     "ts-node-dev": "^2.0.0"
   },
   "engines": {
