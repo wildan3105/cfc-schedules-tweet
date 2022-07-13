@@ -20,7 +20,7 @@ module.exports = {
   {
     name: 'match-fetcher-jobs',
     script: 'build/jobs/match-fetcher.js',
-    cron_restart: '0 0 */2 * *', // At 00:00 on every 2nd day-of-month
+    cron_restart: '0 1 * * *', // At 00:00 every day
     autorestart: false,
     env_production: {
       NODE_ENV: "production",
