@@ -32,8 +32,6 @@ async function fetchAndSet(): Promise<void> {
 
   const convertedData = await serpApiToRedis(fixtures);
 
-  console.log(convertedData[0]);
-
   await Redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
   await Redis.close();
 }
