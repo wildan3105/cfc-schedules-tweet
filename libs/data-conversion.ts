@@ -86,6 +86,14 @@ export async function serpApiToRedis(fixtures: MultipleFixtures) {
   return fixtures;
 }
 
+export async function addHours(numOfHours: number, date: Date): Promise<Date> {
+  const dateCopy = new Date(date.getTime());
+
+  dateCopy.setHours(dateCopy.getHours() + numOfHours);
+
+  return dateCopy;
+}
+
 export const exportedForTesting = {
   getStadiumName,
   convertDateTimeToUTC,

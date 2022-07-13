@@ -4,7 +4,8 @@ import { injectEnv } from "../libs/inject-env";
 import { RedisTerms } from "../constants/redis";
 import { HTTP } from "../modules/http";
 import { transformToTweetableContent } from "../libs/tweet";
-import { remindInNHours } from "../constants/time-conversion";
+import { addHours } from "../libs/data-conversion";
+import { remindInNHours, Time } from "../constants/time-conversion";
 
 const httpController = new HTTP();
 
@@ -20,11 +21,15 @@ interface ITweet {
 }
 
 async function sendTweet(tweetContent: ITweet): Promise<void> {
+  const matchSchedule = new Date(tweetContent.message.date_time);
   const contentToTransform = {
     hours_to_match: tweetContent.hours_to_match,
     stadium: tweetContent.message.stadium,
     participants: tweetContent.message.participants + ` ${new Date()}`,
-    date_time: new Date(tweetContent.message.date_time)
+    date_time:
+      process.env.ENVIRONMENT === "production"
+        ? await addHours(Time.UTCToLocalTimezone, matchSchedule)
+        : matchSchedule
   };
   const transformedTweetContent = await transformToTweetableContent(contentToTransform);
   const tweetMsg = {

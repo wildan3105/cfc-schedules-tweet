@@ -33,8 +33,6 @@ async function getMatchesAndPublish() {
 
   const diffInHours = await calculateDateDiffsInHours(now, upcomingMatch);
 
-  // TODO: calculate in UTC timezone, but publish/subs (?) in local timezone
-
   if (diffInHours <= Time.hoursInADay) {
     const msg: IBody = {
       message: matches[0],
