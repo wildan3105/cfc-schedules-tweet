@@ -11,7 +11,7 @@ module.exports = {
   {
     name: 'match-reader-jobs',
     script: 'build/jobs/match-reader.js',
-    cron_restart: '*/1 * * * *', // hourly
+    cron_restart: '0 * * * *', // hourly
     autorestart: false,
     env_production: {
       NODE_ENV: "production",
