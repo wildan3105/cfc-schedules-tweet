@@ -20,3 +20,6 @@
 
 ### Observability
 - [x] App is silently fail when connection to redis isn't established properly (not connected yet)
+
+### Server
+- heroku maintenance window: `Fridays 18:00 to 22:00 UTC`
