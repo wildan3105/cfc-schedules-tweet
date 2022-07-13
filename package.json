@@ -26,7 +26,8 @@
     "lint": "eslint ./**/*.ts",
     "format": "prettier --config .prettierrc --write './**/*.ts'",
     "test": "jest ./**/*.test.ts",
-    "start": "pm2-runtime start ecosystem.config.js --env production"
+    "start": "pm2-runtime start ecosystem.config.js --env production",
+    "preinstall": "npm i -g pm2 && pm2 install pm2-logrotate"
   },
   "husky": {
     "hooks": {

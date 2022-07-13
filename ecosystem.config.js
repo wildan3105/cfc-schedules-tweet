@@ -30,7 +30,7 @@ module.exports = {
 
   deploy : {
     production : {
-      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production',
+      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production && pm2 logs all',
       'pre-setup': 'npm install & npm run build'
     }
   }
