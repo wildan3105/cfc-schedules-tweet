@@ -11,7 +11,6 @@ import { HTTP } from "../modules/http";
 import { RedisStorage } from "../modules/redis";
 import { RedisTerms, defaultTTLInSeconds } from "../constants/redis";
 import { serpApiToRedis } from "../libs/data-conversion";
-import { dummyFixtures } from "../constants/dummy";
 
 injectEnv();
 
@@ -28,7 +27,9 @@ async function fetchAndSet(): Promise<void> {
   await Redis.init();
 
   const data = await httpController.get();
-  const fixtures = process.env.ENVIRONMENT === "local" ? dummyFixtures : data.sports_results.games;
+  const fixtures = data.sports_results.games;
+
+  console.log(fixtures);
 
   const convertedData = await serpApiToRedis(fixtures);
 
