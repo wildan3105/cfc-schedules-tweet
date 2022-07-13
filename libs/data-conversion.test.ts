@@ -1,4 +1,4 @@
-import { exportedForTesting, serpApiToRedis } from "./data-conversion";
+import { addHours, exportedForTesting, serpApiToRedis } from "./data-conversion";
 
 const rawData = {
   teams: [
@@ -214,5 +214,14 @@ describe("serpApiToRedis to return the correct format of data that'll be fed int
     expect(typeof convertedData).toBe("object");
     expect(convertedData).toHaveLength(1);
     expect(convertedData[0].tournament).toEqual("#OtherMatch");
+  });
+});
+
+describe("addHours to return the correct date after adding N hours from certain date", () => {
+  test("addHours to return the correct date after added 7 hours", async () => {
+    const now = new Date();
+    const addedDate = await addHours(7, now);
+    expect(addedDate).toBeDefined();
+    expect(typeof addedDate).toBe("object");
   });
 });
