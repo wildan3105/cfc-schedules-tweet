@@ -1,27 +1,25 @@
-export const testVar = "ok";
-
 export const dummyFixtures = [
   {
-    date: "Sat, Jul 7",
-    time: "19:00",
+    date: "Jul 11",
+    time: "13:00",
     teams: [{ name: "Chelsea" }, { name: "Club America" }]
   },
   {
-    date: "Wed, Jul 20",
-    time: "4:00 PM",
+    date: "Jul 19",
+    time: "13:00",
     teams: [{ name: "Charlotte" }, { name: "Chelsea" }],
     participants: "Charlotte vs Chelsea"
   },
   {
     tournament: "Florida Cup",
     stage: "Final",
-    date: "Jul 23",
-    time: "TBD",
+    date: "Jul 19",
+    time: "14:00",
     teams: [{ name: "Arsenal" }, { name: "Chelsea" }]
   },
   {
-    date: "Aug 6",
-    time: "9:30 AM",
+    date: "Jul 19",
+    time: "15:00",
     teams: [{ name: "Everton" }, { name: "Chelsea" }]
   },
   {
