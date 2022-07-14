@@ -4,6 +4,6 @@ export const Time: { [key: string]: number } = {
   UTCToLocalTimezone: 7
 };
 
-export const remindInNHours = [1, 2, 3, 4, 5, 6, 7, 8, 9, 22, 23, 24];
+export const remindInNHours = [1, 24];
 export const defaultTimeFormat = "00:00";
 export const TBDFormat = "TBD";
