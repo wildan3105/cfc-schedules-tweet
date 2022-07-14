@@ -48,8 +48,8 @@ async function getMatchesAndPublish() {
       message: JSON.stringify(msg)
     });
 
-    if (remindInNHours.includes(diffInHours)) {
-      // remove the entry from the key
+    // remove the entry from the key if only difference is 1 hour
+    if (diffInHours === 1) {
       matches.shift();
       const currentTTL = await Redis.getTTL(RedisTerms.keyName);
 
