@@ -71,6 +71,9 @@ process.on("unhandledRejection", e => {
 (async () => {
   try {
     await getMatchesAndPublish();
+    setTimeout(() => {
+      process.exit(0);
+    }, 3000);
   } catch (e) {
     console.log(`an error occured`, e);
     process.exit(1);
