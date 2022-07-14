@@ -64,6 +64,7 @@ async function subscribeMessage(channel: string) {
 
 (async () => {
   try {
+    console.log("starting the subscriber");
     await subscribeMessage(RedisTerms.topicName);
   } catch (e) {
     console.log(`an error occured`, e);
