@@ -25,7 +25,7 @@ async function sendTweet(tweetContent: ITweet): Promise<void> {
   const contentToTransform = {
     hours_to_match: tweetContent.hours_to_match,
     stadium: tweetContent.message.stadium,
-    participants: tweetContent.message.participants + ` ${new Date()}`,
+    participants: tweetContent.message.participants,
     date_time:
       process.env.ENVIRONMENT === "production"
         ? await addHours(Time.UTCToLocalTimezone, matchSchedule)
