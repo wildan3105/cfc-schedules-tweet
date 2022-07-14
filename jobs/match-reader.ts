@@ -31,7 +31,12 @@ async function getMatchesAndPublish() {
   const now = new Date();
   const upcomingMatch = new Date(matches[0].date_time);
 
+  console.log(`now : ${now}`);
+  console.log(`upcomingMatch : ${upcomingMatch}`);
+
   const diffInHours = await calculateDateDiffsInHours(now, upcomingMatch);
+
+  console.log(`diffInHours is : ${diffInHours}`);
 
   if (diffInHours <= Time.hoursInADay) {
     const msg: IBody = {
