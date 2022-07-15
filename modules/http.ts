@@ -5,7 +5,7 @@ import { Content } from "../interfaces/tweet";
 import { Query } from "../enums/query";
 
 export class HTTP {
-  async post(content: Content): Promise<void> {
+  async post(content: Content) {
     const request = {
       url: process.env.TWITTER_BASE_URL + "/2/tweets",
       method: "POST",
@@ -22,7 +22,7 @@ export class HTTP {
     }
   }
 
-  async get(): Promise<void> {
+  async get() {
     try {
       const response = await axios.get(process.env.SERPAPI_BASE_URL + "/search", {
         params: {
