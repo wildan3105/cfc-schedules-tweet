@@ -23,7 +23,7 @@ export class RedisStorage {
     await this.waitToConnect();
   }
 
-  private async waitToConnect() {
+  private async waitToConnect(): Promise<void> {
     return new Promise<void>(resolve => {
       this.redisClient.on("connect", () => {
         this.isInitialized = true;
@@ -33,7 +33,7 @@ export class RedisStorage {
     });
   }
 
-  private async listeners() {
+  private async listeners(): Promise<void> {
     // for future use
     this.redisClient.on("ready", () => {});
     this.redisClient.on("error", e => {
@@ -54,23 +54,23 @@ export class RedisStorage {
     return this.isInitialized;
   }
 
-  public async get(key: string) {
+  public async get(key: string): Promise<unknown> {
     return this.redisClient.get(key);
   }
 
-  public async set(key: string, value: string | number, ttl_value: number) {
+  public async set(key: string, value: string | number, ttl_value: number): Promise<unknown> {
     return this.redisClient.set(key, value, "EX", ttl_value); // in seconds
   }
 
-  public async publish(channel: string, message: string) {
+  public async publish(channel: string, message: string): Promise<unknown> {
     return this.redisClient.publish(channel, message);
   }
 
-  public async subscribe(channel: string) {
+  public async subscribe(channel: string): Promise<unknown> {
     return this.redisClient.subscribe(channel);
   }
 
-  public async getTTL(key: string) {
+  public async getTTL(key: string): Promise<unknown> {
     return this.redisClient.ttl(key);
   }
 }
