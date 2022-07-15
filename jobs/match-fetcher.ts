@@ -1,11 +1,3 @@
-/*
-- goal(s):
-    - call Serp API
-    - set the key-value in redis
-- period of running: monthly
-- cron syntax: 0 0 1 * *
-*/
-
 import { injectEnv } from "../libs/inject-env";
 import { HTTP } from "../modules/http";
 import { RedisStorage } from "../modules/redis";

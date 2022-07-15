@@ -14,7 +14,7 @@ interface IMessage {
   message: string;
 }
 
-export async function publishMessage(body: IMessage) {
+export async function publishMessage(body: IMessage): Promise<void> {
   await Redis.init();
   await Redis.publish(body.channel, body.message);
   await Redis.close();

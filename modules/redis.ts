@@ -54,23 +54,23 @@ export class RedisStorage {
     return this.isInitialized;
   }
 
-  public async get(key: string) {
+  public async get(key: string): Promise<string> {
     return this.redisClient.get(key);
   }
 
-  public async set(key: string, value: string | number, ttl_value: number) {
+  public async set(key: string, value: string | number, ttl_value: number): Promise<string> {
     return this.redisClient.set(key, value, "EX", ttl_value); // in seconds
   }
 
-  public async publish(channel: string, message: string) {
+  public async publish(channel: string, message: string): Promise<number> {
     return this.redisClient.publish(channel, message);
   }
 
-  public async subscribe(channel: string) {
+  public async subscribe(channel: string): Promise<unknown> {
     return this.redisClient.subscribe(channel);
   }
 
-  public async getTTL(key: string) {
+  public async getTTL(key: string): Promise<number> {
     return this.redisClient.ttl(key);
   }
 }
