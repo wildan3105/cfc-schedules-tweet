@@ -1,15 +1,8 @@
-/*
-- goal(s):
-    - get the 1st key-value in redis
-    - call publisher
-- period of running: hourly
-- cron syntax: 0 * * * *
-*/
 import { RedisStorage } from "../modules/redis";
 import { publishMessage } from "../events/pub";
 import { injectEnv } from "../libs/inject-env";
 import { RedisTerms } from "../constants/redis";
-import { Time, remindInNHours } from "../constants/time-conversion";
+import { Time } from "../constants/time-conversion";
 import { calculateDateDiffsInHours } from "../libs/calculation";
 
 injectEnv();
@@ -25,14 +18,11 @@ interface IBody {
   message: Record<string, unknown>;
 }
 
-async function getMatchesAndPublish() {
+async function getMatchesAndPublish(): Promise<void> {
   await Redis.init();
   const matches = JSON.parse(await Redis.get(RedisTerms.keyName));
   const now = new Date();
   const upcomingMatch = new Date(matches[0].date_time);
-
-  console.log(`now : ${now}`);
-  console.log(`upcomingMatch : ${upcomingMatch}`);
 
   const diffInHours = await calculateDateDiffsInHours(now, upcomingMatch);
 

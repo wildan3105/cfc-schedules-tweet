@@ -1,11 +1,11 @@
-import axios, { AxiosRequestHeaders } from "axios";
+import axios, { AxiosRequestHeaders, AxiosResponse } from "axios";
 
 import { Oauth1Helper } from "./oauth";
 import { Content } from "../interfaces/tweet";
 import { Query } from "../enums/query";
 
 export class HTTP {
-  async post(content: Content) {
+  async post(content: Content): Promise<void> {
     const request = {
       url: process.env.TWITTER_BASE_URL + "/2/tweets",
       method: "POST",
@@ -22,7 +22,7 @@ export class HTTP {
     }
   }
 
-  async get() {
+  async get(): Promise<void> {
     try {
       const response = await axios.get(process.env.SERPAPI_BASE_URL + "/search", {
         params: {

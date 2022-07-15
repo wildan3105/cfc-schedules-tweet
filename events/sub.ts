@@ -45,7 +45,7 @@ function shouldSendReminder(reminder_time: number): boolean {
   return false;
 }
 
-async function subscribeMessage(channel: string) {
+async function subscribeMessage(channel: string): Promise<void> {
   try {
     const redisClient = new Redis(process.env.REDIS_URL);
     redisClient.subscribe(channel);
