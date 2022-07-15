@@ -6,8 +6,9 @@ import { Query } from "../enums/query";
 
 export class HTTP {
   async post(content: Content) {
+    const { TWITTER_BASE_URL } = process.env;
     const request = {
-      url: process.env.TWITTER_BASE_URL + "/2/tweets",
+      url: TWITTER_BASE_URL + "/2/tweets",
       method: "POST",
       body: content
     };
@@ -23,10 +24,11 @@ export class HTTP {
   }
 
   async get() {
+    const { SERPAPI_BASE_URL, SERPAPI_KEY } = process.env;
     try {
-      const response = await axios.get(process.env.SERPAPI_BASE_URL + "/search", {
+      const response = await axios.get(SERPAPI_BASE_URL + "/search", {
         params: {
-          api_key: process.env.SERPAPI_KEY,
+          api_key: SERPAPI_KEY,
           q: Query.club,
           location: Query.location
         }
