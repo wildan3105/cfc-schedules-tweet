@@ -1,7 +1,8 @@
 import parseFormat = require("moment-parseformat");
 import moment = require("moment");
 
-import { MultipleFixtures, Teams } from "../interfaces/serp-api";
+import { SingleFixture, Teams } from "../interfaces/serp-api";
+import { RedisFixture } from "../interfaces/redis";
 import { Tournament } from "../constants/tournament";
 import { MonthIndex } from "../constants/months";
 import { Team } from "../constants/team";
@@ -75,7 +76,7 @@ function convertDateTimeToUTC(date: string, time: string): Date {
   return dateTimeInUTC;
 }
 
-export async function serpApiToRedis(fixtures: MultipleFixtures) {
+export async function serpApiToRedis(fixtures: Partial<SingleFixture[]>): Promise<RedisFixture[]> {
   fixtures.forEach(elem => {
     elem.participants = `${elem.teams[0].name} vs ${elem.teams[1].name}`;
     (elem.tournament = elem.tournament || Tournament.OTHER),
