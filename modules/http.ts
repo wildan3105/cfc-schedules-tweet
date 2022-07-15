@@ -1,4 +1,4 @@
-import axios, { AxiosRequestHeaders, AxiosResponse } from "axios";
+import axios, { AxiosRequestHeaders } from "axios";
 
 import { Oauth1Helper } from "./oauth";
 import { Content } from "../interfaces/tweet";
