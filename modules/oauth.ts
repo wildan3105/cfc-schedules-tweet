@@ -3,10 +3,9 @@ import legacyCrypto = require("crypto");
 
 import { Content } from "../interfaces/tweet";
 
-const { API_KEY, API_SECRET_KEY, ACCESS_TOKEN, ACCESS_TOKEN_SECRET } = process.env;
-
 export class Oauth1Helper {
   static getAuthHeaderForRequest(request: { url: string; method: string; body: Content }) {
+    const { API_KEY, API_SECRET_KEY, ACCESS_TOKEN, ACCESS_TOKEN_SECRET } = process.env;
     const oauth = new oauth1a({
       consumer: {
         key: API_KEY,
