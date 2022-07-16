@@ -11,6 +11,8 @@ const httpController = new HTTP();
 
 injectEnv();
 
+const { ENVIRONMENT, REDIS_URL } = process.env;
+
 interface ITweet {
   hours_to_match: number;
   message: {
@@ -27,7 +29,7 @@ async function sendTweet(tweetContent: ITweet): Promise<void> {
     stadium: tweetContent.message.stadium,
     participants: tweetContent.message.participants,
     date_time:
-      process.env.ENVIRONMENT === "production"
+      ENVIRONMENT === "production"
         ? await addHours(Time.UTCToLocalTimezone, matchSchedule)
         : matchSchedule
   };
@@ -47,7 +49,7 @@ function shouldSendReminder(reminder_time: number): boolean {
 
 async function subscribeMessage(channel: string): Promise<void> {
   try {
-    const redisClient = new Redis(process.env.REDIS_URL);
+    const redisClient = new Redis(REDIS_URL);
     redisClient.subscribe(channel);
     redisClient.on("message", async (channel, message) => {
       const cleansed = JSON.parse(message);
