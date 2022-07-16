@@ -26,7 +26,7 @@ export async function transformToTweetableContent(message: ITweetBody): Promise<
   let headerTitle: string;
   switch (message.hours_to_match) {
     case 1:
-      headerTitle = "[Matchday!]";
+      headerTitle = "[Matchday! ONE HOUR TO GO]";
       break;
     case 24:
       headerTitle = "[Day - 1!]";
