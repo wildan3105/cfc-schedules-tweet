@@ -40,7 +40,7 @@ export async function transformToTweetableContent(message: ITweetBody): Promise<
     teams: `${Emojis.versus} ${message.participants}`,
     stadium: `${Emojis.stadium} ${message.stadium}`,
     date: `${Emojis.date} ${transformToReadableDate(message.date_time)}`,
-    time: `${Emojis.time} ${transformToReadableTime(message.date_time)}`,
+    time: `${Emojis.time} ${transformToReadableTime(message.date_time)} GMT+7`,
     hashtag: `${Team.hashtag}`
   };
 
