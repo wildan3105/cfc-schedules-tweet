@@ -1,8 +1,12 @@
-import { injectEnv } from "../libs/inject-env";
+/* eslint-disable no-self-assign */
 import { HTTP } from "../modules/http";
 import { RedisStorage } from "../modules/redis";
+
 import { RedisTerms, defaultTTLInSeconds } from "../constants/redis";
+import { Team } from "../constants/team";
 import { serpApiToRedis } from "../libs/data-conversion";
+import { injectEnv } from "../libs/inject-env";
+
 import { Query } from "../enums/query";
 
 injectEnv();
@@ -15,17 +19,40 @@ const Redis = new RedisStorage(redisConfig);
 
 const httpController = new HTTP();
 
+async function getStadiumName(team: string): Promise<string> {
+  let stadiumName;
+  const isChelseaHomeTeam = team === Team.name ? true : false;
+
+  if (isChelseaHomeTeam) {
+    stadiumName = Team.stadium;
+  } else {
+    const cleansedTeamName = team.split(" ");
+    const queryTeamName = cleansedTeamName.join("+").toLowerCase();
+    const fetchedStadiumName = await httpController.get(queryTeamName + "+stadium");
+    stadiumName = fetchedStadiumName.sports_results.title;
+  }
+
+  return stadiumName;
+}
+
 async function fetchAndSet(): Promise<void> {
   await Redis.init();
 
   const existingKeyTTL = await Redis.getTTL(RedisTerms.keyName);
+
   // only fetch the serp API and set the key if current key is already expired
   if (existingKeyTTL < 0) {
     const data = await httpController.get(Query.club);
-    // TODO: need to handle game_spotlight data
     const fixtures = data.sports_results.games;
 
+    await Promise.all(
+      fixtures.map(async element => {
+        element.stadium = await getStadiumName(element.teams[0].name);
+      })
+    );
+
     const convertedData = await serpApiToRedis(fixtures);
+
     await Redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
   }
 

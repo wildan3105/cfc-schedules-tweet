@@ -11,5 +11,5 @@ export interface SingleFixture {
   date_time?: Date;
   stage?: string;
   tournament?: string;
-  stadium?: string;
+  stadium: string;
 }

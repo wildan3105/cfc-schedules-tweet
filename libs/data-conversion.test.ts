@@ -1,33 +1,5 @@
 import { addHours, exportedForTesting, serpApiToRedis } from "./data-conversion";
 
-const rawData = {
-  teams: [
-    {
-      name: "Chelsea FC"
-    },
-    {
-      name: "Real Madrid"
-    }
-  ],
-  date_time: new Date(2022, 10, 10, 10, 0, 0)
-};
-
-describe("test to ensure getStadiumName is giving the correct result", () => {
-  test("getStadiumName to return Chelsea's Stadium", () => {
-    const stadiumName = exportedForTesting.getStadiumName(rawData.teams);
-    expect(stadiumName).toBeDefined();
-    expect(typeof stadiumName).toBe("string");
-    expect(stadiumName).toBe("Stamford Bridge");
-  });
-
-  test("getStadiumName to return Opponent's stadium", () => {
-    const stadiumName = exportedForTesting.getStadiumName(rawData.teams.reverse());
-    expect(stadiumName).toBeDefined();
-    expect(typeof stadiumName).toBe("string");
-    expect(stadiumName).toBe("Opponent's Stadium");
-  });
-});
-
 describe("test to ensure cleanseDate is giving the correct result", () => {
   test("cleanseDate to return month and date only when format is ddd, MMM D", () => {
     const rawDate = "Sat, Jul 30";
@@ -184,7 +156,8 @@ describe("serpApiToRedis to return the correct format of data that'll be fed int
         ],
         tournament: "Carabao Cup",
         date: "Jul 19",
-        time: "10:00 AM"
+        time: "10:00 AM",
+        stadium: "Stamford Bridge"
       }
     ];
     const convertedData = await serpApiToRedis(serpApiData);
@@ -206,7 +179,8 @@ describe("serpApiToRedis to return the correct format of data that'll be fed int
           }
         ],
         date: "Jul 19",
-        time: "10:00 AM"
+        time: "10:00 AM",
+        stadium: "Stamford Bridge"
       }
     ];
     const convertedData = await serpApiToRedis(serpApiData);
