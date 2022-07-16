@@ -23,13 +23,13 @@ export class HTTP {
     }
   }
 
-  async get() {
+  async get(search_query: string) {
     const { SERPAPI_BASE_URL, SERPAPI_KEY } = process.env;
     try {
       const response = await axios.get(SERPAPI_BASE_URL + "/search", {
         params: {
           api_key: SERPAPI_KEY,
-          q: Query.club,
+          q: search_query,
           location: Query.location
         }
       });
