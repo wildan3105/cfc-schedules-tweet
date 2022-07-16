@@ -18,11 +18,17 @@ async function fetchAndSet(): Promise<void> {
   await Redis.init();
 
   const data = await httpController.get();
+  // need to handle game_spotlight data
   const fixtures = data.sports_results.games;
 
   const convertedData = await serpApiToRedis(fixtures);
 
-  await Redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
+  const existingKeyTTL = await Redis.getTTL(RedisTerms.keyName);
+  // only set the key if current key is already expired
+  if (existingKeyTTL < 0) {
+    await Redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
+  }
+
   await Redis.close();
 }
 
