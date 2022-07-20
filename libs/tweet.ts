@@ -26,7 +26,7 @@ export async function transformToTweetableContent(message: ITweetBody): Promise<
   let headerTitle: string;
   switch (message.hours_to_match) {
     case 1:
-      headerTitle = "[Matchday!]";
+      headerTitle = "[Matchday! ONE HOUR TO GO]";
       break;
     case 24:
       headerTitle = "[Day - 1!]";
@@ -40,7 +40,7 @@ export async function transformToTweetableContent(message: ITweetBody): Promise<
     teams: `${Emojis.versus} ${message.participants}`,
     stadium: `${Emojis.stadium} ${message.stadium}`,
     date: `${Emojis.date} ${transformToReadableDate(message.date_time)}`,
-    time: `${Emojis.time} ${transformToReadableTime(message.date_time)}`,
+    time: `${Emojis.time} ${transformToReadableTime(message.date_time)} GMT+7`,
     hashtag: `${Team.hashtag}`
   };
 

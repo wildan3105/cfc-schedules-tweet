@@ -3,4 +3,4 @@ export const RedisTerms: { [key: string]: string } = {
   topicName: "upcoming-fixtures"
 };
 
-export const defaultTTLInSeconds = 604800; // 7 days in seconds
+export const defaultTTLInSeconds = 432000; // 5 days in seconds
