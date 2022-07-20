@@ -29,7 +29,7 @@ async function getStadiumName(team: string): Promise<string> {
     const cleansedTeamName = team.split(" ");
     const queryTeamName = cleansedTeamName.join("+").toLowerCase();
     const fetchedStadiumName = await httpController.get(queryTeamName + "+stadium");
-    stadiumName = fetchedStadiumName.sports_results.title;
+    stadiumName = fetchedStadiumName?.sports_results?.title || "Opponent's Stadium";
   }
 
   return stadiumName;
