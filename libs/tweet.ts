@@ -1,5 +1,5 @@
 import { Emojis } from "../enums/emojis";
-import { IndexToFullMonth } from "../constants/months";
+import { MonthIndexToFullMonth } from "../enums/months";
 import { Team } from "../constants/team";
 
 interface ITweetBody {
@@ -11,7 +11,7 @@ interface ITweetBody {
 
 function transformToReadableDate(date: Date): string {
   const currentDate = date.getDate();
-  const currentMonth = IndexToFullMonth[date.getMonth()];
+  const currentMonth = MonthIndexToFullMonth[date.getMonth()];
   const currentYear = date.getFullYear();
   return `${currentMonth} ${currentDate}, ${currentYear}`;
 }
@@ -26,7 +26,7 @@ export async function transformToTweetableContent(message: ITweetBody): Promise<
   let headerTitle: string;
   switch (message.hours_to_match) {
     case 1:
-      headerTitle = "[Matchday!]";
+      headerTitle = "[Matchday! ONE HOUR TO GO]";
       break;
     case 24:
       headerTitle = "[Day - 1!]";
@@ -40,7 +40,7 @@ export async function transformToTweetableContent(message: ITweetBody): Promise<
     teams: `${Emojis.versus} ${message.participants}`,
     stadium: `${Emojis.stadium} ${message.stadium}`,
     date: `${Emojis.date} ${transformToReadableDate(message.date_time)}`,
-    time: `${Emojis.time} ${transformToReadableTime(message.date_time)}`,
+    time: `${Emojis.time} ${transformToReadableTime(message.date_time)} GMT+7`,
     hashtag: `${Team.hashtag}`
   };
 
