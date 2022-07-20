@@ -4,13 +4,8 @@ import moment = require("moment");
 import { SingleFixture } from "../interfaces/serp-api";
 import { RedisFixture } from "../interfaces/redis";
 import { Tournament } from "../constants/tournament";
-<<<<<<< HEAD
-import { MonthIndex } from "../constants/months";
-=======
-import { PartialMonthToIndex } from "../enums/months";
-import { Team } from "../constants/team";
->>>>>>> main
 import { Time, defaultTimeFormat, TBDFormat } from "../constants/time-conversion";
+import { PartialMonthToIndex } from "../enums/months";
 
 function cleanseDate(date: string): string {
   const excludedMomentFormats = ["MMM YY", "ddd, MMM YY"];
