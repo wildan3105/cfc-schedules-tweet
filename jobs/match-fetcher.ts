@@ -6,7 +6,7 @@ import { RedisTerms, defaultTTLInSeconds } from "../constants/redis";
 import { Team } from "../constants/team";
 import { serpApiToRedis } from "../libs/data-conversion";
 import { injectEnv } from "../libs/inject-env";
-
+import { lowerLimitToFetchAPI } from "../constants/time-conversion";
 import { Query } from "../enums/query";
 
 injectEnv();
@@ -40,9 +40,10 @@ async function fetchAndSet(): Promise<void> {
 
   const existingKeyTTL = await Redis.getTTL(RedisTerms.keyName);
 
-  // only fetch the serp API and set the key if current key is already expired
-  if (existingKeyTTL < 0) {
+  // only fetch the serp API and set the key if current key is expiring in an hour or less
+  if (existingKeyTTL < lowerLimitToFetchAPI) {
     const data = await httpController.get(Query.club);
+    // TODO: need to handle game_spotlight data
     const fixtures = data.sports_results.games;
 
     await Promise.all(
