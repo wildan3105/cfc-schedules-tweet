@@ -4,7 +4,7 @@ import moment = require("moment");
 import { SingleFixture, Teams } from "../interfaces/serp-api";
 import { RedisFixture } from "../interfaces/redis";
 import { Tournament } from "../constants/tournament";
-import { MonthIndex } from "../constants/months";
+import { PartialMonthToIndex } from "../enums/months";
 import { Team } from "../constants/team";
 import { Time, defaultTimeFormat, TBDFormat } from "../constants/time-conversion";
 
@@ -57,7 +57,7 @@ function convertDateTimeToUTC(date: string, time: string): Date {
   const cleansedDate = cleanseDate(date);
   const cleansedTime = convertTo24HourFormat(time);
 
-  const currentMonth = MonthIndex[cleansedDate.slice(0, 3)];
+  const currentMonth = PartialMonthToIndex[cleansedDate.slice(0, 3)];
   const currentDate = Number(cleansedDate.split(" ")[1]);
 
   const currentHours =

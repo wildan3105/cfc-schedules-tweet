@@ -1,5 +1,5 @@
 import { Emojis } from "../enums/emojis";
-import { IndexToFullMonth } from "../constants/months";
+import { MonthIndexToFullMonth } from "../enums/months";
 import { Team } from "../constants/team";
 
 interface ITweetBody {
@@ -11,7 +11,7 @@ interface ITweetBody {
 
 function transformToReadableDate(date: Date): string {
   const currentDate = date.getDate();
-  const currentMonth = IndexToFullMonth[date.getMonth()];
+  const currentMonth = MonthIndexToFullMonth[date.getMonth()];
   const currentYear = date.getFullYear();
   return `${currentMonth} ${currentDate}, ${currentYear}`;
 }
