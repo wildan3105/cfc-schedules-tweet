@@ -76,9 +76,15 @@ function convertDateTimeToUTC(date: string, time: string): Date {
   return dateTimeInUTC;
 }
 
+function convertToTwitterAccountForChelseaFC(team: string): string {
+  return team.includes(Team.name) ? Team.twitterAccount : team;
+}
+
 export async function serpApiToRedis(fixtures: Partial<SingleFixture[]>): Promise<RedisFixture[]> {
   fixtures.forEach(elem => {
-    elem.participants = `${elem.teams[0].name} vs ${elem.teams[1].name}`;
+    elem.participants = `${convertToTwitterAccountForChelseaFC(
+      elem.teams[0].name
+    )} vs ${convertToTwitterAccountForChelseaFC(elem.teams[1].name)}`;
     (elem.tournament = elem.tournament || Tournament.OTHER),
       (elem.date_time = convertDateTimeToUTC(elem.date, elem.time)),
       (elem.stadium = getStadiumName(elem.teams));
@@ -99,5 +105,6 @@ export const exportedForTesting = {
   getStadiumName,
   convertDateTimeToUTC,
   convertTo24HourFormat,
-  cleanseDate
+  cleanseDate,
+  convertToTwitterAccountForChelseaFC
 };
