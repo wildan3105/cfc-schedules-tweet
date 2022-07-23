@@ -61,7 +61,7 @@ function convertDateTimeToUTC(date: string, time: string): Date {
   const currentDate = Number(cleansedDate.split(" ")[1]);
 
   const currentHours =
-    process.env.ENVIRONMENT === "production"
+    process.env.ENVIRONMENT === "local"
       ? Number(cleansedTime.split(":")[0]) - 7
       : Number(cleansedTime.split(":")[0]);
   const currentMinutes = Number(cleansedTime.split(":")[1]);
