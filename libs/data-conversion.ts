@@ -14,7 +14,7 @@ function getStadiumName(teams: Teams[]): string {
 }
 
 function cleanseDate(date: string): string {
-  const excludedMomentFormats = ["MMM YY", "ddd, MMM YY"];
+  const excludedMomentFormats = ["MMM YY", "ddd, MMM YY", "ddd, MMM k"];
   const momentFormat = parseFormat(date);
   let clean;
   /**
@@ -22,6 +22,7 @@ function cleanseDate(date: string): string {
    * e.g.
    * Jul 30 being read as MMM YYY instead of MMM D
    * Sat, Jul 30 being read as ddd, MMM YY instead of ddd, MMM D
+   * Sat, Aug being read as ddd, MMM k instead of ddd, MMM D
    */
   if (excludedMomentFormats.includes(momentFormat)) {
     const splittedDate = date.split(",");
