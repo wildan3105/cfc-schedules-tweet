@@ -22,6 +22,7 @@ function cleanseDate(date: string): string {
    * e.g.
    * Jul 30 being read as MMM YYY instead of MMM D
    * Sat, Jul 30 being read as ddd, MMM YY instead of ddd, MMM D
+   * Sat, Aug being read as ddd, MMM k instead of ddd, MMM D
    */
   if (excludedMomentFormats.includes(momentFormat)) {
     const splittedDate = date.split(",");
@@ -61,7 +62,7 @@ function convertDateTimeToUTC(date: string, time: string): Date {
   const currentDate = Number(cleansedDate.split(" ")[1]);
 
   const currentHours =
-    process.env.ENVIRONMENT === "local"
+    process.env.ENVIRONMENT === "production"
       ? Number(cleansedTime.split(":")[0]) - 7
       : Number(cleansedTime.split(":")[0]);
   const currentMinutes = Number(cleansedTime.split(":")[1]);

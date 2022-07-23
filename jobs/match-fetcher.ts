@@ -20,13 +20,12 @@ async function fetchAndSet(): Promise<void> {
 
   const existingKeyTTL = await Redis.getTTL(RedisTerms.keyName);
   // only fetch the serp API and set the key if current key is expiring in an hour or less
-  if (existingKeyTTL < 444000) {
+  if (existingKeyTTL < lowerLimitToFetchAPI) {
     const data = await httpController.get();
     // TODO: need to handle game_spotlight data
     const fixtures = data.sports_results.games;
 
     const convertedData = await serpApiToRedis(fixtures);
-    console.log(convertedData);
     await Redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
   }
 
