@@ -81,6 +81,23 @@ function convertToTwitterAccountForChelseaFC(team: string): string {
   return team.includes(Team.name) ? Team.twitterAccount : team;
 }
 
+export async function convertToStandardSerpAPIResults(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any
+): Promise<Record<string, unknown>> {
+  const time = data.date.split(",")[1].trim();
+  let date = data.date.split(",")[0].toLowerCase().trim();
+  if (date.includes("tomorrow")) {
+    date = moment(await addHours(24, new Date())).format("MMM D");
+  }
+  return {
+    teams: data.teams,
+    date,
+    time,
+    tournament: data.tournament
+  };
+}
+
 export async function serpApiToRedis(fixtures: Partial<SingleFixture[]>): Promise<RedisFixture[]> {
   fixtures.forEach(elem => {
     elem.participants = `${convertToTwitterAccountForChelseaFC(
