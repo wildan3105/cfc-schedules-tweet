@@ -14,7 +14,7 @@ function getStadiumName(teams: Teams[]): string {
 }
 
 function cleanseDate(date: string): string {
-  const excludedMomentFormats = ["MMM YY", "ddd, MMM YY"];
+  const excludedMomentFormats = ["MMM YY", "ddd, MMM YY", "ddd, MMM k"];
   const momentFormat = parseFormat(date);
   let clean;
   /**
