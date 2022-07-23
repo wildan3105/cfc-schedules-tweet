@@ -233,3 +233,19 @@ describe("addHours to return the correct date after adding N hours from certain 
     expect(typeof addedDate).toBe("object");
   });
 });
+
+describe("convertToTwitterAccountForChelseaFC to return the correct format for team name", () => {
+  test("convertToTwitterAccountForChelseaFC to return @ChelseaFC if team name contains 'Chelsea'", () => {
+    const teamName = "Chelsea FC";
+    const convertedTeamName = exportedForTesting.convertToTwitterAccountForChelseaFC(teamName);
+    expect(typeof convertedTeamName).toBe("string");
+    expect(convertedTeamName).toEqual("@ChelseaFC");
+  });
+
+  test("convertToTwitterAccountForChelseaFC to return the original team name if it doesn't contain 'Chelsea'", () => {
+    const teamName = "Tottenham FC";
+    const convertedTeamName = exportedForTesting.convertToTwitterAccountForChelseaFC(teamName);
+    expect(typeof convertedTeamName).toBe("string");
+    expect(convertedTeamName).toEqual(teamName);
+  });
+});
