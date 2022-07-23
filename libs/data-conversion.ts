@@ -4,7 +4,7 @@ import moment = require("moment");
 import { SingleFixture, Teams } from "../interfaces/serp-api";
 import { RedisFixture } from "../interfaces/redis";
 import { Tournament } from "../constants/tournament";
-import { MonthIndex } from "../constants/months";
+import { PartialMonthToIndex } from "../enums/months";
 import { Team } from "../constants/team";
 import { Time, defaultTimeFormat, TBDFormat } from "../constants/time-conversion";
 
@@ -14,7 +14,7 @@ function getStadiumName(teams: Teams[]): string {
 }
 
 function cleanseDate(date: string): string {
-  const excludedMomentFormats = ["MMM YY", "ddd, MMM YY"];
+  const excludedMomentFormats = ["MMM YY", "ddd, MMM YY", "ddd, MMM k"];
   const momentFormat = parseFormat(date);
   let clean;
   /**
@@ -22,6 +22,7 @@ function cleanseDate(date: string): string {
    * e.g.
    * Jul 30 being read as MMM YYY instead of MMM D
    * Sat, Jul 30 being read as ddd, MMM YY instead of ddd, MMM D
+   * Sat, Aug being read as ddd, MMM k instead of ddd, MMM D
    */
   if (excludedMomentFormats.includes(momentFormat)) {
     const splittedDate = date.split(",");
@@ -57,7 +58,7 @@ function convertDateTimeToUTC(date: string, time: string): Date {
   const cleansedDate = cleanseDate(date);
   const cleansedTime = convertTo24HourFormat(time);
 
-  const currentMonth = MonthIndex[cleansedDate.slice(0, 3)];
+  const currentMonth = PartialMonthToIndex[cleansedDate.slice(0, 3)];
   const currentDate = Number(cleansedDate.split(" ")[1]);
 
   const currentHours =
@@ -76,9 +77,15 @@ function convertDateTimeToUTC(date: string, time: string): Date {
   return dateTimeInUTC;
 }
 
+function convertToTwitterAccountForChelseaFC(team: string): string {
+  return team.includes(Team.name) ? Team.twitterAccount : team;
+}
+
 export async function serpApiToRedis(fixtures: Partial<SingleFixture[]>): Promise<RedisFixture[]> {
   fixtures.forEach(elem => {
-    elem.participants = `${elem.teams[0].name} vs ${elem.teams[1].name}`;
+    elem.participants = `${convertToTwitterAccountForChelseaFC(
+      elem.teams[0].name
+    )} vs ${convertToTwitterAccountForChelseaFC(elem.teams[1].name)}`;
     (elem.tournament = elem.tournament || Tournament.OTHER),
       (elem.date_time = convertDateTimeToUTC(elem.date, elem.time)),
       (elem.stadium = getStadiumName(elem.teams));
@@ -99,5 +106,6 @@ export const exportedForTesting = {
   getStadiumName,
   convertDateTimeToUTC,
   convertTo24HourFormat,
-  cleanseDate
+  cleanseDate,
+  convertToTwitterAccountForChelseaFC
 };

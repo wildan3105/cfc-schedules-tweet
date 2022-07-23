@@ -37,6 +37,14 @@ describe("test to ensure cleanseDate is giving the correct result", () => {
     expect(cleansedDate).toBe("Jul 30");
   });
 
+  test("cleanseDate to return month and date only when format is ddd, MMM k", () => {
+    const rawDate = "Sat, Aug 6";
+    const cleansedDate = exportedForTesting.cleanseDate(rawDate);
+    expect(cleansedDate).toBeDefined();
+    expect(typeof cleansedDate).toBe("string");
+    expect(cleansedDate).toBe("Aug 6");
+  });
+
   test("cleanseDate to return month and date only when format is MMM D", () => {
     const rawDate = "Jul 15";
     const cleansedDate = exportedForTesting.cleanseDate(rawDate);
@@ -223,5 +231,21 @@ describe("addHours to return the correct date after adding N hours from certain 
     const addedDate = await addHours(7, now);
     expect(addedDate).toBeDefined();
     expect(typeof addedDate).toBe("object");
+  });
+});
+
+describe("convertToTwitterAccountForChelseaFC to return the correct format for team name", () => {
+  test("convertToTwitterAccountForChelseaFC to return @ChelseaFC if team name contains 'Chelsea'", () => {
+    const teamName = "Chelsea FC";
+    const convertedTeamName = exportedForTesting.convertToTwitterAccountForChelseaFC(teamName);
+    expect(typeof convertedTeamName).toBe("string");
+    expect(convertedTeamName).toEqual("@ChelseaFC");
+  });
+
+  test("convertToTwitterAccountForChelseaFC to return the original team name if it doesn't contain 'Chelsea'", () => {
+    const teamName = "Tottenham FC";
+    const convertedTeamName = exportedForTesting.convertToTwitterAccountForChelseaFC(teamName);
+    expect(typeof convertedTeamName).toBe("string");
+    expect(convertedTeamName).toEqual(teamName);
   });
 });
