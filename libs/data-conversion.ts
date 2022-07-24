@@ -8,6 +8,8 @@ import { PartialMonthToIndex } from "../enums/months";
 import { Team } from "../constants/team";
 import { Time, defaultTimeFormat, TBDFormat } from "../constants/time-conversion";
 
+const MOMENT_DEFAULT_FORMAT = "MMM D";
+
 function getStadiumName(teams: Teams[]): string {
   const stadiumName = teams[0].name.includes(Team.name) ? Team.stadium : "Opponent's Stadium";
   return stadiumName;
@@ -28,7 +30,7 @@ function cleanseDate(date: string): string {
     const splittedDate = date.split(",");
     clean = splittedDate.length > 1 ? splittedDate[1].trim() : splittedDate[0];
   } else {
-    clean = moment(date, momentFormat).format("MMM D");
+    clean = moment(date, momentFormat).format(MOMENT_DEFAULT_FORMAT);
   }
   return clean;
 }
@@ -88,7 +90,9 @@ export async function convertToStandardSerpAPIResults(
   const time = data.date.split(",")[1].trim();
   let date = data.date.split(",")[0].toLowerCase().trim();
   if (date.includes("tomorrow")) {
-    date = moment(await addHours(24, new Date())).format("MMM D");
+    date = moment(await addHours(24, new Date())).format(MOMENT_DEFAULT_FORMAT);
+  } else if(date.includes("today")) {
+    date = moment(new Date()).format(MOMENT_DEFAULT_FORMAT);
   }
   return {
     teams: data.teams,
