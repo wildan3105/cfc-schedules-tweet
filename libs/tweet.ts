@@ -7,6 +7,7 @@ interface ITweetBody {
   stadium: string;
   participants: string;
   date_time: Date;
+  tournament: string;
 }
 
 function transformToReadableDate(date: Date): string {
@@ -37,6 +38,7 @@ export async function transformToTweetableContent(message: ITweetBody): Promise<
 
   const transformed = {
     header: headerTitle,
+    tournament: `${Emojis.tournament} ${message.tournament}`,
     teams: `${Emojis.versus} ${message.participants}`,
     stadium: `${Emojis.stadium} ${message.stadium}`,
     date: `${Emojis.date} ${transformToReadableDate(message.date_time)}`,

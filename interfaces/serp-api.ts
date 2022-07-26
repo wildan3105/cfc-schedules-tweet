@@ -10,6 +10,6 @@ export interface SingleFixture {
   time: string;
   date_time?: Date;
   stage?: string;
-  tournament?: string;
+  tournament: string;
   stadium: string;
 }
