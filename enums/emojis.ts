@@ -1,5 +1,5 @@
 export enum Emojis {
-  tournament = "🏆"
+  tournament = "🏆",
   versus = "🆚",
   stadium = "🏟️",
   date = "📅",
