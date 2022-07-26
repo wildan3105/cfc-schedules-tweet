@@ -1,7 +1,7 @@
 import parseFormat = require("moment-parseformat");
 import moment = require("moment");
 
-import { SingleFixture, Teams } from "../interfaces/serp-api";
+import { SingleFixture } from "../interfaces/serp-api";
 import { RedisFixture } from "../interfaces/redis";
 import { Tournament } from "../constants/tournament";
 import { PartialMonthToIndex } from "../enums/months";
@@ -9,11 +9,6 @@ import { Team } from "../constants/team";
 import { Time, defaultTimeFormat, TBDFormat } from "../constants/time-conversion";
 
 const MOMENT_DEFAULT_FORMAT = "MMM D";
-
-function getStadiumName(teams: Teams[]): string {
-  const stadiumName = teams[0].name.includes(Team.name) ? Team.stadium : "Opponent's Stadium";
-  return stadiumName;
-}
 
 function cleanseDate(date: string): string {
   const excludedMomentFormats = ["MMM YY", "ddd, MMM YY", "ddd, MMM k"];
@@ -91,7 +86,7 @@ export async function convertToStandardSerpAPIResults(
   let date = data.date.split(",")[0].toLowerCase().trim();
   if (date.includes("tomorrow")) {
     date = moment(await addHours(24, new Date())).format(MOMENT_DEFAULT_FORMAT);
-  } else if(date.includes("today")) {
+  } else if (date.includes("today")) {
     date = moment(new Date()).format(MOMENT_DEFAULT_FORMAT);
   }
   return {
@@ -102,14 +97,15 @@ export async function convertToStandardSerpAPIResults(
   };
 }
 
-export async function serpApiToRedis(fixtures: Partial<SingleFixture[]>): Promise<RedisFixture[]> {
+export async function serpApiToRedis(fixtures: SingleFixture[]): Promise<RedisFixture[]> {
   fixtures.forEach(elem => {
     elem.participants = `${convertToTwitterAccountForChelseaFC(
       elem.teams[0].name
     )} vs ${convertToTwitterAccountForChelseaFC(elem.teams[1].name)}`;
     (elem.tournament = elem.tournament || Tournament.OTHER),
       (elem.date_time = convertDateTimeToUTC(elem.date, elem.time)),
-      (elem.stadium = getStadiumName(elem.teams));
+      // eslint-disable-next-line no-self-assign
+      (elem.stadium = elem.stadium);
   });
 
   return fixtures;
@@ -124,7 +120,6 @@ export async function addHours(numOfHours: number, date: Date): Promise<Date> {
 }
 
 export const exportedForTesting = {
-  getStadiumName,
   convertDateTimeToUTC,
   convertTo24HourFormat,
   cleanseDate,
