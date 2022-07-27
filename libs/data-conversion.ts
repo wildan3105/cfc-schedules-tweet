@@ -91,9 +91,10 @@ export async function convertToStandardSerpAPIResults(
   }
   return {
     teams: data.teams,
+    tournament: data.tournament,
+    stadium: data.stadium,
     date,
-    time,
-    tournament: data.tournament
+    time
   };
 }
 
