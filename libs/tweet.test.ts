@@ -5,6 +5,7 @@ const fixedDate = new Date(2022, 10, 10, 10, 10, 10);
 const templateBody = {
   stadium: "Stamford Bridge",
   participants: "Chelsea vs Atletico",
+  tournament: "Champions League",
   date_time: fixedDate
 };
 

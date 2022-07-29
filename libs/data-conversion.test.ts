@@ -179,29 +179,6 @@ describe("serpApiToRedis to return the correct format of data that'll be fed int
     expect(convertedData).toHaveLength(1);
     expect(convertedData[0].tournament).toBe("Carabao Cup");
   });
-
-  test("serpApiToReds to return correct format from serp api data - tournament is not provided", async () => {
-    const serpApiData = [
-      {
-        teams: [
-          {
-            name: "Chelsea"
-          },
-          {
-            name: "Liverpool"
-          }
-        ],
-        date: "Jul 19",
-        time: "10:00 AM",
-        stadium: "Stamford Bridge"
-      }
-    ];
-    const convertedData = await serpApiToRedis(serpApiData);
-    expect(convertedData).toBeDefined();
-    expect(typeof convertedData).toBe("object");
-    expect(convertedData).toHaveLength(1);
-    expect(convertedData[0].tournament).toEqual("#OtherMatch");
-  });
 });
 
 describe("addHours to return the correct date after adding N hours from certain date", () => {

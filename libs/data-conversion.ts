@@ -1,9 +1,9 @@
+/* eslint-disable no-self-assign */
 import parseFormat = require("moment-parseformat");
 import moment = require("moment");
 
 import { SingleFixture } from "../interfaces/serp-api";
 import { RedisFixture } from "../interfaces/redis";
-import { Tournament } from "../constants/tournament";
 import { PartialMonthToIndex } from "../enums/months";
 import { Team } from "../constants/team";
 import { Time, defaultTimeFormat, TBDFormat } from "../constants/time-conversion";
@@ -19,7 +19,7 @@ function cleanseDate(date: string): string {
    * e.g.
    * Jul 30 being read as MMM YYY instead of MMM D
    * Sat, Jul 30 being read as ddd, MMM YY instead of ddd, MMM D
-   * Sat, Aug being read as ddd, MMM k instead of ddd, MMM D
+   * Sat, Aug 6 being read as ddd, MMM k instead of ddd, MMM D
    */
   if (excludedMomentFormats.includes(momentFormat)) {
     const splittedDate = date.split(",");
@@ -103,9 +103,8 @@ export async function serpApiToRedis(fixtures: SingleFixture[]): Promise<RedisFi
     elem.participants = `${convertToTwitterAccountForChelseaFC(
       elem.teams[0].name
     )} vs ${convertToTwitterAccountForChelseaFC(elem.teams[1].name)}`;
-    (elem.tournament = elem.tournament || Tournament.OTHER),
+    (elem.tournament = elem.tournament),
       (elem.date_time = convertDateTimeToUTC(elem.date, elem.time)),
-      // eslint-disable-next-line no-self-assign
       (elem.stadium = elem.stadium);
   });
 
