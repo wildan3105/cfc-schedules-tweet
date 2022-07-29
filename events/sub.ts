@@ -19,6 +19,7 @@ interface ITweet {
     stadium: string;
     participants: string;
     date_time: string;
+    tournament: string;
   };
 }
 
@@ -28,6 +29,7 @@ async function sendTweet(tweetContent: ITweet): Promise<void> {
     hours_to_match: tweetContent.hours_to_match,
     stadium: tweetContent.message.stadium,
     participants: tweetContent.message.participants,
+    tournament: tweetContent.message.tournament,
     date_time:
       ENVIRONMENT === "production"
         ? await addHours(Time.UTCToLocalTimezone, matchSchedule)
