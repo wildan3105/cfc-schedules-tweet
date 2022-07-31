@@ -9,13 +9,14 @@ import { Team } from "../constants/team";
 import { Time, defaultTimeFormat, TBDFormat } from "../constants/time-conversion";
 
 function cleanseDate(date: string): string {
-  const excludedMomentFormats = ["MMM YY", "ddd, MMM YY", "ddd, MMM k"];
+  const excludedMomentFormats = ["MMM YY", "ddd, MMM YY", "ddd, MMM k", "MMM k"];
   const momentFormat = parseFormat(date);
   let clean;
   /**
    * excluded because it's being falsy read
    * e.g.
    * Jul 30 being read as MMM YYY instead of MMM D
+   * Sep 4 being read as MMM k instead of MMM D
    * Sat, Jul 30 being read as ddd, MMM YY instead of ddd, MMM D
    * Sat, Aug 6 being read as ddd, MMM k instead of ddd, MMM D
    */

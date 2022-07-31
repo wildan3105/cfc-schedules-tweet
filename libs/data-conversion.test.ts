@@ -56,6 +56,14 @@ describe("test to ensure cleanseDate is giving the correct result", () => {
     expect(typeof cleansedDate).toBe("string");
     expect(cleansedDate).toBe("Jul 30");
   });
+
+  test("cleanseDate to return month and date only when format is MMM k", () => {
+    const rawDate = "Sep 4";
+    const cleansedDate = exportedForTesting.cleanseDate(rawDate);
+    expect(cleansedDate).toBeDefined();
+    expect(typeof cleansedDate).toBe("string");
+    expect(cleansedDate).toBe("Sep 4");
+  });
 });
 
 describe("convertTo24HourFormat to return the correct format", () => {
