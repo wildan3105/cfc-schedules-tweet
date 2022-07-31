@@ -91,7 +91,7 @@ export async function convertToStandardSerpAPIResults(
   }
   return {
     teams: data.teams,
-    tournament: data.tournament,
+    tournament: data.tournament || data.league,
     stadium: data.stadium,
     date,
     time
