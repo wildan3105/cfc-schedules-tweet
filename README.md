@@ -41,6 +41,5 @@ Send tweets ahead of Chelsea FC's match!
 ![](./diagram.png)
 
 ### Cron scheduling
-- `match-fetcher` -> runs **every day** to accommodate latest updates from google API
-   - key's TTL: **2 days** -> to ensure key availability in the case of `match-fetcher` fails to set the key once
-- `match-reader`  -> runs **every hour** to give more closer reminder (day-1 and hour-1)
+- `match-fetcher` -> runs **every day at 7:AM UTC**
+- `match-reader`  -> runs **every 10 minutes**
