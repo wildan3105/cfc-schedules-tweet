@@ -1,4 +1,9 @@
-import { addHours, exportedForTesting, serpApiToRedis } from "./data-conversion";
+import {
+  addHours,
+  convertToStandardSerpAPIResults,
+  exportedForTesting,
+  serpApiToRedis
+} from "./data-conversion";
 
 describe("test to ensure cleanseDate is giving the correct result", () => {
   test("cleanseDate to return month and date only when format is ddd, MMM D", () => {
@@ -206,5 +211,47 @@ describe("convertToTwitterAccountForChelseaFC to return the correct format for t
     const convertedTeamName = exportedForTesting.convertToTwitterAccountForChelseaFC(teamName);
     expect(typeof convertedTeamName).toBe("string");
     expect(convertedTeamName).toEqual(teamName);
+  });
+});
+
+describe("convertToStandardSerpAPIResults to return the correct and standard format of serp API result", () => {
+  test("convertToStandardSerpAPIResults to return the standard format of game result from game highlight when 'tomorrow' date is provided", async () => {
+    const gameHighlight = {
+      league: "Florida Cup",
+      date: "tomorrow, 7:00 am",
+      stage: "Finale",
+      teams: [
+        {
+          name: "Chelsea"
+        },
+        {
+          name: "Arsenal"
+        }
+      ]
+    };
+    const convertedGameHighlight = await convertToStandardSerpAPIResults(gameHighlight);
+    expect(typeof convertedGameHighlight).toBe("object");
+    expect(typeof convertedGameHighlight.date).toBe("string");
+    expect(convertedGameHighlight.time).toEqual("7:00 am");
+  });
+
+  test("convertToStandardSerpAPIResults to return the standard format of game result from game highlight when 'today' date is provided", async () => {
+    const gameHighlight = {
+      league: "Florida Cup",
+      date: "today, 11:00 am",
+      stage: "Finale",
+      teams: [
+        {
+          name: "Chelsea"
+        },
+        {
+          name: "Arsenal"
+        }
+      ]
+    };
+    const convertedGameHighlight = await convertToStandardSerpAPIResults(gameHighlight);
+    expect(typeof convertedGameHighlight).toBe("object");
+    expect(typeof convertedGameHighlight.date).toBe("string");
+    expect(convertedGameHighlight.time).toEqual("11:00 am");
   });
 });
