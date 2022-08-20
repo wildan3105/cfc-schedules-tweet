@@ -218,7 +218,8 @@ describe("convertToStandardSerpAPIResults to return the correct and standard for
   test("convertToStandardSerpAPIResults to return the standard format of game result from game highlight when 'tomorrow' date is provided", async () => {
     const gameHighlight = {
       league: "Florida Cup",
-      date: "tomorrow, 7:00 am",
+      date: "tomorrow",
+      time: "7:00 am",
       stage: "Finale",
       teams: [
         {
@@ -238,7 +239,8 @@ describe("convertToStandardSerpAPIResults to return the correct and standard for
   test("convertToStandardSerpAPIResults to return the standard format of game result from game highlight when 'today' date is provided", async () => {
     const gameHighlight = {
       league: "Florida Cup",
-      date: "today, 11:00 am",
+      date: "today",
+      time: "11:00 am",
       stage: "Finale",
       teams: [
         {
