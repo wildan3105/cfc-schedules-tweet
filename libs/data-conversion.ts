@@ -83,8 +83,8 @@ export async function convertToStandardSerpAPIResults(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any
 ): Promise<Record<string, unknown>> {
-  const time = data.date.split(",")[1].trim();
-  let date = data.date.split(",")[0].toLowerCase().trim();
+  const time = data.time.trim();
+  let date = data.date.toLowerCase().trim();
   if (date.includes("tomorrow")) {
     date = moment(await addHours(24, new Date())).format(MOMENT_DEFAULT_FORMAT);
   } else if (date.includes("today")) {
