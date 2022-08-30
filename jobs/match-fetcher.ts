@@ -28,11 +28,14 @@ async function fetchAndSet(): Promise<void> {
     let gameHighlight;
     if (data.sports_results.game_spotlight) {
       // handle game highlight and append to the result
-      gameHighlight = await convertToStandardSerpAPIResults(data.sports_results.game_spotlight);
+      gameHighlight = await convertToStandardSerpAPIResults(
+        data.sports_results.game_spotlight,
+        true
+      );
       fixtures.unshift(gameHighlight);
     } else if (customDateFormats.includes(firstMatchDate)) {
       const firstMatch = fixtures[0];
-      fixtures[0] = await convertToStandardSerpAPIResults(firstMatch);
+      fixtures[0] = await convertToStandardSerpAPIResults(firstMatch, false);
     }
 
     const convertedData = await serpApiToRedis(fixtures);
