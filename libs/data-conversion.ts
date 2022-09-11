@@ -8,14 +8,17 @@ import { PartialMonthToIndex } from "../enums/months";
 import { Team } from "../constants/team";
 import { Time, defaultTimeFormat, TBDFormat } from "../constants/time-conversion";
 
+const MOMENT_DEFAULT_FORMAT = "MMM D";
+
 function cleanseDate(date: string): string {
-  const excludedMomentFormats = ["MMM YY", "ddd, MMM YY", "ddd, MMM k"];
+  const excludedMomentFormats = ["MMM YY", "ddd, MMM YY", "ddd, MMM k", "MMM k"];
   const momentFormat = parseFormat(date);
   let clean;
   /**
    * excluded because it's being falsy read
    * e.g.
    * Jul 30 being read as MMM YYY instead of MMM D
+   * Sep 4 being read as MMM k instead of MMM D
    * Sat, Jul 30 being read as ddd, MMM YY instead of ddd, MMM D
    * Sat, Aug 6 being read as ddd, MMM k instead of ddd, MMM D
    */
@@ -23,7 +26,7 @@ function cleanseDate(date: string): string {
     const splittedDate = date.split(",");
     clean = splittedDate.length > 1 ? splittedDate[1].trim() : splittedDate[0];
   } else {
-    clean = moment(date, momentFormat).format("MMM D");
+    clean = moment(date, momentFormat).format(MOMENT_DEFAULT_FORMAT);
   }
   return clean;
 }
@@ -74,6 +77,33 @@ function convertDateTimeToUTC(date: string, time: string): Date {
 
 function convertToTwitterAccountForChelseaFC(team: string): string {
   return team.includes(Team.name) ? Team.twitterAccount : team;
+}
+
+export async function convertToStandardSerpAPIResults(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any,
+  fromSpotlight: boolean
+): Promise<Record<string, unknown>> {
+  let time: unknown, date: string | string[];
+  if (fromSpotlight) {
+    time = data.date.split(",")[1].trim();
+    date = data.date.split(",")[0].toLowerCase().trim();
+  } else {
+    time = data.time.trim();
+    date = data.date.toLowerCase().trim();
+  }
+  if (date.includes("tomorrow")) {
+    date = moment(await addHours(24, new Date())).format(MOMENT_DEFAULT_FORMAT);
+  } else if (date.includes("today")) {
+    date = moment(new Date()).format(MOMENT_DEFAULT_FORMAT);
+  }
+  return {
+    teams: data.teams,
+    tournament: data.tournament || data.league,
+    stadium: data.stadium,
+    date,
+    time
+  };
 }
 
 export async function serpApiToRedis(fixtures: SingleFixture[]): Promise<RedisFixture[]> {

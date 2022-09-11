@@ -1,4 +1,9 @@
-import { addHours, exportedForTesting, serpApiToRedis } from "./data-conversion";
+import {
+  addHours,
+  convertToStandardSerpAPIResults,
+  exportedForTesting,
+  serpApiToRedis
+} from "./data-conversion";
 
 describe("test to ensure cleanseDate is giving the correct result", () => {
   test("cleanseDate to return month and date only when format is ddd, MMM D", () => {
@@ -55,6 +60,14 @@ describe("test to ensure cleanseDate is giving the correct result", () => {
     expect(cleansedDate).toBeDefined();
     expect(typeof cleansedDate).toBe("string");
     expect(cleansedDate).toBe("Jul 30");
+  });
+
+  test("cleanseDate to return month and date only when format is MMM k", () => {
+    const rawDate = "Sep 4";
+    const cleansedDate = exportedForTesting.cleanseDate(rawDate);
+    expect(cleansedDate).toBeDefined();
+    expect(typeof cleansedDate).toBe("string");
+    expect(cleansedDate).toBe("Sep 4");
   });
 });
 
@@ -198,5 +211,48 @@ describe("convertToTwitterAccountForChelseaFC to return the correct format for t
     const convertedTeamName = exportedForTesting.convertToTwitterAccountForChelseaFC(teamName);
     expect(typeof convertedTeamName).toBe("string");
     expect(convertedTeamName).toEqual(teamName);
+  });
+});
+
+describe("convertToStandardSerpAPIResults to return the correct and standard format of serp API result", () => {
+  test("convertToStandardSerpAPIResults to return the standard format of game result from game highlight when 'tomorrow' date is provided inside game_spotlight", async () => {
+    const gameHighlight = {
+      league: "Florida Cup",
+      date: "tomorrow, 7:00 am",
+      stage: "Finale",
+      teams: [
+        {
+          name: "Chelsea"
+        },
+        {
+          name: "Arsenal"
+        }
+      ]
+    };
+    const convertedGameHighlight = await convertToStandardSerpAPIResults(gameHighlight, true);
+    expect(typeof convertedGameHighlight).toBe("object");
+    expect(typeof convertedGameHighlight.date).toBe("string");
+    expect(convertedGameHighlight.time).toEqual("7:00 am");
+  });
+
+  test("convertToStandardSerpAPIResults to return the standard format of game result from game highlight when 'today' date is provided outside of game_spotlight", async () => {
+    const gameHighlight = {
+      league: "Florida Cup",
+      date: "today",
+      time: "11:00 am",
+      stage: "Finale",
+      teams: [
+        {
+          name: "Chelsea"
+        },
+        {
+          name: "Arsenal"
+        }
+      ]
+    };
+    const convertedGameHighlight = await convertToStandardSerpAPIResults(gameHighlight, false);
+    expect(typeof convertedGameHighlight).toBe("object");
+    expect(typeof convertedGameHighlight.date).toBe("string");
+    expect(convertedGameHighlight.time).toEqual("11:00 am");
   });
 });
