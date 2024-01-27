@@ -13,7 +13,7 @@ const MOMENT_DEFAULT_FORMAT = "MMM D";
 function cleanseDate(date: string): string {
   const excludedMomentFormats = ["MMM YY", "ddd, MMM YY", "ddd, MMM k", "MMM k"];
   const momentFormat = parseFormat(date);
-  let clean;
+  let clean: string;
   /**
    * excluded because it's being falsy read
    * e.g.
@@ -29,6 +29,10 @@ function cleanseDate(date: string): string {
     clean = moment(date, momentFormat).format(MOMENT_DEFAULT_FORMAT);
   }
   return clean;
+}
+
+export function removeIncompleteSerpAPIData(fixtures: SingleFixture[]): SingleFixture[] {
+  return fixtures.filter(f => f.time !== undefined && f.date !== undefined);
 }
 
 function convertTo24HourFormat(time: string): string {
@@ -131,5 +135,6 @@ export const exportedForTesting = {
   convertDateTimeToUTC,
   convertTo24HourFormat,
   cleanseDate,
-  convertToTwitterAccountForChelseaFC
+  convertToTwitterAccountForChelseaFC,
+  removeIncompleteSerpAPIData
 };

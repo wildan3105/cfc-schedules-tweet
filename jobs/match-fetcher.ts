@@ -2,7 +2,7 @@ import { injectEnv } from "../libs/inject-env";
 import { HTTP } from "../modules/http";
 import { RedisStorage } from "../modules/redis";
 import { RedisTerms, defaultTTLInSeconds } from "../constants/redis";
-import { serpApiToRedis, convertToStandardSerpAPIResults } from "../libs/data-conversion";
+import { serpApiToRedis, convertToStandardSerpAPIResults, removeIncompleteSerpAPIData } from "../libs/data-conversion";
 import { lowerLimitToFetchAPI } from "../constants/time-conversion";
 
 injectEnv();
@@ -21,7 +21,7 @@ async function fetchAndSet(): Promise<void> {
   const existingKeyTTL = await Redis.getTTL(RedisTerms.keyName);
   // only fetch the serp API and set the key if current key is expiring in an hour or less
   if (existingKeyTTL < lowerLimitToFetchAPI) {
-    const data = await httpController.get();
+    const data = await httpController.get(); // TODO: strick-checking data type
     const fixtures = data.sports_results.games;
     const firstMatchDate = data.sports_results.games[0].date.toLocaleLowerCase().trim();
     const customDateFormats = ["tomorrow", "today"];
@@ -38,7 +38,8 @@ async function fetchAndSet(): Promise<void> {
       fixtures[0] = await convertToStandardSerpAPIResults(firstMatch, false);
     }
 
-    const convertedData = await serpApiToRedis(fixtures);
+    const completedData = removeIncompleteSerpAPIData(fixtures);
+    const convertedData = await serpApiToRedis(completedData);
     await Redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
   }
 
