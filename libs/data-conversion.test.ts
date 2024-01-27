@@ -5,6 +5,73 @@ import {
   serpApiToRedis
 } from "./data-conversion";
 
+describe("test to remove incomplete data", () => {
+  test("removeIncompleteSerpAPIData to return empty array if objects inside array don't have any date and time information", () => {
+    const rawData = [
+      {
+        teams: [
+          {
+            name: "First Club Football"
+          },
+          {
+            name: "Second Club Football"
+          }
+        ],
+        tournament: "Competition Cup",
+        stadium: "Homeground Stadium"
+      },
+      {
+        teams: [
+          {
+            name: "First Club Football (2)"
+          },
+          {
+            name: "Second Club Football (2)"
+          }
+        ],
+        tournament: "Competition Cup (2)",
+        stadium: "Homeground Stadium (2)"
+      }
+    ]
+    const completedData = exportedForTesting.removeIncompleteSerpAPIData(rawData);
+    expect(completedData).toEqual([]);
+  });
+
+  test("removeIncompleteSerpAPIData to return an array of an object if some of the objects inside array don't have any date and time information", () => {
+    const rawData = [
+      {
+        teams: [
+          {
+            name: "First Club Football"
+          },
+          {
+            name: "Second Club Football"
+          }
+        ],
+        tournament: "Competition Cup",
+        stadium: "Homeground Stadium",
+        date: "Feb 20",
+        time: "7:15 PM"
+      },
+      {
+        teams: [
+          {
+            name: "First Club Football (2)"
+          },
+          {
+            name: "Second Club Football (2)"
+          }
+        ],
+        tournament: "Competition Cup (2)",
+        stadium: "Homeground Stadium (2)"
+      }
+    ]
+    const completedData = exportedForTesting.removeIncompleteSerpAPIData(rawData);
+    expect(completedData).toHaveLength(1);
+    expect(completedData[0].time).toEqual("7:15 PM");
+  })
+})
+
 describe("test to ensure cleanseDate is giving the correct result", () => {
   test("cleanseDate to return month and date only when format is ddd, MMM D", () => {
     const rawDate = "Sat, Jul 30";
