@@ -2,8 +2,7 @@ import {
   addHours,
   convertToStandardSerpAPIResults,
   exportedForTesting,
-  serpApiToRedis,
-  removeIncompleteSerpAPIData
+  serpApiToRedis
 } from "./data-conversion";
 
 describe("test to remove incomplete data", () => {
