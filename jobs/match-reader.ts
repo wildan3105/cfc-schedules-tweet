@@ -21,6 +21,10 @@ interface IBody {
 async function getMatchesAndPublish(): Promise<void> {
   await Redis.init();
   const matches = JSON.parse(await Redis.get(RedisTerms.keyName));
+  if (!Array.isArray(matches)) {
+    console.log(`Nothing to read from redis. Exit early`)
+    return;
+  }
   const now = new Date();
   const upcomingMatch = new Date(matches[0].date_time);
 
@@ -71,5 +75,10 @@ process.on("unhandledRejection", e => {
   } catch (e) {
     console.log(`an error occured`, e);
     process.exit(1);
+  } finally {
+    console.log(`Match reader cron executed.`)
+    setTimeout(() => {
+      process.exit(0);
+    }, 3000);
   }
 })();

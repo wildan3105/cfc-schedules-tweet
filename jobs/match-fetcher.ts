@@ -40,6 +40,7 @@ async function fetchAndSet(): Promise<void> {
 
     const completedData = removeIncompleteSerpAPIData(fixtures);
     const convertedData = await serpApiToRedis(completedData);
+    console.log(`Storing ${convertedData.length} fixture(s) into redis.`)
     await Redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
   }
 
@@ -69,5 +70,10 @@ process.on("unhandledRejection", e => {
   } catch (e) {
     console.log(`an error occured`, e);
     process.exit(1);
+  } finally {
+    console.log(`Match fetcher cron executed.`)
+    setTimeout(() => {
+      process.exit(0);
+    }, 3000);
   }
 })();
