@@ -7,44 +7,51 @@ import { lowerLimitToFetchAPI } from "../constants/time-conversion";
 
 injectEnv();
 
+const REDIS_URL = process.env.REDIS_URL;
 const redisConfig = {
-  redisURL: process.env.REDIS_URL
+  redisURL: REDIS_URL
 };
-
-const Redis = new RedisStorage(redisConfig);
 
 const httpController = new HTTP();
 
-async function fetchAndSet(): Promise<void> {
-  await Redis.init();
+class MatchFetcher {
+  private redis: RedisStorage;
 
-  const existingKeyTTL = await Redis.getTTL(RedisTerms.keyName);
-  // only fetch the serp API and set the key if current key is expiring in an hour or less
-  if (existingKeyTTL < lowerLimitToFetchAPI) {
-    const data = await httpController.get(); // TODO: strick-checking data type
-    const fixtures = data.sports_results.games;
-    const firstMatchDate = data.sports_results.games[0].date.toLocaleLowerCase().trim();
-    const customDateFormats = ["tomorrow", "today"];
-    let gameHighlight;
-    if (data.sports_results.game_spotlight) {
-      // handle game highlight and append to the result
-      gameHighlight = await convertToStandardSerpAPIResults(
-        data.sports_results.game_spotlight,
-        true
-      );
-      fixtures.unshift(gameHighlight);
-    } else if (customDateFormats.includes(firstMatchDate)) {
-      const firstMatch = fixtures[0];
-      fixtures[0] = await convertToStandardSerpAPIResults(firstMatch, false);
-    }
-
-    const completedData = removeIncompleteSerpAPIData(fixtures);
-    const convertedData = await serpApiToRedis(completedData);
-    console.log(`Storing ${convertedData.length} fixture(s) into redis.`)
-    await Redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
+  constructor() {
+    this.redis = new RedisStorage(redisConfig);
   }
 
-  await Redis.close();
+  public async fetchAndSet(): Promise<void> {
+    await this.redis.init();
+  
+    const existingKeyTTL = await this.redis.getTTL(RedisTerms.keyName);
+    // only fetch the serp API and set the key if current key is expiring in an hour or less
+    if (existingKeyTTL < lowerLimitToFetchAPI) {
+      const data = await httpController.get(); // TODO: strick-checking data type
+      const fixtures = data.sports_results.games;
+      const firstMatchDate = data.sports_results.games[0].date.toLocaleLowerCase().trim();
+      const customDateFormats = ["tomorrow", "today"];
+      let gameHighlight;
+      if (data.sports_results.game_spotlight) {
+        // handle game highlight and append to the result
+        gameHighlight = await convertToStandardSerpAPIResults(
+          data.sports_results.game_spotlight,
+          true
+        );
+        fixtures.unshift(gameHighlight);
+      } else if (customDateFormats.includes(firstMatchDate)) {
+        const firstMatch = fixtures[0];
+        fixtures[0] = await convertToStandardSerpAPIResults(firstMatch, false);
+      }
+  
+      const completedData = removeIncompleteSerpAPIData(fixtures);
+      const convertedData = await serpApiToRedis(completedData);
+      console.log(`Storing ${convertedData.length} fixture(s) into redis.`)
+      await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
+    }
+  
+    await this.redis.close();
+  }
 }
 
 process.on("uncaughtException", e => {
@@ -63,7 +70,8 @@ process.on("unhandledRejection", e => {
 
 (async () => {
   try {
-    await fetchAndSet();
+    const matchFetcher = new MatchFetcher();
+    await matchFetcher.fetchAndSet();
     setTimeout(() => {
       process.exit(0);
     }, 3000);

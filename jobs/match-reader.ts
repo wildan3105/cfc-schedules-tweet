@@ -7,47 +7,54 @@ import { calculateDateDiffsInHours } from "../libs/calculation";
 
 injectEnv();
 
+const REDIS_URL = process.env.REDIS_URL;
 const redisConfig = {
-  redisURL: process.env.REDIS_URL
+  redisURL: REDIS_URL
 };
-
-const Redis = new RedisStorage(redisConfig);
 
 interface IBody {
   hours_to_match: number;
   message: Record<string, unknown>;
 }
 
-async function getMatchesAndPublish(): Promise<void> {
-  await Redis.init();
-  const matches = JSON.parse(await Redis.get(RedisTerms.keyName));
-  if (!Array.isArray(matches)) {
-    console.log(`Nothing to read from redis. Exit early`)
-    return;
+class MatchReader {
+  private redis: RedisStorage;
+
+  constructor() {
+    this.redis = new RedisStorage(redisConfig);
   }
-  const now = new Date();
-  const upcomingMatch = new Date(matches[0].date_time);
 
-  const diffInHours = await calculateDateDiffsInHours(now, upcomingMatch);
-
-  console.log(`Upcoming match ${JSON.stringify(matches[0])} will be played in ${diffInHours} hour(s)`);
-
-  if (diffInHours <= Time.hoursInADay) {
-    const msg: IBody = {
-      message: matches[0],
-      hours_to_match: diffInHours
-    };
-    await publishMessage({
-      channel: RedisTerms.topicName,
-      message: JSON.stringify(msg)
-    });
-
-    // remove the entry from the key if only difference is 1 hour
-    if (diffInHours === 1) {
-      matches.shift();
-      const currentTTL = await Redis.getTTL(RedisTerms.keyName);
-
-      await Redis.set(RedisTerms.keyName, JSON.stringify(matches), currentTTL);
+  public async getMatchesAndPublish(): Promise<void> {
+    await this.redis.init();
+    const matches = JSON.parse(await this.redis.get(RedisTerms.keyName));
+    if (!Array.isArray(matches)) {
+      console.log(`Nothing to read from redis. Exit early`)
+      return;
+    }
+    const now = new Date();
+    const upcomingMatch = new Date(matches[0].date_time);
+  
+    const diffInHours = await calculateDateDiffsInHours(now, upcomingMatch);
+  
+    console.log(`Upcoming match ${JSON.stringify(matches[0])} will be played in ${diffInHours} hour(s)`);
+  
+    if (diffInHours <= Time.hoursInADay) {
+      const msg: IBody = {
+        message: matches[0],
+        hours_to_match: diffInHours
+      };
+      await publishMessage({
+        channel: RedisTerms.topicName,
+        message: JSON.stringify(msg)
+      });
+  
+      // remove the entry from the key if only difference is 1 hour
+      if (diffInHours === 1) {
+        matches.shift();
+        const currentTTL = await this.redis.getTTL(RedisTerms.keyName);
+  
+        await this.redis.set(RedisTerms.keyName, JSON.stringify(matches), currentTTL);
+      }
     }
   }
 }
@@ -68,7 +75,8 @@ process.on("unhandledRejection", e => {
 
 (async () => {
   try {
-    await getMatchesAndPublish();
+    const matchReader = new MatchReader();
+    await matchReader.getMatchesAndPublish();
     setTimeout(() => {
       process.exit(0);
     }, 3000);
