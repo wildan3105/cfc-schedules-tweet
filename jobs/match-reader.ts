@@ -29,8 +29,8 @@ async function getMatchesAndPublish(): Promise<void> {
   const upcomingMatch = new Date(matches[0].date_time);
 
   const diffInHours = await calculateDateDiffsInHours(now, upcomingMatch);
-  
-  console.log(`Upcoming match ${JSON.stringify(matches[0])} will be played in ${diffInHours} hr(s)`);
+
+  console.log(`Upcoming match ${JSON.stringify(matches[0])} will be played in ${diffInHours} hour(s)`);
 
   if (diffInHours <= Time.hoursInADay) {
     const msg: IBody = {
