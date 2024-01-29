@@ -30,7 +30,7 @@ async function getMatchesAndPublish(): Promise<void> {
 
   const diffInHours = await calculateDateDiffsInHours(now, upcomingMatch);
 
-  console.log(`diffInHours is : ${diffInHours}`);
+  console.log(`Upcoming match ${JSON.stringify(matches[0])} will be played in ${diffInHours} hour(s)`);
 
   if (diffInHours <= Time.hoursInADay) {
     const msg: IBody = {
