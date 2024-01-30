@@ -22,8 +22,8 @@
     "build": "tsc",
     "match-fetcher": "ts-node-dev --poll --transpile-only --respawn jobs/match-fetcher.ts --watch **/*.ts",
     "match-reader": "ts-node-dev --poll --transpile-only --respawn jobs/match-reader.ts --watch **/*.ts",
-    "sub": "ts-node-dev --poll --transpile-only --respawn events/sub.ts --watch **/*.ts",
-    "sub-js": "node build/events/sub.js",
+    "subscriber": "ts-node-dev --poll --transpile-only --respawn events/subscriber.ts --watch **/*.ts",
+    "subscriber-js": "node build/events/subscriber.js",
     "lint": "eslint ./**/*.ts",
     "format": "prettier --config .prettierrc --write './**/*.ts'",
     "test": "jest ./**/*.test.ts"
