@@ -68,11 +68,13 @@ class Subscriber {
   }
   
   public async subscribeMessage(channel: string): Promise<void> {
+    console.log(`Subscribing to ${channel} ...`)
     try {
       await this.initializeRedis();
       await this.redis.subscribe(channel);
       this.redis.on("message", async (_, message) => {
         const cleansed = JSON.parse(message);
+        console.log(`New message received`, cleansed);
         if (this.shouldSendReminder(cleansed.hours_to_match)) {
           await this.sendTweet(cleansed);
         }
