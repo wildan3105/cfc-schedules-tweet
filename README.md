@@ -55,5 +55,5 @@ npm run sub
 ```
 
 ### Cron scheduling
-- `match-fetcher` -> runs **every day at 7:AM UTC**
+- `match-fetcher` -> runs **every hour**
 - `match-reader`  -> runs **every 10 minutes**
