@@ -1,5 +1,4 @@
 import { RedisStorage } from "../modules/redis";
-import { publishMessage } from "../events/pub";
 import { injectEnv } from "../libs/inject-env";
 import { RedisTerms } from "../constants/redis";
 import { Time } from "../constants/time-conversion";
@@ -24,8 +23,14 @@ class MatchReader {
     this.redis = new RedisStorage(redisConfig);
   }
 
+  private async initializeRedis(): Promise<void> {
+    if (!this.redis.initialized()) {
+      await this.redis.init();
+    }
+  }
+
   public async getMatchesAndPublish(): Promise<void> {
-    await this.redis.init();
+    await this.initializeRedis();
     const matches = JSON.parse(await this.redis.get(RedisTerms.keyName));
     if (!Array.isArray(matches)) {
       console.log(`Nothing to read from redis. Exit early`)
@@ -43,10 +48,8 @@ class MatchReader {
         message: matches[0],
         hours_to_match: diffInHours
       };
-      await publishMessage({
-        channel: RedisTerms.topicName,
-        message: JSON.stringify(msg)
-      });
+
+      await this.redis.publish(RedisTerms.channelName, JSON.stringify(msg))
   
       // remove the entry from the key if only difference is 1 hour
       if (diffInHours === 1) {

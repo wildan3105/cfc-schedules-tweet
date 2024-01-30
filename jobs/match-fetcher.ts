@@ -21,8 +21,14 @@ class MatchFetcher {
     this.redis = new RedisStorage(redisConfig);
   }
 
+  private async initializeRedis(): Promise<void> {
+    if (!this.redis.initialized()) {
+      await this.redis.init();
+    }
+  }
+
   public async fetchAndSet(): Promise<void> {
-    await this.redis.init();
+    await this.initializeRedis();
   
     const existingKeyTTL = await this.redis.getTTL(RedisTerms.keyName);
     // only fetch the serp API and set the key if current key is expiring in an hour or less
