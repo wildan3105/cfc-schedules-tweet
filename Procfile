@@ -1,1 +1,1 @@
-worker: node build/events/sub.js
+worker: node build/events/subscriber.js

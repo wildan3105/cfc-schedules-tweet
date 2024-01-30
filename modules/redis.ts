@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import Redis from "ioredis";
-
+import { EventEmitter } from "events";
 interface IRedisConfig {
   redisURL: string;
 }
 
-export class RedisStorage {
+export class RedisStorage extends EventEmitter {
   private readonly redisConfig: IRedisConfig;
 
   private redisClient: Redis;
@@ -13,13 +13,14 @@ export class RedisStorage {
   private isInitialized = false;
 
   constructor(redisConfig: IRedisConfig) {
+    super();
     this.redisConfig = redisConfig;
   }
 
   public async init(): Promise<void> {
     this.redisClient = new Redis(this.redisConfig.redisURL);
 
-    await this.listeners();
+    await this.setupListeners();
     await this.waitToConnect();
   }
 
@@ -33,7 +34,7 @@ export class RedisStorage {
     });
   }
 
-  private async listeners() {
+  private async setupListeners() {
     // for future use
     this.redisClient.on("ready", () => {});
     this.redisClient.on("error", e => {
@@ -66,8 +67,11 @@ export class RedisStorage {
     return this.redisClient.publish(channel, message);
   }
 
-  public async subscribe(channel: string): Promise<unknown> {
-    return this.redisClient.subscribe(channel);
+  public async subscribe(channel: string): Promise<void> {
+    this.redisClient.subscribe(channel);
+    this.redisClient.on("message", (channel, message) => {
+      this.emit("message", channel, message);
+    });
   }
 
   public async getTTL(key: string): Promise<number> {
