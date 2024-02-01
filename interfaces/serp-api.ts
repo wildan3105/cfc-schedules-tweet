@@ -17,9 +17,9 @@ export interface SingleFixture {
 
 export interface GameSpotlight {
   teams: Teams[];
+  stadium: string;
   league?: string;
   tournament?: string;
-  stadium: string;
   date?: string;
   time?: string;
 }
