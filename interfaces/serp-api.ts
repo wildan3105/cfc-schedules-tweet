@@ -5,11 +5,21 @@ interface Teams {
 
 export interface SingleFixture {
   teams: Teams[];
+  tournament: string;
+  stadium: string;
   participants?: string;
   date?: string;
   time?: string;
   date_time?: Date;
   stage?: string;
-  tournament: string;
+  league?: string;
+}
+
+export interface GameSpotlight {
+  teams: Teams[];
   stadium: string;
+  league?: string;
+  tournament?: string;
+  date?: string;
+  time?: string;
 }

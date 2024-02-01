@@ -1,4 +1,4 @@
-export const Team: { [key: string]: string } = {
+export const Team = {
   name: "Chelsea",
   stadium: "Stamford Bridge",
   hashtag: "#ChelseaFC #CFCFixture",

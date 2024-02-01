@@ -2,7 +2,7 @@
 import parseFormat = require("moment-parseformat");
 import moment = require("moment");
 
-import { SingleFixture } from "../interfaces/serp-api";
+import { SingleFixture, GameSpotlight } from "../interfaces/serp-api";
 import { RedisFixture } from "../interfaces/redis";
 import { PartialMonthToIndex } from "../enums/months";
 import { Team } from "../constants/team";
@@ -84,8 +84,7 @@ function convertToTwitterAccountForChelseaFC(team: string): string {
 }
 
 export async function convertToStandardSerpAPIResults(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any,
+  data: GameSpotlight | SingleFixture,
   fromSpotlight: boolean
 ): Promise<Record<string, unknown>> {
   let time: unknown, date: string | string[];

@@ -1,5 +1,3 @@
-import Redis from "ioredis";
-
 import { injectEnv } from "../libs/inject-env";
 import { RedisTerms } from "../constants/redis";
 import { HTTP } from "../modules/http";
