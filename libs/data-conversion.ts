@@ -84,7 +84,6 @@ function convertToTwitterAccountForChelseaFC(team: string): string {
 }
 
 export async function convertToStandardSerpAPIResults(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: GameSpotlight | SingleFixture,
   fromSpotlight: boolean
 ): Promise<Record<string, unknown>> {
