@@ -46,14 +46,12 @@ class MatchFetcher {
         );
         fixtures.unshift(gameHighlight);
       } else if (customDateFormats.includes(firstMatchDate)) {
-        console.log(`this goes here for games with tomorrow as date`)
         const firstMatch = fixtures[0];
         fixtures[0] = convertToStandardSerpAPIResults(firstMatch, false);
       }
   
       const completedData = removeIncompleteSerpAPIData(fixtures);
       const convertedData = serpApiToRedis(completedData);
-      console.log(convertedData);
       console.log(`Storing ${convertedData.length} fixture(s) into redis.`)
       await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
     }
