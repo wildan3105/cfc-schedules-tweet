@@ -240,7 +240,7 @@ describe("serpApiToRedis to return the correct format of data that'll be fed int
         stadium: "Stamford Bridge"
       }
     ];
-    const convertedData = await serpApiToRedis(serpApiData);
+    const convertedData = serpApiToRedis(serpApiData);
     expect(convertedData).toBeDefined();
     expect(typeof convertedData).toBe("object");
     expect(convertedData).toHaveLength(1);
@@ -251,7 +251,7 @@ describe("serpApiToRedis to return the correct format of data that'll be fed int
 describe("addHours to return the correct date after adding N hours from certain date", () => {
   test("addHours to return the correct date after added 7 hours", async () => {
     const now = new Date();
-    const addedDate = await addHours(7, now);
+    const addedDate = addHours(7, now);
     expect(addedDate).toBeDefined();
     expect(typeof addedDate).toBe("object");
   });
@@ -289,7 +289,7 @@ describe("convertToStandardSerpAPIResults to return the correct and standard for
       ],
       stadium: "Stamford Bridge"
     };
-    const convertedGameSpotlight = await convertToStandardSerpAPIResults(gameSpotlight, true);
+    const convertedGameSpotlight = convertToStandardSerpAPIResults(gameSpotlight, true);
     expect(typeof convertedGameSpotlight).toBe("object");
     expect(typeof convertedGameSpotlight.date).toBe("string");
     expect(convertedGameSpotlight.time).toEqual("7:00 am");
@@ -311,7 +311,7 @@ describe("convertToStandardSerpAPIResults to return the correct and standard for
       ],
       stadium: "Stamford Bridge"
     };
-    const convertedGameSpotlight = await convertToStandardSerpAPIResults(gameSpotlight, false);
+    const convertedGameSpotlight = convertToStandardSerpAPIResults(gameSpotlight, false);
     expect(typeof convertedGameSpotlight).toBe("object");
     expect(typeof convertedGameSpotlight.date).toBe("string");
     expect(convertedGameSpotlight.time).toEqual("11:00 am");

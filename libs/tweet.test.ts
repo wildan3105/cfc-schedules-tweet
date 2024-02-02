@@ -35,7 +35,7 @@ describe("tweet-related libs testing", () => {
       hours_to_match: 1,
       ...templateBody
     };
-    const data = await transformToTweetableContent(body);
+    const data = transformToTweetableContent(body);
     expect(typeof data).toBe("string");
     expect(data).toContain(Emojis.date);
     expect(data).toContain(Emojis.stadium);
@@ -48,7 +48,7 @@ describe("tweet-related libs testing", () => {
       hours_to_match: 24,
       ...templateBody
     };
-    const data = await transformToTweetableContent(body);
+    const data = transformToTweetableContent(body);
     expect(typeof data).toBe("string");
   });
 
@@ -57,7 +57,7 @@ describe("tweet-related libs testing", () => {
       hours_to_match: 20,
       ...templateBody
     };
-    const data = await transformToTweetableContent(body);
+    const data = transformToTweetableContent(body);
     expect(typeof data).toBe("string");
   });
 });
