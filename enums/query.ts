@@ -1,4 +1,4 @@
 export enum Query {
-  club = "athletic+club+fixtures",
+  club = "chelsea+fc+fixtures",
   location = "indonesia"
 }
