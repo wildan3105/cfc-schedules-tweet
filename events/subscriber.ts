@@ -48,10 +48,10 @@ class Subscriber {
       tournament: tweetContent.message.tournament,
       date_time:
         ENVIRONMENT === "production"
-          ? await addHours(Time.UTCToLocalTimezone, matchSchedule)
+          ? addHours(Time.UTCToLocalTimezone, matchSchedule)
           : matchSchedule
     };
-    const transformedTweetContent = await transformToTweetableContent(contentToTransform);
+    const transformedTweetContent = transformToTweetableContent(contentToTransform);
     const tweetMsg = {
       text: transformedTweetContent
     };

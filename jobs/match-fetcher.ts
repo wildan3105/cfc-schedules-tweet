@@ -40,18 +40,18 @@ class MatchFetcher {
       let gameHighlight;
       if (data.sports_results.game_spotlight) {
         // handle game highlight and append to the result
-        gameHighlight = await convertToStandardSerpAPIResults(
+        gameHighlight = convertToStandardSerpAPIResults(
           data.sports_results.game_spotlight,
           true
         );
         fixtures.unshift(gameHighlight);
       } else if (customDateFormats.includes(firstMatchDate)) {
         const firstMatch = fixtures[0];
-        fixtures[0] = await convertToStandardSerpAPIResults(firstMatch, false);
+        fixtures[0] = convertToStandardSerpAPIResults(firstMatch, false);
       }
   
       const completedData = removeIncompleteSerpAPIData(fixtures);
-      const convertedData = await serpApiToRedis(completedData);
+      const convertedData = serpApiToRedis(completedData);
       console.log(`Storing ${convertedData.length} fixture(s) into redis.`)
       await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
     }

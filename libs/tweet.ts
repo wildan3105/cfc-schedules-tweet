@@ -23,7 +23,7 @@ function transformToReadableTime(date: Date): string {
   return `${currentHour}:${currentMinutes}`;
 }
 
-export async function transformToTweetableContent(message: ITweetBody): Promise<string> {
+export function transformToTweetableContent(message: ITweetBody): string {
   let headerTitle: string;
   switch (message.hours_to_match) {
     case 1:

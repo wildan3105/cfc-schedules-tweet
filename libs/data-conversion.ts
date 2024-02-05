@@ -31,10 +31,6 @@ function cleanseDate(date: string): string {
   return clean;
 }
 
-export function removeIncompleteSerpAPIData(fixtures: SingleFixture[]): SingleFixture[] {
-  return fixtures.filter(f => f.time !== undefined && f.date !== undefined);
-}
-
 function convertTo24HourFormat(time: string): string {
   const meridiems = ["AM", "PM", "am", "pm"];
 
@@ -79,14 +75,18 @@ function convertDateTimeToUTC(date: string, time: string): Date {
   return dateTimeInUTC;
 }
 
+export function removeIncompleteSerpAPIData(fixtures: SingleFixture[]): SingleFixture[] {
+  return fixtures.filter(f => f.time !== undefined && f.date !== undefined);
+}
+
 function convertToTwitterAccountForChelseaFC(team: string): string {
   return team.includes(Team.name) ? Team.twitterAccount : team;
 }
 
-export async function convertToStandardSerpAPIResults(
+export function convertToStandardSerpAPIResults(
   data: GameSpotlight | SingleFixture,
   fromSpotlight: boolean
-): Promise<Record<string, unknown>> {
+): Record<string, unknown> {
   let time: unknown, date: string | string[];
   if (fromSpotlight) {
     time = data.date.split(",")[1].trim();
@@ -96,7 +96,7 @@ export async function convertToStandardSerpAPIResults(
     date = data.date.toLowerCase().trim();
   }
   if (date.includes("tomorrow")) {
-    date = moment(await addHours(24, new Date())).format(MOMENT_DEFAULT_FORMAT);
+    date = moment(addHours(24, new Date())).format(MOMENT_DEFAULT_FORMAT);
   } else if (date.includes("today")) {
     date = moment(new Date()).format(MOMENT_DEFAULT_FORMAT);
   }
@@ -109,7 +109,7 @@ export async function convertToStandardSerpAPIResults(
   };
 }
 
-export async function serpApiToRedis(fixtures: SingleFixture[]): Promise<RedisFixture[]> {
+export function serpApiToRedis(fixtures: SingleFixture[]): RedisFixture[] {
   fixtures.forEach(elem => {
     elem.participants = `${convertToTwitterAccountForChelseaFC(
       elem.teams[0].name
@@ -122,7 +122,7 @@ export async function serpApiToRedis(fixtures: SingleFixture[]): Promise<RedisFi
   return fixtures;
 }
 
-export async function addHours(numOfHours: number, date: Date): Promise<Date> {
+export function addHours(numOfHours: number, date: Date): Date {
   const dateCopy = new Date(date.getTime());
 
   dateCopy.setHours(dateCopy.getHours() + numOfHours);
