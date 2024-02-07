@@ -2,6 +2,8 @@ import axios, { AxiosRequestHeaders } from "axios";
 
 import { Oauth1Helper } from "./oauth";
 import { Content } from "../interfaces/tweet";
+import { EmailRequest } from "../interfaces/elastic-email-api";
+import { ElasticEmailDefaultContent } from "../constants/elastic-email";
 import { Query } from "../enums/query";
 
 export class HTTP {
@@ -34,6 +36,38 @@ export class HTTP {
         }
       });
       return response.data;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async sendEmail(content: string) {
+    const { ELASTIC_EMAIL_BASE_URL, ELASTIC_EMAIL_API_KEY } = process.env;
+    const requestBody: EmailRequest = {
+      Recipients: {
+        To: [ElasticEmailDefaultContent.recipientAddress]
+      },
+      Content: {
+        From: ElasticEmailDefaultContent.senderAddress,
+        Subject: ElasticEmailDefaultContent.subject,
+        Body: [{
+          ContentType: "HTML",
+          Content: content,
+          Charset: "UTF-8"
+        }]
+      }
+    }
+    const request = {
+      url: ELASTIC_EMAIL_BASE_URL + "/emails/transactional",
+      method: "POST",
+      body: requestBody
+    };
+    const authHeader = {
+      'X-ElasticEmail-ApiKey': ELASTIC_EMAIL_API_KEY
+    } as AxiosRequestHeaders;
+
+    try {
+      await axios.post(request.url, request.body, { headers: authHeader });
     } catch (e) {
       console.error(e);
     }

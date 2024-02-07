@@ -22,6 +22,7 @@
     "build": "tsc",
     "match-fetcher": "ts-node-dev --poll --transpile-only --respawn jobs/match-fetcher.ts --watch **/*.ts",
     "match-reader": "ts-node-dev --poll --transpile-only --respawn jobs/match-reader.ts --watch **/*.ts",
+    "api-healthcheck": "ts-node-dev --poll --transpile-only --respawn jobs/serp-api-healthcheck.ts --watch **/*.ts",
     "subscriber": "ts-node-dev --poll --transpile-only --respawn events/subscriber.ts --watch **/*.ts",
     "subscriber-js": "node build/events/subscriber.js",
     "lint": "eslint ./**/*.ts",
