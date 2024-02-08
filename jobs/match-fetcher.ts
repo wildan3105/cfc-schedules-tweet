@@ -12,13 +12,13 @@ const redisConfig = {
   redisURL: REDIS_URL
 };
 
-const httpController = new HTTP();
-
 class MatchFetcher {
   private redis: RedisStorage;
+  private httpController: HTTP;
 
   constructor() {
     this.redis = new RedisStorage(redisConfig);
+    this.httpController = new HTTP();
   }
 
   private async initializeRedis(): Promise<void> {
@@ -33,7 +33,7 @@ class MatchFetcher {
     const existingKeyTTL = await this.redis.getTTL(RedisTerms.keyName);
     // only fetch the serp API and set the key if current key is expiring in an hour or less
     if (existingKeyTTL < lowerLimitToFetchAPI) {
-      const data = await httpController.get(); // TODO: strick-checking data type
+      const data = await this.httpController.get(); // TODO: strick-checking data type
       const fixtures = data.sports_results.games;
       const firstMatchDate = data.sports_results.games[0].date.toLocaleLowerCase().trim();
       const customDateFormats = ["tomorrow", "today"];
@@ -82,7 +82,7 @@ process.on("unhandledRejection", e => {
       process.exit(0);
     }, 3000);
   } catch (e) {
-    console.log(`an error occured`, e);
+    console.log(`an error occured when executing match fetcher cron`, e);
     process.exit(1);
   } finally {
     console.log(`Match fetcher cron executed.`)

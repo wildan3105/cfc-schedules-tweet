@@ -84,7 +84,7 @@ process.on("unhandledRejection", e => {
       process.exit(0);
     }, 3000);
   } catch (e) {
-    console.log(`an error occured`, e);
+    console.log(`an error occured when executing match reader cron`, e);
     process.exit(1);
   } finally {
     console.log(`Match reader cron executed.`)

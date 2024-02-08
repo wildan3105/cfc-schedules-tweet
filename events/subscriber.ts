@@ -6,8 +6,6 @@ import { addHours } from "../libs/data-conversion";
 import { remindInNHours, Time } from "../constants/time-conversion";
 import { RedisStorage } from "../modules/redis";
 
-const httpController = new HTTP();
-
 injectEnv();
 
 const { ENVIRONMENT, REDIS_URL } = process.env;
@@ -28,9 +26,11 @@ interface ITweet {
 
 class Subscriber {
   private redis: RedisStorage;
+  private httpController: HTTP;
 
   constructor() {
     this.redis = new RedisStorage(redisConfig);
+    this.httpController = new HTTP();
   }
 
   private async initializeRedis(): Promise<void> {
@@ -55,7 +55,7 @@ class Subscriber {
     const tweetMsg = {
       text: transformedTweetContent
     };
-    await httpController.post(tweetMsg);
+    await this.httpController.post(tweetMsg);
   }
   
   private shouldSendReminder(reminder_time: number): boolean {
