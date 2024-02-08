@@ -1,5 +1,6 @@
 import { injectEnv } from "../libs/inject-env";
 import { HTTP } from "../modules/http";
+import { SportsResults } from "../interfaces/serp-api";
 
 injectEnv();
 
@@ -14,8 +15,38 @@ class SerpAPIHealthCheck {
         await this.httpController.sendEmail(content);
     }
 
+    private checkIfSerpAPIResponseValid(data: Record<string, object>): boolean {
+        if(!data) return false;
+        if(!this.isValidSportsResults(data)) return false;
+        return true;
+    }
+
+    private isValidSportsResults(obj: any): obj is SportsResults {
+        return (
+            typeof obj === 'object' &&
+            obj !== null &&
+            'title' in obj &&
+            'rankings' in obj &&
+            'thumbnail' in obj &&
+            'games' in obj &&
+            Array.isArray(obj.games)
+        );
+    }
+
     public async getMatches(): Promise<void> {
-        await this.sendReportingEmail(`test only at ${new Date().toLocaleTimeString()}`)
+        const serpAPIResponse = await this.httpController.get();
+        const sportsResults = serpAPIResponse.sports_results;
+        const isValid = this.checkIfSerpAPIResponseValid(sportsResults);
+        if(!isValid) {
+            console.log(`Error when validating response from Serp API. Sending email notification...`);
+            const errorObject = {
+                payload: sportsResults,
+                context: 'Error when validating response from Serp API.'
+            }
+            await this.sendReportingEmail(JSON.stringify(errorObject));
+        } else {
+            console.log(`Serp API response is valid. Exiting.`)
+        }
     }
 }
 

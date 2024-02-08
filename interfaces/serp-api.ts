@@ -1,8 +1,3 @@
-interface Teams {
-  name: string;
-  thumbnail?: string;
-}
-
 export interface SingleFixture {
   teams: Teams[];
   tournament: string;
@@ -13,6 +8,7 @@ export interface SingleFixture {
   date_time?: Date;
   stage?: string;
   league?: string;
+  video_highlights?: VideoHighlight[]
 }
 
 export interface GameSpotlight {
@@ -22,4 +18,22 @@ export interface GameSpotlight {
   tournament?: string;
   date?: string;
   time?: string;
+}
+
+export interface SportsResults {
+  title: string;
+  rankings: string;
+  thumbnail: string;
+  games: SingleFixture[]
+}
+
+interface VideoHighlight {
+  link?: string;
+  thumbnail?: string;
+  duration?: string;
+}
+
+interface Teams {
+  name: string;
+  thumbnail?: string;
 }
