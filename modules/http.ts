@@ -21,7 +21,7 @@ export class HTTP {
     try {
       await axios.post(request.url, request.body, { headers: authHeader });
     } catch (e) {
-      console.error(e);
+      console.error(`There's an error when calling twitter API. Details: ${e}`);
     }
   }
 
@@ -37,7 +37,7 @@ export class HTTP {
       });
       return response.data;
     } catch (e) {
-      console.error(e);
+      console.error(`There's an error when calling Serp API. Details: ${e}`);
     }
   }
 
@@ -69,7 +69,7 @@ export class HTTP {
     try {
       await axios.post(request.url, request.body, { headers: authHeader });
     } catch (e) {
-      console.error(e);
+      console.error(`There's an error when calling Elastic Email API. Details: ${e}`);
     }
   }
 }
