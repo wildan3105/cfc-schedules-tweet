@@ -74,6 +74,7 @@ class Subscriber {
         const cleansed = JSON.parse(message);
         console.log(`New message received`, cleansed);
         if (this.shouldSendReminder(cleansed.hours_to_match)) {
+          console.log(`This is attempting to tweet a match that's about to begin in ${cleansed.hours_to_match} hours`)
           await this.sendTweet(cleansed);
         }
       });
