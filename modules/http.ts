@@ -31,7 +31,8 @@ export class HTTP {
       const response = await axios.get(SERPAPI_BASE_URL + "/search", {
         params: {
           api_key: SERPAPI_KEY,
-          q: Query.club
+          q: Query.club,
+          location: Query.location
         }
       });
       return response.data;
