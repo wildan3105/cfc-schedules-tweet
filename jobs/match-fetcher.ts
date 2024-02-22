@@ -35,7 +35,7 @@ class MatchFetcher {
     if (existingKeyTTL < lowerLimitToFetchAPI) {
       const data = await this.httpController.get(); // TODO: strick-checking data type
       const fixtures = data.sports_results.games;
-      const firstMatchDate = data.sports_results.games[0].date.toLocaleLowerCase().trim();
+      const firstMatchDate = data.sports_results.games[0]?.date?.toLocaleLowerCase().trim();
       const customDateFormats = ["tomorrow", "today"];
       let gameHighlight;
       if (data.sports_results.game_spotlight) {
@@ -45,7 +45,7 @@ class MatchFetcher {
           true
         );
         fixtures.unshift(gameHighlight);
-      } else if (customDateFormats.includes(firstMatchDate)) {
+      } else if (firstMatchDate && customDateFormats.includes(firstMatchDate)) {
         const firstMatch = fixtures[0];
         fixtures[0] = convertToStandardSerpAPIResults(firstMatch, false);
       }
