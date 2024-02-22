@@ -41,7 +41,7 @@ export class HTTP {
     }
   }
 
-  async sendEmail(content: string) {
+  async sendEmail(content: string, subject?: string) {
     const { ELASTIC_EMAIL_BASE_URL, ELASTIC_EMAIL_API_KEY } = process.env;
     const requestBody: EmailRequest = {
       Recipients: {
@@ -49,7 +49,7 @@ export class HTTP {
       },
       Content: {
         From: ElasticEmailDefaultContent.senderAddress,
-        Subject: ElasticEmailDefaultContent.subject,
+        Subject: subject || ElasticEmailDefaultContent.subject,
         Body: [{
           ContentType: "HTML",
           Content: content,
