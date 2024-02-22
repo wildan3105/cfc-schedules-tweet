@@ -27,36 +27,46 @@ class MatchFetcher {
     }
   }
 
+  private async sendReportingEmail(content: string, title: string): Promise<void> {
+    await this.httpController.sendEmail(content, title);
+  }
+
   public async fetchAndSet(): Promise<void> {
     await this.initializeRedis();
   
     const existingKeyTTL = await this.redis.getTTL(RedisTerms.keyName);
-    // only fetch the serp API and set the key if current key is expiring in an hour or less
-    if (existingKeyTTL < lowerLimitToFetchAPI) {
-      const data = await this.httpController.get(); // TODO: strick-checking data type
-      const fixtures = data.sports_results.games;
-      const firstMatchDate = data.sports_results.games[0]?.date?.toLocaleLowerCase().trim();
-      const customDateFormats = ["tomorrow", "today"];
-      let gameHighlight;
-      if (data.sports_results.game_spotlight) {
-        // handle game highlight and append to the result
-        gameHighlight = convertToStandardSerpAPIResults(
-          data.sports_results.game_spotlight,
-          true
-        );
-        fixtures.unshift(gameHighlight);
-      } else if (firstMatchDate && customDateFormats.includes(firstMatchDate)) {
-        const firstMatch = fixtures[0];
-        fixtures[0] = convertToStandardSerpAPIResults(firstMatch, false);
+    try {
+      // only fetch the serp API and set the key if current key is expiring in an hour or less
+      if (existingKeyTTL < lowerLimitToFetchAPI) {
+        const data = await this.httpController.get(); // TODO: strick-checking data type
+        const fixtures = data.sports_results.games;
+        const firstMatchDate = data.sports_results.games[0].date.toLocaleLowerCase().trim();
+        const customDateFormats = ["tomorrow", "today"];
+        let gameHighlight;
+        if (data.sports_results.game_spotlight) {
+          // handle game highlight and append to the result
+          gameHighlight = convertToStandardSerpAPIResults(
+            data.sports_results.game_spotlight,
+            true
+          );
+          fixtures.unshift(gameHighlight);
+        } else if (customDateFormats.includes(firstMatchDate)) {
+          const firstMatch = fixtures[0];
+          fixtures[0] = convertToStandardSerpAPIResults(firstMatch, false);
+        }
+        const completedData = removeIncompleteSerpAPIData(fixtures);
+        const convertedData = serpApiToRedis(completedData);
+        console.log(`Storing ${convertedData.length} fixture(s) into redis.`)
+        await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
       }
-  
-      const completedData = removeIncompleteSerpAPIData(fixtures);
-      const convertedData = serpApiToRedis(completedData);
-      console.log(`Storing ${convertedData.length} fixture(s) into redis.`)
-      await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
+
+      await this.redis.close();
+    } catch (e) {
+      console.log(`failed to fetch matches from serp API`, e);
+      const error = new Error(e);
+      const errorMessage = `Title: <b> ${error.name} </b> <br><br> Message: ${error.message} <br><br> Stack: ${error.stack ? error.stack : ''}`;
+      await this.sendReportingEmail(errorMessage, 'Match fetcher cron');
     }
-  
-    await this.redis.close();
   }
 }
 
