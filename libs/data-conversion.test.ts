@@ -128,6 +128,14 @@ describe("test to ensure cleanseDate is giving the correct result", () => {
     expect(typeof cleansedDate).toBe("string");
     expect(cleansedDate).toBe("Sep 4");
   });
+
+  test("cleanseDate to return month and date only when format is MMMM YY", () => {
+    const rawDate = "May 11";
+    const cleansedDate = exportedForTesting.cleanseDate(rawDate);
+    expect(cleansedDate).toBeDefined();
+    expect(typeof cleansedDate).toBe("string");
+    expect(cleansedDate).toBe("May 11");
+  });
 });
 
 describe("convertTo24HourFormat to return the correct format", () => {
