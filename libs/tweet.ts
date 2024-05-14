@@ -1,6 +1,9 @@
 import { Emojis } from "../enums/emojis";
 import { MonthIndexToFullMonth } from "../enums/months";
 import { Team } from "../constants/team";
+import momentTz = require('moment-timezone');
+
+const UKTimezoneName = 'Europe/London';
 
 interface ITweetBody {
   hours_to_match: number;
@@ -8,6 +11,11 @@ interface ITweetBody {
   participants: string;
   date_time: Date;
   tournament: string;
+}
+
+interface UKDateTime {
+  date: string;
+  time: string;
 }
 
 function transformToReadableDate(date: Date): string {
@@ -23,6 +31,15 @@ function transformToReadableTime(date: Date): string {
   return `${currentHour}:${currentMinutes}`;
 }
 
+function convertToUKTimezone(datetime: Date): UKDateTime {
+  const date = momentTz(datetime).tz(UKTimezoneName).format("MMMM DD, YYYY");
+  const time = momentTz(datetime).tz(UKTimezoneName).format("HH:mm");
+  return {
+    date,
+    time
+  }
+}
+
 export function transformToTweetableContent(message: ITweetBody): string {
   let headerTitle: string;
   switch (message.hours_to_match) {
@@ -36,13 +53,15 @@ export function transformToTweetableContent(message: ITweetBody): string {
       headerTitle = "";
   }
 
+  const UKDateTime = convertToUKTimezone(message.date_time);
+
   const transformed = {
     header: headerTitle,
     tournament: `${Emojis.tournament} ${message.tournament}`,
     teams: `${Emojis.versus} ${message.participants}`,
     stadium: `${Emojis.stadium} ${message.stadium}`,
-    date: `${Emojis.date} ${transformToReadableDate(message.date_time)}`,
-    time: `${Emojis.time} ${transformToReadableTime(message.date_time)} GMT+7`,
+    date_time: `${Emojis.date} ${transformToReadableDate(message.date_time)} / ${UKDateTime.date} (UK Date)`,
+    time: `${Emojis.time} ${transformToReadableTime(message.date_time)} GMT+7 / ${UKDateTime.time} (UK Time)`,
     hashtag: `${Team.hashtag}`
   };
 
