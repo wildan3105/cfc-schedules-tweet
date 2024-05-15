@@ -2,13 +2,12 @@ import { injectEnv } from "../libs/inject-env";
 import { RedisTerms } from "../constants/redis";
 import { HTTP } from "../modules/http";
 import { transformToTweetableContent } from "../libs/tweet";
-import { addHours } from "../libs/data-conversion";
-import { remindInNHours, Time } from "../constants/time-conversion";
+import { remindInNHours } from "../constants/time-conversion";
 import { RedisStorage } from "../modules/redis";
 
 injectEnv();
 
-const { ENVIRONMENT, REDIS_URL } = process.env;
+const { REDIS_URL } = process.env;
 
 const redisConfig = {
   redisURL: REDIS_URL
@@ -46,10 +45,7 @@ class Subscriber {
       stadium: tweetContent.message.stadium,
       participants: tweetContent.message.participants,
       tournament: tweetContent.message.tournament,
-      date_time:
-        ENVIRONMENT === "production"
-          ? addHours(Time.UTCToLocalTimezone, matchSchedule)
-          : matchSchedule
+      date_time: matchSchedule
     };
     const transformedTweetContent = transformToTweetableContent(contentToTransform);
     const tweetMsg = {
