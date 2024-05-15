@@ -43,7 +43,7 @@ class MatchReader {
   
     console.log(`Upcoming match ${JSON.stringify(matches[0])} will be played in ${diffInHours} hour(s)`);
   
-    if (diffInHours <= Time.hoursInADay) {
+    // if (diffInHours <= Time.hoursInADay) {
       const msg: IBody = {
         message: matches[0],
         hours_to_match: diffInHours
@@ -58,7 +58,7 @@ class MatchReader {
   
         await this.redis.set(RedisTerms.keyName, JSON.stringify(matches), currentTTL);
       }
-    }
+    // }
   }
 }
 

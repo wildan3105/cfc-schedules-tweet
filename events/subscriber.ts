@@ -51,7 +51,9 @@ class Subscriber {
     const tweetMsg = {
       text: transformedTweetContent
     };
-    await this.httpController.post(tweetMsg);
+
+    console.log(tweetMsg);
+    // await this.httpController.post(tweetMsg);
   }
   
   private shouldSendReminder(reminder_time: number): boolean {
@@ -69,10 +71,10 @@ class Subscriber {
       this.redis.on("message", async (_, message) => {
         const cleansed = JSON.parse(message);
         console.log(`New message received`, cleansed);
-        if (this.shouldSendReminder(cleansed.hours_to_match)) {
+        // if (this.shouldSendReminder(cleansed.hours_to_match)) {
           console.log(`This is attempting to tweet a match that's about to begin in ${cleansed.hours_to_match} hours`)
           await this.sendTweet(cleansed);
-        }
+        // }
       });
     } catch (e) {
       console.log(`an error occured when subscribing message to ${channel} `, e);
