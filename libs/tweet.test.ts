@@ -23,6 +23,9 @@ describe("tweet-related libs testing", () => {
     expect(data).toContain(Emojis.versus);
     expect(data).toContain('#');
     expect(data).toContain('[Matchday! ONE HOUR TO GO]');
+
+    const hashTagCount = (data.match(/#/g) || []).length;
+    expect(hashTagCount).toEqual(3);
   });
 
   test("transformToTweetableContent - 24 hours before the match", async () => {
@@ -34,6 +37,9 @@ describe("tweet-related libs testing", () => {
     expect(typeof data).toBe("string");
     expect(data).toContain('#');
     expect(data).toContain('[Day - 1!]')
+
+    const hashTagCount = (data.match(/#/g) || []).length;
+    expect(hashTagCount).toEqual(3);
   });
 
   test("transformToTweetableContent - other hours before the match", async () => {
@@ -44,5 +50,8 @@ describe("tweet-related libs testing", () => {
     const data = transformToTweetableContent(body);
     expect(typeof data).toBe("string");
     expect(data).toContain('#');
+
+    const hashTagCount = (data.match(/#/g) || []).length;
+    expect(hashTagCount).toEqual(3);
   });
 });
