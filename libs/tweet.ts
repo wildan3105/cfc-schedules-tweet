@@ -12,6 +12,10 @@ interface ITweetBody {
   tournament: string;
 }
 
+function convertTournamentToHashTag(tournament: string): string {
+  return `#${tournament.replace(/ /g, '')}`;
+}
+
 export function transformToTweetableContent(message: ITweetBody): string {
   let headerTitle: string;
   switch (message.hours_to_match) {
@@ -35,7 +39,7 @@ export function transformToTweetableContent(message: ITweetBody): string {
     stadium: `${Emojis.stadium} ${message.stadium}`,
     date_time: `${Emojis.date} ${UKDate} (UK Date)`,
     time: `${Emojis.time} ${UKTime} (UK Time)`,
-    hashtag: `${Team.hashtag}`
+    hashtag: `${Team.hashtag} ${convertTournamentToHashTag(message.tournament)}`
   };
 
   return Object.values(transformed).join("\n").toString() as string;

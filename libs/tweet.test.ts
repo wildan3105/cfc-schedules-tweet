@@ -21,6 +21,8 @@ describe("tweet-related libs testing", () => {
     expect(data).toContain(Emojis.stadium);
     expect(data).toContain(Emojis.time);
     expect(data).toContain(Emojis.versus);
+    expect(data).toContain('#');
+    expect(data).toContain('[Matchday! ONE HOUR TO GO]');
   });
 
   test("transformToTweetableContent - 24 hours before the match", async () => {
@@ -30,6 +32,8 @@ describe("tweet-related libs testing", () => {
     };
     const data = transformToTweetableContent(body);
     expect(typeof data).toBe("string");
+    expect(data).toContain('#');
+    expect(data).toContain('[Day - 1!]')
   });
 
   test("transformToTweetableContent - other hours before the match", async () => {
@@ -39,5 +43,6 @@ describe("tweet-related libs testing", () => {
     };
     const data = transformToTweetableContent(body);
     expect(typeof data).toBe("string");
+    expect(data).toContain('#');
   });
 });
