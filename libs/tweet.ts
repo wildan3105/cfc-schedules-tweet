@@ -1,9 +1,8 @@
+import * as moment from "moment-timezone";
 import { Emojis } from "../enums/emojis";
-import { MonthIndexToFullMonth } from "../enums/months";
 import { Team } from "../constants/team";
-import momentTz = require('moment-timezone');
 
-const UKTimezoneName = 'Europe/London';
+const UKTimeZoneName = "Europe/London";
 
 interface ITweetBody {
   hours_to_match: number;
@@ -11,33 +10,6 @@ interface ITweetBody {
   participants: string;
   date_time: Date;
   tournament: string;
-}
-
-interface UKDateTime {
-  date: string;
-  time: string;
-}
-
-function transformToReadableDate(date: Date): string {
-  const currentDate = date.getDate();
-  const currentMonth = MonthIndexToFullMonth[date.getMonth()];
-  const currentYear = date.getFullYear();
-  return `${currentMonth} ${currentDate}, ${currentYear}`;
-}
-
-function transformToReadableTime(date: Date): string {
-  const currentHour = date.getHours();
-  const currentMinutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
-  return `${currentHour}:${currentMinutes}`;
-}
-
-function convertToUKTimezone(datetime: Date): UKDateTime {
-  const date = momentTz(datetime).tz(UKTimezoneName).format("MMMM DD, YYYY");
-  const time = momentTz(datetime).tz(UKTimezoneName).format("HH:mm");
-  return {
-    date,
-    time
-  }
 }
 
 export function transformToTweetableContent(message: ITweetBody): string {
@@ -53,22 +25,18 @@ export function transformToTweetableContent(message: ITweetBody): string {
       headerTitle = "";
   }
 
-  const UKDateTime = convertToUKTimezone(message.date_time);
+  const UKDate = moment(message.date_time).tz(UKTimeZoneName).format("dddd, MMMM DD, YYYY");
+  const UKTime = moment(message.date_time).tz(UKTimeZoneName).format("HH:mm");
 
   const transformed = {
     header: headerTitle,
     tournament: `${Emojis.tournament} ${message.tournament}`,
     teams: `${Emojis.versus} ${message.participants}`,
     stadium: `${Emojis.stadium} ${message.stadium}`,
-    date_time: `${Emojis.date} ${transformToReadableDate(message.date_time)} / ${UKDateTime.date} (UK Date)`,
-    time: `${Emojis.time} ${transformToReadableTime(message.date_time)} GMT+7 / ${UKDateTime.time} (UK Time)`,
+    date_time: `${Emojis.date} ${UKDate} (UK Date)`,
+    time: `${Emojis.time} ${UKTime} (UK Time)`,
     hashtag: `${Team.hashtag}`
   };
 
   return Object.values(transformed).join("\n").toString() as string;
 }
-
-export const exportedForTesting = {
-  transformToReadableDate,
-  transformToReadableTime
-};
