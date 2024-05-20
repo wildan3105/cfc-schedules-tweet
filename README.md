@@ -10,35 +10,15 @@ Send tweets ahead of Chelsea FC's match!
 
 ### Example of the tweet
 
-#### H-24 reminder
+#### Day-1
+![day-1-reminder](./images/cfc-1d.PNG)
 
-```Markdown
-[Day - 1!]
-#UCL // only support if tournament is given. otherwise fallback to `#OtherMatch`
-🆚 Chelsea vs Real Madrid
-🏟️ Stamford Bridge // only support `Stamford Bridge` or `Opponent's Stadium` for now
-📅 March 21, 2022
-⏱️ 21:00
-
-#ChelseaFC #CFCFixture
-```
-
-#### H-1 reminder
-
-```Markdown
-[Matchday !]
-#UCL // only support if tournament is given. otherwise fallback to `#OtherMatch`
-🆚 Chelsea vs Real Madrid
-🏟️ Stamford Bridge // only support `Stamford Bridge` or `Opponent's Stadium` for now
-📅 March 20, 2022
-⏱️ 21:00
-
-#ChelseaFC #CFCFixture
-```
+#### Hour-1 reminder
+![hour-1-reminder](./images/cfc-1h.PNG)
 
 ### High-level flow
 
-![](./diagram.png)
+![system-architecture](./images/diagram.png)
 
 ### How to run locally
 1. Cron for fetching the matches
