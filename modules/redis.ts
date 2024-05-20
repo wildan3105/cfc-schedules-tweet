@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import Redis from "ioredis";
 import { EventEmitter } from "events";
+
+import { loggerService } from "./log";
 interface IRedisConfig {
   redisURL: string;
 }
@@ -38,7 +40,7 @@ export class RedisStorage extends EventEmitter {
     // for future use
     this.redisClient.on("ready", () => {});
     this.redisClient.on("error", e => {
-      console.log(`an error occured`, e);
+      loggerService.error(`an error occured: ${e}`);
     });
     this.redisClient.on("close", async () => {});
     this.redisClient.on("reconnecting", () => {});

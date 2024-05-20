@@ -3,6 +3,7 @@ import { injectEnv } from "../libs/inject-env";
 import { RedisTerms } from "../constants/redis";
 import { Time } from "../constants/time-conversion";
 import { calculateDateDiffsInHours } from "../libs/calculation";
+import { loggerService } from "../modules/log";
 
 injectEnv();
 
@@ -33,7 +34,7 @@ class MatchReader {
     await this.initializeRedis();
     const matches = JSON.parse(await this.redis.get(RedisTerms.keyName));
     if (!Array.isArray(matches)) {
-      console.log(`Nothing to read from redis. Exit early`)
+      loggerService.warn(`Nothing to read from redis. Exit early`)
       return;
     }
     const now = new Date();
@@ -41,7 +42,7 @@ class MatchReader {
   
     const diffInHours = calculateDateDiffsInHours(now, upcomingMatch);
   
-    console.log(`Upcoming match ${JSON.stringify(matches[0])} will be played in ${diffInHours} hour(s)`);
+    loggerService.info(`Upcoming match ${JSON.stringify(matches[0])} will be played in ${diffInHours} hour(s)`);
   
     if (diffInHours <= Time.hoursInADay) {
       const msg: IBody = {
@@ -64,14 +65,14 @@ class MatchReader {
 
 process.on("uncaughtException", e => {
   setTimeout(() => {
-    console.log(`an error occured [uncaughtException]`, e);
+    loggerService.error(`an error occured [uncaughtException]: ${e}`);
     process.exit(1);
   }, 3000);
 });
 
 process.on("unhandledRejection", e => {
   setTimeout(() => {
-    console.log(`an error occured [unhandledRejection]`, e);
+    loggerService.error(`an error occured [unhandledRejection]: ${e}`);
     process.exit(1);
   }, 3000);
 });
@@ -84,10 +85,10 @@ process.on("unhandledRejection", e => {
       process.exit(0);
     }, 3000);
   } catch (e) {
-    console.log(`an error occured when executing match reader cron`, e);
+    loggerService.error(`an error occured when executing match reader cron: ${e}`);
     process.exit(1);
   } finally {
-    console.log(`Match reader cron executed.`)
+    loggerService.info(`Match reader cron executed.`)
     setTimeout(() => {
       process.exit(0);
     }, 3000);
