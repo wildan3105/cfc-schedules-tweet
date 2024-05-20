@@ -33,7 +33,7 @@ class MatchReader {
   public async getMatchesAndPublish(): Promise<void> {
     await this.initializeRedis();
     const matches = JSON.parse(await this.redis.get(RedisTerms.keyName));
-    if (!Array.isArray(matches)) {
+    if (!Array.isArray(matches) || Object.keys(matches).length === 0) {
       loggerService.warn(`Nothing to read from redis. Exit early`)
       return;
     }
