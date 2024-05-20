@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import * as moment from "moment";
 
 class LoggerService {
   private static instance: LoggerService;
@@ -11,7 +11,7 @@ class LoggerService {
   }
 
   private log(level: string, message: string): void {
-    const timestamp = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
+    const timestamp = moment(new Date()).format('YYYY-M-D HH:mm:ss');
     const logMessage = `${timestamp} [${level.toUpperCase()}] ${message}`;
     
     console.log(logMessage);
