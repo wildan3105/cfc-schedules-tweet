@@ -4,6 +4,7 @@ import { RedisStorage } from "../modules/redis";
 import { RedisTerms, defaultTTLInSeconds } from "../constants/redis";
 import { serpApiToRedis, convertToStandardSerpAPIResults, removeIncompleteSerpAPIData } from "../libs/data-conversion";
 import { lowerLimitToFetchAPI } from "../constants/time-conversion";
+import { loggerService } from "../modules/log";
 
 injectEnv();
 
@@ -57,13 +58,13 @@ class MatchFetcher {
         const completedData = removeIncompleteSerpAPIData(fixtures);
         const convertedData = serpApiToRedis(completedData);
 
-        console.log(`Storing ${convertedData.length} fixture(s) into redis.`)
+        loggerService.info(`Storing ${convertedData.length} fixture(s) into redis.`)
         await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
       }
 
       await this.redis.close();
     } catch (e) {
-      console.log(`failed to fetch matches from serp API`, e);
+      loggerService.error(`Failed to fetch matches from serp API: ${e}`);
       const error = new Error(e);
       const errorMessage = `Title: <b> ${error.name} </b> <br><br> Message: ${error.message} <br><br> Stack: ${error.stack ? error.stack : ''}`;
       await this.sendReportingEmail(errorMessage, 'Match fetcher cron');
@@ -73,14 +74,14 @@ class MatchFetcher {
 
 process.on("uncaughtException", e => {
   setTimeout(() => {
-    console.log(`an error occured [uncaughtException]`, e);
+    loggerService.error(`an error occured [uncaughtException]: ${e}`);
     process.exit(1);
   }, 3000);
 });
 
 process.on("unhandledRejection", e => {
   setTimeout(() => {
-    console.log(`an error occured [unhandledRejection]`, e);
+    loggerService.error(`an error occured [unhandledRejection]: ${e}`);
     process.exit(1);
   }, 3000);
 });
@@ -93,10 +94,10 @@ process.on("unhandledRejection", e => {
       process.exit(0);
     }, 3000);
   } catch (e) {
-    console.log(`an error occured when executing match fetcher cron`, e);
+    loggerService.error(`an error occured when executing match fetcher cron: ${e}`);
     process.exit(1);
   } finally {
-    console.log(`Match fetcher cron executed.`)
+    loggerService.info(`Match fetcher cron executed.`)
     setTimeout(() => {
       process.exit(0);
     }, 3000);

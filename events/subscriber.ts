@@ -4,6 +4,7 @@ import { HTTP } from "../modules/http";
 import { transformToTweetableContent } from "../libs/tweet";
 import { remindInNHours } from "../constants/time-conversion";
 import { RedisStorage } from "../modules/redis";
+import { loggerService } from "../modules/log";
 
 injectEnv();
 
@@ -62,20 +63,20 @@ class Subscriber {
   }
   
   public async subscribeMessage(channel: string): Promise<void> {
-    console.log(`Subscribing to ${channel} ...`)
+    loggerService.info(`Subscribing to ${channel} ...`)
     try {
       await this.initializeRedis();
       await this.redis.subscribe(channel);
       this.redis.on("message", async (_, message) => {
         const cleansed = JSON.parse(message);
-        console.log(`New message received`, cleansed);
+        loggerService.info(`New message received: ${cleansed}`);
         if (this.shouldSendReminder(cleansed.hours_to_match)) {
-          console.log(`This is attempting to tweet a match that's about to begin in ${cleansed.hours_to_match} hours`)
+          loggerService.info(`This is attempting to tweet a match that's about to begin in ${cleansed.hours_to_match} hours`)
           await this.sendTweet(cleansed);
         }
       });
     } catch (e) {
-      console.log(`an error occured when subscribing message to ${channel} `, e);
+      loggerService.error(`an error occured when subscribing message to ${channel}: ${e} `);
     }
   }
 }
@@ -85,7 +86,7 @@ class Subscriber {
     const subscriber = new Subscriber();
     await subscriber.subscribeMessage(RedisTerms.channelName);
   } catch (e) {
-    console.log(`an error occured`, e);
+    loggerService.error(`an error occured: ${e}`);
     process.exit(1);
   }
 })();
