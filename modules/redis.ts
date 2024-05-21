@@ -79,4 +79,8 @@ export class RedisStorage extends EventEmitter {
   public async getTTL(key: string): Promise<number> {
     return this.redisClient.ttl(key);
   }
+
+  public async expireKey(key: string): Promise<number> {
+    return this.redisClient.expire(key, 0);
+  }
 }

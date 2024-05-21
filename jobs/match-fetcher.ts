@@ -13,11 +13,12 @@ const redisConfig = {
   redisURL: REDIS_URL
 };
 
-class MatchFetcher {
-  private redis: RedisStorage;
+export class MatchFetcher {
   private httpController: HTTP;
 
-  constructor() {
+  constructor(
+    private redis: RedisStorage
+  ) {
     this.redis = new RedisStorage(redisConfig);
     this.httpController = new HTTP();
   }
@@ -88,7 +89,8 @@ process.on("unhandledRejection", e => {
 
 (async () => {
   try {
-    const matchFetcher = new MatchFetcher();
+    const redisClient = new RedisStorage(redisConfig);
+    const matchFetcher = new MatchFetcher(redisClient);
     await matchFetcher.fetchAndSet();
     setTimeout(() => {
       process.exit(0);
