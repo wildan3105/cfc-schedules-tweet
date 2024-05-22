@@ -11,7 +11,7 @@ describe("Match fetcher integration test", () => {
     });
 
     afterAll(async () => {
-        await suite.afterAll();
+        suite.afterAll();
     });
 
     beforeEach(async () => {

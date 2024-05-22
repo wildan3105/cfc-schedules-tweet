@@ -24,7 +24,17 @@ export const createSuite = async(
             serpAPIServer?.clearRequests();
         },
         afterAll: async () => {
-            serpAPIServer?.server.closeAllConnections();
+            if (serpAPIServer) {
+                await new Promise<void>((resolve, reject) => {
+                    serpAPIServer.server.close((err) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve();
+                        }
+                    });
+                });
+            }
         },
         mockSerpAPIServer: serpAPIServer
     };
