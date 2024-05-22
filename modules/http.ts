@@ -37,7 +37,6 @@ export class HTTP {
           location: Query.location
         }
       });
-      loggerService.info(response.data);
       return response.data;
     } catch (e) {
       loggerService.error(`There's an error when calling Serp API. Details: ${e}`);
