@@ -1,10 +1,12 @@
-import axios, { AxiosRequestHeaders } from "axios";
+import axios, { AxiosRequestHeaders, AxiosResponse } from "axios";
 
 import { Oauth1Helper } from "./oauth";
 import { Content } from "../interfaces/tweet";
 import { EmailRequest } from "../interfaces/elastic-email-api";
+import { APIResponse } from "../interfaces/serp-api";
 import { ElasticEmailDefaultContent } from "../constants/elastic-email";
 import { Query } from "../enums/query";
+import { loggerService } from "./log";
 
 export class HTTP {
   async post(content: Content) {
@@ -21,23 +23,24 @@ export class HTTP {
     try {
       await axios.post(request.url, request.body, { headers: authHeader });
     } catch (e) {
-      console.error(`There's an error when calling twitter API. Details: ${e}`);
+      loggerService.error(`There's an error when calling twitter API. Details: ${e}`);
     }
   }
 
-  async get() {
+  async get(): Promise<APIResponse | undefined> {
     const { SERPAPI_BASE_URL, SERPAPI_KEY } = process.env;
     try {
-      const response = await axios.get(SERPAPI_BASE_URL + "/search", {
+      const response: AxiosResponse = await axios.get(SERPAPI_BASE_URL + "/search", {
         params: {
           api_key: SERPAPI_KEY,
           q: Query.club,
           location: Query.location
         }
       });
+      loggerService.info(response.data);
       return response.data;
     } catch (e) {
-      console.error(`There's an error when calling Serp API. Details: ${e}`);
+      loggerService.error(`There's an error when calling Serp API. Details: ${e}`);
     }
   }
 
@@ -69,7 +72,7 @@ export class HTTP {
     try {
       await axios.post(request.url, request.body, { headers: authHeader });
     } catch (e) {
-      console.error(`There's an error when calling Elastic Email API. Details: ${e}`);
+      loggerService.error(`There's an error when calling Elastic Email API. Details: ${e}`);
     }
   }
 }

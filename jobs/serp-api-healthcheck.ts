@@ -12,42 +12,14 @@ class SerpAPIHealthCheck {
         this.httpController = new HTTP();
     }
 
-    private async sendReportingEmail(content: string): Promise<void> {
-        await this.httpController.sendEmail(content);
+    public async sendReportingEmail(matches: SportsResults): Promise<void> {
+        // construct email body
+        await this.httpController.sendEmail(matches.title);
     }
 
-    private checkIfSerpAPIResponseValid(data: Record<string, object>): boolean {
-        if(!data) return false;
-        if(!this.isValidSportsResults(data)) return false;
-        return true;
-    }
-
-    private isValidSportsResults(obj: any): obj is SportsResults {
-        return (
-            typeof obj === 'object' &&
-            obj !== null &&
-            'title' in obj &&
-            'rankings' in obj &&
-            'thumbnail' in obj &&
-            'games' in obj &&
-            Array.isArray(obj.games)
-        );
-    }
-
-    public async getMatches(): Promise<void> {
+    public async getMatches(): Promise<SportsResults> {
         const serpAPIResponse = await this.httpController.get();
-        const sportsResults = serpAPIResponse.sports_results;
-        const isValid = this.checkIfSerpAPIResponseValid(sportsResults);
-        if(!isValid) {
-            loggerService.error(`Error when validating response from Serp API. Sending email notification...`);
-            const errorObject = {
-                payload: sportsResults,
-                context: 'Error when validating response from Serp API.'
-            }
-            await this.sendReportingEmail(JSON.stringify(errorObject));
-        } else {
-            loggerService.info(`Serp API response is valid. Exiting.`)
-        }
+        return serpAPIResponse.sports_results;
     }
 }
 
@@ -68,7 +40,8 @@ process.on("unhandledRejection", e => {
 (async() => {
     try {
         const healthcheck = new SerpAPIHealthCheck();
-        await healthcheck.getMatches();
+        const matches = await healthcheck.getMatches();
+        await healthcheck.sendReportingEmail(matches);
     } catch (e) {
         loggerService.error(`an error occured when performing serp API healthcheck cron: ${e}`);
         process.exit(1);

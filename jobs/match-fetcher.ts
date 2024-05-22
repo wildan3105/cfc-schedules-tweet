@@ -43,14 +43,14 @@ class MatchFetcher {
         const fixtures = data.sports_results.games;
         const firstMatchDate = data.sports_results.games[0]?.date?.trim();
         const customDateFormats = ["tomorrow", "today"];
-        let gameHighlight;
+        let gameSpotlight;
         if (data.sports_results.game_spotlight) {
-          // handle game highlight and append to the result
-          gameHighlight = convertToStandardSerpAPIResults(
+          // handle game spotlight and append to the result
+          gameSpotlight = convertToStandardSerpAPIResults(
             data.sports_results.game_spotlight,
             true
           );
-          fixtures.unshift(gameHighlight);
+          fixtures.unshift(gameSpotlight);
         } else if (firstMatchDate && customDateFormats.includes(firstMatchDate.toLowerCase())) {
           const firstMatch = fixtures[0];
           fixtures[0] = convertToStandardSerpAPIResults(firstMatch, false);
