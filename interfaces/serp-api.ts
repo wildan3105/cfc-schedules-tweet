@@ -26,6 +26,7 @@ export interface GameSpotlight {
   stage?: string;
   date?: string;
   time?: string;
+  video_highlight_carousel?: VideoHighlight[]
 }
 
 export interface SportsResults {
@@ -64,6 +65,7 @@ interface searchInformation {
 }
 
 interface VideoHighlight {
+  title?: string;
   link?: string;
   thumbnail?: string;
   duration?: string;
