@@ -1,5 +1,6 @@
 import { Suite, createSuite } from "../tests/utils";
-// import { MatchFetcher } from "./match-fetcher";
+import * as supertest from "supertest";
+import { MatchFetcher } from "./match-fetcher";
 
 describe("Match fetcher integration test", () => {
     let suite: Suite;
@@ -26,15 +27,20 @@ describe("Match fetcher integration test", () => {
     // redis connected, key is expired thus need to be set
     describe('Happy scenario: redis connected, key is expired', () => {
         it('should handle expired key and call SerpAPI', async () => {
-            // Perform your test actions here
-            // Call the function that triggers the SerpAPI request
+            // Simulate making the request to SerpAPI
+            const api_key = 'your-api-key';
+            const query = 'bayer+leverkusen+fc+fixtures';
+            const location = 'Indonesia';
+
+            // Simulate the request (replace this with your actual request logic)
+            await supertest('http://localhost:8888')
+                .get('/search')
+                .query({ api_key, q: query, location });
 
             // Perform assertions
-            const query = 'Chelsea FC';
-
             suite.mockSerpAPIServer?.assertRequests((requests) => {
                 return requests.every((req) => {
-                    return req.q === query; // Ensure the query parameter is checked correctly
+                    return req.q === query && req.location === location;
                 });
             });
         });

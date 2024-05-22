@@ -33,6 +33,8 @@ export const startMockSerpAPIServer = (): Promise<MockSerpAPIServer> => {
             })
         }
 
+        requests.push(req.query); // Collect requests for assertion
+
         const response = {
             search_metadata: {},
             search_parameters: {},

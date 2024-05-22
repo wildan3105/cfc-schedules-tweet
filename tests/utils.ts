@@ -1,4 +1,3 @@
-import supertest from "supertest";
 import { MatchFetcher } from "../jobs/match-fetcher";
 import { MockSerpAPIServer, startMockSerpAPIServer } from "./mock-servers/serp-api";
 
