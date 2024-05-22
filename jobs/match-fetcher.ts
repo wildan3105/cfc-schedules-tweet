@@ -39,12 +39,6 @@ export class MatchFetcher {
     return res;
   }
 
-  private handleExit(): void {
-    setTimeout(() => {
-      process.exit(0);
-    }, 3000);
-  }
-
   private async processAndStoreData(data: APIResponse): Promise<void> {
     const fixtures = data.sports_results.games;
     const firstMatchDate = data.sports_results.games[0]?.date?.trim();
@@ -65,8 +59,6 @@ export class MatchFetcher {
 
     loggerService.info(`Storing ${convertedData.length} fixture(s) into redis.`)
     await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
-
-    this.handleExit();
   }
 
   public async fetchAndSet(): Promise<void> {
@@ -113,8 +105,5 @@ process.on("unhandledRejection", e => {
     process.exit(1);
   } finally {
     loggerService.info(`Match fetcher cron executed.`)
-    setTimeout(() => {
-      process.exit(0);
-    }, 3000);
   }
 })();
