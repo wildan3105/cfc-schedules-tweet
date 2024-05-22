@@ -18,11 +18,10 @@ interface IBody {
 }
 
 class MatchReader {
-  private redis: RedisStorage;
 
-  constructor() {
-    this.redis = new RedisStorage(redisConfig);
-  }
+  constructor(
+    private redis: RedisStorage
+  ) {}
 
   private async initializeRedis(): Promise<void> {
     if (!this.redis.initialized()) {
@@ -79,7 +78,8 @@ process.on("unhandledRejection", e => {
 
 (async () => {
   try {
-    const matchReader = new MatchReader();
+    const redisClient = new RedisStorage(redisConfig);
+    const matchReader = new MatchReader(redisClient);
     await matchReader.getMatchesAndPublish();
     setTimeout(() => {
       process.exit(0);
