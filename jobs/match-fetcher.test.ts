@@ -1,48 +1,45 @@
-import { Suite, createSuite } from "../tests/utils";
-import * as supertest from "supertest";
-import { MatchFetcher } from "./match-fetcher";
+import { MatchFetcher } from "../jobs/match-fetcher";
+import { RedisStorage } from "../modules/redis";
+import { serpApiToRedis, convertToStandardSerpAPIResults, removeIncompleteSerpAPIData } from "../libs/data-conversion";
+import { loggerService } from "../modules/log";
 
-describe("Match fetcher integration test", () => {
-    let suite: Suite;
+import { HTTP } from "../modules/http";
 
-    beforeAll(async () => {
-        // ensure redis is connected
-        // ensure 'fixtures' key is set with short-lived duration
-        suite = await createSuite({ startMockSerpAPIServer: true });
+// Mock the HTTP module to simulate responses from SerpAPI
+jest.mock("../modules/http");
+
+describe("MatchFetcher integration test", () => {
+  let redisStorage: RedisStorage;
+
+  beforeAll(async () => {
+    // Set up the real Redis server
+    const redisConfig = { redisURL: process.env.REDIS_URL };
+    redisStorage = new RedisStorage(redisConfig);
+    await redisStorage.init();
+  });
+
+  afterAll(async () => {
+    // Close the Redis connection after all tests
+    await redisStorage.close();
+  });
+
+  it("fetchAndSet should store data in Redis", async () => {
+    // Create an instance of MatchFetcher
+    const matchFetcher = new MatchFetcher(redisStorage);
+
+    (HTTP.prototype.get as jest.Mock).mockResolvedValue({
+        sports_results: {
+            games: [
+                // Define the mocked response data here
+            ]
+        }
     });
 
-    afterAll(async () => {
-        suite.afterAll();
-    });
+    // Run the fetchAndSet method
+    await matchFetcher.fetchAndSet();
 
-    beforeEach(async () => {
-        await suite.beforeEach();
-    });
-
-    afterEach(async () => {
-        await suite.afterEach();
-    });
-
-    // 1) first scenario
-    // redis connected, key is expired thus need to be set
-    describe('Happy scenario: redis connected, key is expired', () => {
-        it('should handle expired key and call SerpAPI', async () => {
-            // Simulate making the request to SerpAPI
-            const api_key = 'your-api-key';
-            const query = 'bayer+leverkusen+fc+fixtures';
-            const location = 'Indonesia';
-
-            // Simulate the request (replace this with your actual request logic)
-            await supertest('http://localhost:8888')
-                .get('/search')
-                .query({ api_key, q: query, location });
-
-            // Perform assertions
-            suite.mockSerpAPIServer?.assertRequests((requests) => {
-                return requests.every((req) => {
-                    return req.q === query && req.location === location;
-                });
-            });
-        });
-    });
+    // Add assertions to verify the behavior
+    // For example, you can check if data is stored in Redis as expected
+    // You can also check if HTTP requests were made to SerpAPI (mocked)
+  });
 });

@@ -26,7 +26,7 @@
     "subscriber-js": "node build/events/subscriber.js",
     "lint": "eslint ./**/*.ts",
     "format": "prettier --config .prettierrc --write './**/*.ts'",
-    "test": "jest ./**/*.test.ts",
+    "test": "jest --detectOpenHandles ./**/*.test.ts",
     "test:match-fetcher": "jest --detectOpenHandles ./jobs/match-fetcher.test.ts"
   },
   "husky": {
