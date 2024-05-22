@@ -37,20 +37,18 @@ class MatchFetcher {
   
     const existingKeyTTL = await this.redis.getTTL(RedisTerms.keyName);
     try {
-      // only fetch the serp API and set the key if current key is expiring in an hour or less
       if (existingKeyTTL < lowerLimitToFetchAPI) {
-        const data = await this.httpController.get(); // TODO: strick-checking data type
+        const data = await this.httpController.get();
         const fixtures = data.sports_results.games;
         const firstMatchDate = data.sports_results.games[0]?.date?.trim();
         const customDateFormats = ["tomorrow", "today"];
-        let gameHighlight;
+        let gameSpotlight;
         if (data.sports_results.game_spotlight) {
-          // handle game highlight and append to the result
-          gameHighlight = convertToStandardSerpAPIResults(
+          gameSpotlight = convertToStandardSerpAPIResults(
             data.sports_results.game_spotlight,
             true
           );
-          fixtures.unshift(gameHighlight);
+          fixtures.unshift(gameSpotlight);
         } else if (firstMatchDate && customDateFormats.includes(firstMatchDate.toLowerCase())) {
           const firstMatch = fixtures[0];
           fixtures[0] = convertToStandardSerpAPIResults(firstMatch, false);
