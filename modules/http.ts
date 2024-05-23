@@ -43,7 +43,7 @@ export class HTTP {
     }
   }
 
-  async sendEmail(content: string, subject?: string) {
+  async sendEmail(content: string, subject?: string): Promise<void> {
     const { ELASTIC_EMAIL_BASE_URL, ELASTIC_EMAIL_API_KEY } = process.env;
     const requestBody: EmailRequest = {
       Recipients: {

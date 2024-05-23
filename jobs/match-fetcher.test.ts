@@ -14,6 +14,7 @@ describe("MatchFetcher integration test", () => {
   let redisClient: RedisStorage;
   let matchFetcher: MatchFetcher;
   let mockHttpGet: jest.Mock;
+  let mockSendEmail: jest.Mock;
 
   beforeAll(async () => {
     // Set up the real Redis server
@@ -33,6 +34,7 @@ describe("MatchFetcher integration test", () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     mockHttpGet = HTTP.prototype.get as jest.Mock;
+    mockSendEmail = HTTP.prototype.sendEmail as jest.Mock;
 
   });
 
@@ -128,7 +130,28 @@ describe("MatchFetcher integration test", () => {
 
     it("should not call serp API when existing key TTL is lower than the threshold", async () => {
       await redisClient.set(RedisTerms.keyName, "fixtures", lowerLimitToFetchAPI + 100);
+      await matchFetcher.fetchAndSet();
       expect(mockHttpGet).not.toHaveBeenCalled();
     });
+
+    it('should call sendReportingEmail when one of the functions inside fetchAndSet() is returning error', async () => {
+      await redisClient.set(RedisTerms.keyName, "fixtures", lowerLimitToFetchAPI - 10); // Set TTL to a low value
+
+      // Mock HTTP get to throw an error
+      const error = new Error("API failure");
+      mockHttpGet.mockRejectedValueOnce(error);
+
+      // Mock sendEmail to do nothing
+      mockSendEmail.mockResolvedValueOnce(undefined);
+
+      // Call the fetchAndSet method to simulate cronjob behavior
+      await matchFetcher.fetchAndSet();
+
+      // Assert that HTTP.get was called and failed
+      expect(mockHttpGet).toHaveBeenCalled();
+
+      // Assert that sendReportingEmail was called
+      expect(mockSendEmail).toHaveBeenCalledWith(expect.stringContaining("API failure"), 'Match fetcher cron');
+    })
   });
 });
