@@ -24,19 +24,12 @@ export class MatchFetcher {
     this.httpController = new HTTP();
   }
 
-  private async initializeRedis(): Promise<void> {
-    if (!this.redis.initialized()) {
-      await this.redis.init();
-    }
-  }
-
   private async sendReportingEmail(content: string, title: string): Promise<void> {
     await this.httpController.sendEmail(content, title);
   }
 
   private async fetchMatchesFromAPI(): Promise<APIResponse> {
-    const res = await this.httpController.get();
-    return res;
+    return await this.httpController.get();
   }
 
   private async processAndStoreData(data: APIResponse): Promise<void> {
@@ -63,15 +56,11 @@ export class MatchFetcher {
 
   public async fetchAndSet(): Promise<void> {
     try {
-      await this.initializeRedis();
-
       const existingKeyTTL = await this.redis.getTTL(RedisTerms.keyName);
       if (existingKeyTTL < lowerLimitToFetchAPI) {
         const data = await this.fetchMatchesFromAPI();
         await this.processAndStoreData(data);
       }
-
-      await this.redis.close();
     } catch (e) {
       loggerService.error(`Failed to fetch matches from SerpAPI: ${e}`);
       const error = new Error(e);
@@ -96,14 +85,18 @@ process.on("unhandledRejection", e => {
 });
 
 (async () => {
+  const redisClient = new RedisStorage(redisConfig);
+  await redisClient.init();
+  
+  const matchFetcher = new MatchFetcher(redisClient);
+
   try {
-    const redisClient = new RedisStorage(redisConfig);
-    const matchFetcher = new MatchFetcher(redisClient);
     await matchFetcher.fetchAndSet();
   } catch (e) {
     loggerService.error(`an error occurred when executing match fetcher cron: ${e}`);
     process.exit(1);
   } finally {
     loggerService.info(`Match fetcher cron executed.`)
+    await redisClient.close()
   }
 })();
