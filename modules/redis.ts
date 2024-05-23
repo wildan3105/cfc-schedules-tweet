@@ -66,6 +66,10 @@ export class RedisStorage extends EventEmitter {
     return this.redisClient.set(key, value, "EX", ttl_value); // in seconds
   }
 
+  public async delete(key: string): Promise<number> {
+    return this.redisClient.del(key);
+  }
+
   public async publish(channel: string, message: string): Promise<number> {
     return this.redisClient.publish(channel, message);
   }
