@@ -20,11 +20,30 @@ export class RedisStorage extends EventEmitter {
   }
 
   public async init(): Promise<void> {
-    this.redisClient = new Redis(this.redisConfig.redisURL);
-
-    await this.setupListeners();
-    await this.waitToConnect();
+    const maxRetries = 5;
+    const retryDelay = 5000;
+    let retries = 0;
+  
+    while (!this.isInitialized && retries < maxRetries) {
+      try {
+        this.redisClient = new Redis(this.redisConfig.redisURL);
+  
+        await this.setupListeners();
+        await this.waitToConnect();
+        this.isInitialized = true;
+      } catch (error) {
+        loggerService.error(`Failed to connect to Redis. Retrying in ${retryDelay / 1000} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
+        retries++;
+      }
+    }
+  
+    if (!this.isInitialized) {
+      loggerService.error(`Failed to connect to Redis after ${maxRetries} retries. Giving up.`);
+      throw new Error("Failed to connect to Redis.");
+    }
   }
+  
 
   private async waitToConnect() {
     return new Promise<void>(resolve => {
