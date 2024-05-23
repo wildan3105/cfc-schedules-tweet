@@ -35,7 +35,7 @@ export class MatchFetcher {
     const fixtures = data.sports_results.games;
     const firstMatchDate = data.sports_results.games[0]?.date?.trim();
     const customDateFormats = ["tomorrow", "today"];
-    let gameSpotlight;
+    let gameSpotlight; // FIXME: provide better type
     if (data.sports_results.game_spotlight) {
       gameSpotlight = convertToStandardSerpAPIResults(
         data.sports_results.game_spotlight,
