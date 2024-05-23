@@ -20,7 +20,6 @@ export class MatchFetcher {
   constructor(
     private redis: RedisStorage
   ) {
-    this.redis = new RedisStorage(redisConfig);
     this.httpController = new HTTP();
   }
 
@@ -84,19 +83,23 @@ process.on("unhandledRejection", e => {
   }, 3000);
 });
 
-(async () => {
-  const redisClient = new RedisStorage(redisConfig);
-  await redisClient.init();
-  
-  const matchFetcher = new MatchFetcher(redisClient);
+// this conditional is necessary so that other files importing this
+// won't execute the file immediately
+if (require.main === module) {
+  (async () => {
+    const redisClient = new RedisStorage(redisConfig);
+    await redisClient.init();
 
-  try {
-    await matchFetcher.fetchAndSet();
-  } catch (e) {
-    loggerService.error(`an error occurred when executing match fetcher cron: ${e}`);
-    process.exit(1);
-  } finally {
-    loggerService.info(`Match fetcher cron executed.`)
-    await redisClient.close()
-  }
-})();
+    const matchFetcher = new MatchFetcher(redisClient);
+
+    try {
+      await matchFetcher.fetchAndSet();
+    } catch (e) {
+      loggerService.error(`an error occurred when executing match fetcher cron: ${e}`);
+      process.exit(1);
+    } finally {
+      loggerService.info(`Match fetcher cron executed.`)
+      await redisClient.close()
+    }
+  })();
+}
