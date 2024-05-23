@@ -106,8 +106,5 @@ process.on("unhandledRejection", e => {
         process.exit(1);
     } finally {
         loggerService.info(`SerpAPI Healthcheck cron executed.`)
-        setTimeout(() => {
-            process.exit(0);
-        }, 3000);
     }
 })();
