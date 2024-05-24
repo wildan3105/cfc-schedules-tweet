@@ -5,7 +5,7 @@ import { RedisTerms, defaultTTLInSeconds } from "../constants/redis";
 import { serpApiToRedis, convertToStandardSerpAPIResults, removeIncompleteSerpAPIData } from "../libs/data-conversion";
 import { lowerLimitToFetchAPI } from "../constants/time-conversion";
 import { loggerService } from "../modules/log";
-import { APIResponse } from "../interfaces/serp-api";
+import { APIResponse, Fixture } from "../interfaces/serp-api";
 
 injectEnv();
 
@@ -13,6 +13,8 @@ const REDIS_URL = process.env.REDIS_URL;
 const redisConfig = {
   redisURL: REDIS_URL
 };
+
+const customDateFormats = ["tomorrow", "today"];
 
 export class MatchFetcher {
   private httpController: HTTP;
@@ -31,21 +33,31 @@ export class MatchFetcher {
     return await this.httpController.get();
   }
 
-  private async processAndStoreData(data: APIResponse): Promise<void> {
-    const fixtures = data.sports_results.games;
-    const firstMatchDate = data.sports_results.games[0]?.date?.trim();
-    const customDateFormats = ["tomorrow", "today"];
-    let gameSpotlight; // FIXME: provide better type
-    if (data.sports_results.game_spotlight) {
-      gameSpotlight = convertToStandardSerpAPIResults(
-        data.sports_results.game_spotlight,
-        true
-      );
-      fixtures.unshift(gameSpotlight);
-    } else if (firstMatchDate && customDateFormats.includes(firstMatchDate.toLowerCase())) {
-      const firstMatch = fixtures[0];
-      fixtures[0] = convertToStandardSerpAPIResults(firstMatch, false);
+  private extractFeatures(data: APIResponse): Fixture[] {
+    return data.sports_results.games;
+  }
+
+  private handleGameSpotlight(data: APIResponse): Fixture[] {
+    const fixtures = this.extractFeatures(data);
+
+    const { game_spotlight } = data.sports_results;
+    if (game_spotlight) {
+      return [convertToStandardSerpAPIResults(game_spotlight, true), ...fixtures];
     }
+    return fixtures;
+  }
+
+  private handleCustomDateFormats(fixtures: Fixture[]): Fixture[] {
+    const firstMatchDate = fixtures[0]?.date?.trim();
+    if (firstMatchDate && customDateFormats.includes(firstMatchDate.toLowerCase())) {
+      fixtures[0] = convertToStandardSerpAPIResults(fixtures[0], false);
+    }
+    return fixtures;
+  }
+
+  private async processAndStoreData(data: APIResponse): Promise<void> {
+    let fixtures = this.handleGameSpotlight(data);
+    fixtures = this.handleCustomDateFormats(fixtures);
     const completedData = removeIncompleteSerpAPIData(fixtures);
     const convertedData = serpApiToRedis(completedData);
 

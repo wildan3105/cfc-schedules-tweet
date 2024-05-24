@@ -5,7 +5,7 @@ export interface APIResponse {
   sports_results: SportsResults
 }
 
-export interface SingleFixture {
+export interface Fixture {
   teams?: Teams[];
   tournament?: string;
   stadium?: string;
@@ -33,7 +33,7 @@ export interface SportsResults {
   title: string;
   rankings: string;
   thumbnail: string;
-  games: SingleFixture[]
+  games: Fixture[]
   game_spotlight?: GameSpotlight
 }
 

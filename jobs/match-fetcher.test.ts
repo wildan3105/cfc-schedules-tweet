@@ -1,6 +1,5 @@
 import { MatchFetcher } from "../jobs/match-fetcher";
 import { RedisStorage } from "../modules/redis";
-import { serpApiToRedis, convertToStandardSerpAPIResults, removeIncompleteSerpAPIData } from "../libs/data-conversion";
 
 import { HTTP } from "../modules/http";
 import { RedisTerms } from "../constants/redis";
@@ -127,7 +126,13 @@ describe("MatchFetcher integration test", () => {
       const jsonData: RedisFixture[] = JSON.parse(storedData);
       expect(jsonData).toHaveLength(2);
       expect(jsonData[0].participants).toEqual("@ChelseaFC vs Manchester City");
+      expect(jsonData[0].tournament).toEqual("FA Cup");
+      expect(jsonData[0].date_time).toBeTruthy();
+      expect(jsonData[0].stadium).toEqual("Wembley");
       expect(jsonData[1].participants).toEqual("@ChelseaFC vs Bayern Munich");
+      expect(jsonData[1].tournament).toEqual("Champions League");
+      expect(jsonData[1].date_time).toBeTruthy();
+      expect(jsonData[1].stadium).toEqual("Wembley");
     });
 
     it("should call serp API and then return games with spotlight and then store data in redis when existing key TTL is lower than the threshold", async () => {
@@ -140,7 +145,7 @@ describe("MatchFetcher integration test", () => {
             game_spotlight: {
               tournament: "Carabao Cup",
               stage: "Final",
-              stadium: "Wembley",
+              stadium: "Stamford Bridge",
               date: "tomorrow, 7:00 AM",
               teams: [
                   {
@@ -174,7 +179,7 @@ describe("MatchFetcher integration test", () => {
                 {
                     tournament: "Champions League",
                     stage: "Final",
-                    stadium: "Wembley",
+                    stadium: "Camp Nou",
                     date: "May 31",
                     time: "4:00 AM",
                     teams: [
@@ -204,8 +209,17 @@ describe("MatchFetcher integration test", () => {
       const jsonData: RedisFixture[] = JSON.parse(storedData);
       expect(jsonData).toHaveLength(3);
       expect(jsonData[0].participants).toEqual("@ChelseaFC vs Manchester United");
+      expect(jsonData[0].tournament).toEqual("Carabao Cup");
+      expect(jsonData[0].date_time).toBeTruthy();
+      expect(jsonData[0].stadium).toEqual("Stamford Bridge");
       expect(jsonData[1].participants).toEqual("@ChelseaFC vs Blackburn");
+      expect(jsonData[1].tournament).toEqual("FA Cup");
+      expect(jsonData[1].date_time).toBeTruthy();
+      expect(jsonData[1].stadium).toEqual("Wembley");
       expect(jsonData[2].participants).toEqual("@ChelseaFC vs Bayer Leverkusen");
+      expect(jsonData[2].tournament).toEqual("Champions League");
+      expect(jsonData[2].date_time).toBeTruthy();
+      expect(jsonData[2].stadium).toEqual("Camp Nou");
     });
 
     it("should call serp API and then return games with custom date format and then store data in redis when existing key TTL is lower than the threshold", async () => {
@@ -217,8 +231,8 @@ describe("MatchFetcher integration test", () => {
             thumbnail: "https://serpapi.com/searches/664c6debd5a531e26c40de85/images/5c2e766222da2daf89a3f8923a77c1b481e15eaedf850cab6c2d44ed889d174f.png",
             games: [
                 {
-                    tournament: "Premier League Cup",
-                    stadium: "Wembley",
+                    tournament: "Premier League",
+                    stadium: "Anfield",
                     date: "tomorrow",
                     time: "2:00 AM",
                     teams: [
@@ -235,7 +249,7 @@ describe("MatchFetcher integration test", () => {
                 {
                     tournament: "Champions League",
                     stage: "Final",
-                    stadium: "Wembley",
+                    stadium: "San Siro",
                     date: "May 31",
                     time: "4:00 AM",
                     teams: [
@@ -265,7 +279,13 @@ describe("MatchFetcher integration test", () => {
       const jsonData: RedisFixture[] = JSON.parse(storedData);
       expect(jsonData).toHaveLength(2);
       expect(jsonData[0].participants).toEqual("Liverpool vs @ChelseaFC");
+      expect(jsonData[0].tournament).toEqual("Premier League");
+      expect(jsonData[0].date_time).toBeTruthy();
+      expect(jsonData[0].stadium).toEqual("Anfield");
       expect(jsonData[1].participants).toEqual("@ChelseaFC vs Bayern Munich");
+      expect(jsonData[1].tournament).toEqual("Champions League");
+      expect(jsonData[1].date_time).toBeTruthy();
+      expect(jsonData[1].stadium).toEqual("San Siro");
     });
 
     it("should not call serp API when existing key TTL is greater than the threshold", async () => {

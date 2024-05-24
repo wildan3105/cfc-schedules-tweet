@@ -2,7 +2,7 @@
 import parseFormat = require("moment-parseformat");
 import moment = require("moment");
 
-import { SingleFixture, GameSpotlight } from "../interfaces/serp-api";
+import { Fixture, GameSpotlight } from "../interfaces/serp-api";
 import { RedisFixture } from "../interfaces/redis";
 import { PartialMonthToIndex } from "../enums/months";
 import { Team } from "../constants/team";
@@ -76,7 +76,7 @@ function convertDateTimeToUTC(date: string, time: string): Date {
   return dateTimeInUTC;
 }
 
-export function removeIncompleteSerpAPIData(fixtures: SingleFixture[]): SingleFixture[] {
+export function removeIncompleteSerpAPIData(fixtures: Fixture[]): Fixture[] {
   return fixtures.filter(f => f.time !== "TBD" && f.date !== undefined);
 }
 
@@ -85,7 +85,7 @@ function convertToTwitterAccountForChelseaFC(team: string): string {
 }
 
 export function convertToStandardSerpAPIResults(
-  data: GameSpotlight | SingleFixture,
+  data: GameSpotlight | Fixture,
   fromSpotlight: boolean
 ): Record<string, unknown> {
   let time: unknown, date: string | string[];
@@ -110,7 +110,7 @@ export function convertToStandardSerpAPIResults(
   };
 }
 
-export function serpApiToRedis(fixtures: SingleFixture[]): RedisFixture[] {
+export function serpApiToRedis(fixtures: Fixture[]): RedisFixture[] {
   fixtures.forEach(elem => {
     elem.participants = `${convertToTwitterAccountForChelseaFC(
       elem.teams[0].name
