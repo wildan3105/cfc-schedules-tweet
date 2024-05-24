@@ -2,6 +2,7 @@ import { MatchFetcher } from "../jobs/match-fetcher";
 import { RedisStorage } from "../modules/redis";
 
 import { HTTP } from "../modules/http";
+import { loggerService } from "../modules/log";
 import { RedisTerms } from "../constants/redis";
 
 import { lowerLimitToFetchAPI } from "../constants/time-conversion";
@@ -9,6 +10,7 @@ import { APIResponse } from "../interfaces/serp-api";
 import { RedisFixture } from "../interfaces/redis";
 
 jest.mock("../modules/http");
+jest.mock("../modules/log");
 
 const baseSerpAPIResponse = {
   search_metadata: {
@@ -118,13 +120,16 @@ describe("MatchFetcher integration test", () => {
 
       await matchFetcher.fetchAndSet();
 
+      const expectedMatchesLength = mockApiResponse.sports_results.games.length;
+
       expect(mockHttpGet).toHaveBeenCalled();
+      expect(loggerService.info).toHaveBeenCalledWith(expect.stringContaining(`Storing ${expectedMatchesLength} fixture(s) into redis.`));
 
       const storedData = await redisClient.get(RedisTerms.keyName);
       expect(storedData).toBeTruthy();
 
       const jsonData: RedisFixture[] = JSON.parse(storedData);
-      expect(jsonData).toHaveLength(2);
+      expect(jsonData).toHaveLength(expectedMatchesLength);
       expect(jsonData[0].participants).toEqual("@ChelseaFC vs Manchester City");
       expect(jsonData[0].tournament).toEqual("FA Cup");
       expect(jsonData[0].date_time).toBeTruthy();
@@ -201,13 +206,16 @@ describe("MatchFetcher integration test", () => {
 
       await matchFetcher.fetchAndSet();
 
+      const expectedMatchesLength = mockApiResponseWithGameSpotlight.sports_results.games.length + 1; // 1 is from game spotlight match
+
       expect(mockHttpGet).toHaveBeenCalled();
+      expect(loggerService.info).toHaveBeenCalledWith(expect.stringContaining(`Storing ${expectedMatchesLength} fixture(s) into redis.`));
 
       const storedData = await redisClient.get(RedisTerms.keyName);
       expect(storedData).toBeTruthy();
 
       const jsonData: RedisFixture[] = JSON.parse(storedData);
-      expect(jsonData).toHaveLength(3);
+      expect(jsonData).toHaveLength(expectedMatchesLength);
       expect(jsonData[0].participants).toEqual("@ChelseaFC vs Manchester United");
       expect(jsonData[0].tournament).toEqual("Carabao Cup");
       expect(jsonData[0].date_time).toBeTruthy();
@@ -271,13 +279,16 @@ describe("MatchFetcher integration test", () => {
 
       await matchFetcher.fetchAndSet();
 
+      const expectedMatchesLength = mockApiResponseWithCustomDateFormat.sports_results.games.length;
+
       expect(mockHttpGet).toHaveBeenCalled();
+      expect(loggerService.info).toHaveBeenCalledWith(expect.stringContaining(`Storing ${expectedMatchesLength} fixture(s) into redis.`));
 
       const storedData = await redisClient.get(RedisTerms.keyName);
       expect(storedData).toBeTruthy();
 
       const jsonData: RedisFixture[] = JSON.parse(storedData);
-      expect(jsonData).toHaveLength(2);
+      expect(jsonData).toHaveLength(expectedMatchesLength);
       expect(jsonData[0].participants).toEqual("Liverpool vs @ChelseaFC");
       expect(jsonData[0].tournament).toEqual("Premier League");
       expect(jsonData[0].date_time).toBeTruthy();
