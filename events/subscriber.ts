@@ -25,11 +25,11 @@ interface ITweet {
 }
 
 class Subscriber {
-  private redis: RedisStorage;
   private httpController: HTTP;
 
-  constructor() {
-    this.redis = new RedisStorage(redisConfig);
+  constructor(
+    private redis: RedisStorage
+  ) {
     this.httpController = new HTTP();
   }
 
@@ -83,7 +83,8 @@ class Subscriber {
 
 (async () => {
   try {
-    const subscriber = new Subscriber();
+    const redisClient = new RedisStorage(redisConfig);
+    const subscriber = new Subscriber(redisClient);
     await subscriber.subscribeMessage(RedisTerms.channelName);
   } catch (e) {
     loggerService.error(`an error occured: ${e}`);

@@ -5,6 +5,7 @@ import { RedisTerms, defaultTTLInSeconds } from "../constants/redis";
 import { serpApiToRedis, convertToStandardSerpAPIResults, removeIncompleteSerpAPIData } from "../libs/data-conversion";
 import { lowerLimitToFetchAPI } from "../constants/time-conversion";
 import { loggerService } from "../modules/log";
+import { APIResponse, Fixture } from "../interfaces/serp-api";
 
 injectEnv();
 
@@ -13,91 +14,104 @@ const redisConfig = {
   redisURL: REDIS_URL
 };
 
-class MatchFetcher {
-  private redis: RedisStorage;
+const customDateFormats = ["tomorrow", "today"];
+
+export class MatchFetcher {
   private httpController: HTTP;
 
-  constructor() {
-    this.redis = new RedisStorage(redisConfig);
+  constructor(
+    private redis: RedisStorage
+  ) {
     this.httpController = new HTTP();
   }
 
-  private async initializeRedis(): Promise<void> {
-    if (!this.redis.initialized()) {
-      await this.redis.init();
-    }
-  }
-
-  private async sendReportingEmail(content: string, title: string): Promise<void> {
-    await this.httpController.sendEmail(content, title);
-  }
-
   public async fetchAndSet(): Promise<void> {
-    await this.initializeRedis();
-  
-    const existingKeyTTL = await this.redis.getTTL(RedisTerms.keyName);
     try {
+      const existingKeyTTL = await this.redis.getTTL(RedisTerms.keyName);
       if (existingKeyTTL < lowerLimitToFetchAPI) {
-        const data = await this.httpController.get();
-        const fixtures = data.sports_results.games;
-        const firstMatchDate = data.sports_results.games[0]?.date?.trim();
-        const customDateFormats = ["tomorrow", "today"];
-        let gameSpotlight;
-        if (data.sports_results.game_spotlight) {
-          gameSpotlight = convertToStandardSerpAPIResults(
-            data.sports_results.game_spotlight,
-            true
-          );
-          fixtures.unshift(gameSpotlight);
-        } else if (firstMatchDate && customDateFormats.includes(firstMatchDate.toLowerCase())) {
-          const firstMatch = fixtures[0];
-          fixtures[0] = convertToStandardSerpAPIResults(firstMatch, false);
-        }
-        const completedData = removeIncompleteSerpAPIData(fixtures);
-        const convertedData = serpApiToRedis(completedData);
-
-        loggerService.info(`Storing ${convertedData.length} fixture(s) into redis.`)
-        await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
+        const data = await this.fetchMatchesFromAPI();
+        await this.processAndStoreData(data);
       }
-
-      await this.redis.close();
     } catch (e) {
-      loggerService.error(`Failed to fetch matches from serp API: ${e}`);
+      loggerService.error(`Failed to fetch matches from SerpAPI: ${e}`);
       const error = new Error(e);
       const errorMessage = `Title: <b> ${error.name} </b> <br><br> Message: ${error.message} <br><br> Stack: ${error.stack ? error.stack : ''}`;
       await this.sendReportingEmail(errorMessage, 'Match fetcher cron');
     }
   }
+
+  private async fetchMatchesFromAPI(): Promise<APIResponse> {
+    return await this.httpController.get();
+  }
+
+  private async processAndStoreData(data: APIResponse): Promise<void> {
+    let fixtures = this.handleGameSpotlight(data);
+    fixtures = this.handleCustomDateFormats(fixtures);
+    const completedData = removeIncompleteSerpAPIData(fixtures);
+    const convertedData = serpApiToRedis(completedData);
+
+    loggerService.info(`Storing ${convertedData.length} fixture(s) into redis.`)
+    await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
+  }
+
+  private extractFeatures(data: APIResponse): Fixture[] {
+    return data.sports_results.games;
+  }
+
+  private handleGameSpotlight(data: APIResponse): Fixture[] {
+    const fixtures = this.extractFeatures(data);
+
+    const { game_spotlight } = data.sports_results;
+    if (game_spotlight) {
+      return [convertToStandardSerpAPIResults(game_spotlight, true), ...fixtures];
+    }
+    return fixtures;
+  }
+
+  private handleCustomDateFormats(fixtures: Fixture[]): Fixture[] {
+    const firstMatchDate = fixtures[0]?.date?.trim();
+    if (firstMatchDate && customDateFormats.includes(firstMatchDate.toLowerCase())) {
+      fixtures[0] = convertToStandardSerpAPIResults(fixtures[0], false);
+    }
+    return fixtures;
+  }
+  
+  private async sendReportingEmail(content: string, title: string): Promise<void> {
+    await this.httpController.sendEmail(content, title);
+  }
 }
 
 process.on("uncaughtException", e => {
   setTimeout(() => {
-    loggerService.error(`an error occured [uncaughtException]: ${e}`);
+    loggerService.error(`an error occurred [uncaughtException]: ${e}`);
     process.exit(1);
   }, 3000);
 });
 
 process.on("unhandledRejection", e => {
   setTimeout(() => {
-    loggerService.error(`an error occured [unhandledRejection]: ${e}`);
+    loggerService.error(`an error occurred [unhandledRejection]: ${e}`);
     process.exit(1);
   }, 3000);
 });
 
-(async () => {
-  try {
-    const matchFetcher = new MatchFetcher();
-    await matchFetcher.fetchAndSet();
-    setTimeout(() => {
-      process.exit(0);
-    }, 3000);
-  } catch (e) {
-    loggerService.error(`an error occured when executing match fetcher cron: ${e}`);
-    process.exit(1);
-  } finally {
-    loggerService.info(`Match fetcher cron executed.`)
-    setTimeout(() => {
-      process.exit(0);
-    }, 3000);
-  }
-})();
+// this conditional is necessary so that other files importing this
+// won't execute the file immediately
+if (require.main === module) {
+  (async () => {
+    const redisClient = new RedisStorage(redisConfig);
+    await redisClient.init();
+
+    const matchFetcher = new MatchFetcher(redisClient);
+
+    try {
+      await matchFetcher.fetchAndSet();
+    } catch (e) {
+      loggerService.error(`an error occurred when executing match fetcher cron: ${e}`);
+      process.exit(1);
+    } finally {
+      loggerService.info(`Match fetcher cron executed.`)
+      await redisClient.close()
+    }
+  })();
+}

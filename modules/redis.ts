@@ -25,6 +25,7 @@ export class RedisStorage extends EventEmitter {
     await this.setupListeners();
     await this.waitToConnect();
   }
+  
 
   private async waitToConnect() {
     return new Promise<void>(resolve => {
@@ -65,6 +66,10 @@ export class RedisStorage extends EventEmitter {
     return this.redisClient.set(key, value, "EX", ttl_value); // in seconds
   }
 
+  public async delete(key: string): Promise<number> {
+    return this.redisClient.del(key);
+  }
+
   public async publish(channel: string, message: string): Promise<number> {
     return this.redisClient.publish(channel, message);
   }
@@ -78,5 +83,9 @@ export class RedisStorage extends EventEmitter {
 
   public async getTTL(key: string): Promise<number> {
     return this.redisClient.ttl(key);
+  }
+
+  public async expireKey(key: string): Promise<number> {
+    return this.redisClient.expire(key, 0);
   }
 }
