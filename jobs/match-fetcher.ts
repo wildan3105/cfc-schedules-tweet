@@ -40,12 +40,18 @@ export class MatchFetcher {
     }
   }
 
-  private async sendReportingEmail(content: string, title: string): Promise<void> {
-    await this.httpController.sendEmail(content, title);
-  }
-
   private async fetchMatchesFromAPI(): Promise<APIResponse> {
     return await this.httpController.get();
+  }
+
+  private async processAndStoreData(data: APIResponse): Promise<void> {
+    let fixtures = this.handleGameSpotlight(data);
+    fixtures = this.handleCustomDateFormats(fixtures);
+    const completedData = removeIncompleteSerpAPIData(fixtures);
+    const convertedData = serpApiToRedis(completedData);
+
+    loggerService.info(`Storing ${convertedData.length} fixture(s) into redis.`)
+    await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
   }
 
   private extractFeatures(data: APIResponse): Fixture[] {
@@ -69,15 +75,9 @@ export class MatchFetcher {
     }
     return fixtures;
   }
-
-  private async processAndStoreData(data: APIResponse): Promise<void> {
-    let fixtures = this.handleGameSpotlight(data);
-    fixtures = this.handleCustomDateFormats(fixtures);
-    const completedData = removeIncompleteSerpAPIData(fixtures);
-    const convertedData = serpApiToRedis(completedData);
-
-    loggerService.info(`Storing ${convertedData.length} fixture(s) into redis.`)
-    await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
+  
+  private async sendReportingEmail(content: string, title: string): Promise<void> {
+    await this.httpController.sendEmail(content, title);
   }
 }
 
