@@ -25,6 +25,21 @@ export class MatchFetcher {
     this.httpController = new HTTP();
   }
 
+  public async fetchAndSet(): Promise<void> {
+    try {
+      const existingKeyTTL = await this.redis.getTTL(RedisTerms.keyName);
+      if (existingKeyTTL < lowerLimitToFetchAPI) {
+        const data = await this.fetchMatchesFromAPI();
+        await this.processAndStoreData(data);
+      }
+    } catch (e) {
+      loggerService.error(`Failed to fetch matches from SerpAPI: ${e}`);
+      const error = new Error(e);
+      const errorMessage = `Title: <b> ${error.name} </b> <br><br> Message: ${error.message} <br><br> Stack: ${error.stack ? error.stack : ''}`;
+      await this.sendReportingEmail(errorMessage, 'Match fetcher cron');
+    }
+  }
+
   private async sendReportingEmail(content: string, title: string): Promise<void> {
     await this.httpController.sendEmail(content, title);
   }
@@ -63,21 +78,6 @@ export class MatchFetcher {
 
     loggerService.info(`Storing ${convertedData.length} fixture(s) into redis.`)
     await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
-  }
-
-  public async fetchAndSet(): Promise<void> {
-    try {
-      const existingKeyTTL = await this.redis.getTTL(RedisTerms.keyName);
-      if (existingKeyTTL < lowerLimitToFetchAPI) {
-        const data = await this.fetchMatchesFromAPI();
-        await this.processAndStoreData(data);
-      }
-    } catch (e) {
-      loggerService.error(`Failed to fetch matches from SerpAPI: ${e}`);
-      const error = new Error(e);
-      const errorMessage = `Title: <b> ${error.name} </b> <br><br> Message: ${error.message} <br><br> Stack: ${error.stack ? error.stack : ''}`;
-      await this.sendReportingEmail(errorMessage, 'Match fetcher cron');
-    }
   }
 }
 
