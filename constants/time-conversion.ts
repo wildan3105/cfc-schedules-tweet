@@ -1,4 +1,4 @@
-export const Time: { [key: string]: number } = {
+export const Time = {
   offset: 12,
   hoursInADay: 24,
   UTCToLocalTimezone: 7

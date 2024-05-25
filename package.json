@@ -4,29 +4,31 @@
   "description": "Send tweet ahead of CFC's match",
   "main": "./build/jobs/match-fetcher.js",
   "dependencies": {
-    "@pm2/pm2-version-check": "^1.0.4",
-    "axios": "0.27.2",
+    "axios": "^1.7.2",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.1",
     "ioredis": "^5.1.0",
     "moment": "^2.29.4",
     "moment-parseformat": "^4.0.0",
+    "moment-timezone": "^0.5.45",
     "oauth-1.0a": "^2.2.6",
-    "pm2": "^5.2.0",
     "ts-node-dev": "^2.0.0"
   },
   "engines": {
-    "node": "12.x"
+    "node": "20.x",
+    "npm": "9.x"
   },
   "scripts": {
     "build": "tsc",
     "match-fetcher": "ts-node-dev --poll --transpile-only --respawn jobs/match-fetcher.ts --watch **/*.ts",
     "match-reader": "ts-node-dev --poll --transpile-only --respawn jobs/match-reader.ts --watch **/*.ts",
-    "sub": "ts-node-dev --poll --transpile-only --respawn events/sub.ts --watch **/*.ts",
-    "sub-js": "node build/events/sub.js",
+    "api-healthcheck": "ts-node-dev --poll --transpile-only --respawn jobs/serp-api-healthcheck.ts --watch **/*.ts",
+    "subscriber": "ts-node-dev --poll --transpile-only --respawn events/subscriber.ts --watch **/*.ts",
+    "subscriber-js": "node build/events/subscriber.js",
     "lint": "eslint ./**/*.ts",
     "format": "prettier --config .prettierrc --write './**/*.ts'",
-    "test": "jest ./**/*.test.ts"
+    "test": "jest --detectOpenHandles ./**/*.test.ts",
+    "test:match-reader": "jest --detectOpenHandles ./jobs/match-reader.test.ts"
   },
   "husky": {
     "hooks": {
@@ -39,15 +41,20 @@
     "@babel/preset-env": "^7.18.6",
     "@babel/preset-typescript": "^7.18.6",
     "@jest/reporters": "^28.1.2",
+    "@types/express": "^4.17.21",
     "@types/jest": "^28.1.4",
     "@types/node": "^18.0.0",
+    "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "@typescript-eslint/parser": "^5.30.0",
+    "body-parser": "^1.20.2",
     "eslint": "^8.18.0",
+    "express": "^4.19.2",
     "husky": "^4.3.8",
     "jest": "^28.1.2",
     "lint-staged": "^13.0.3",
     "prettier": "2.7.1",
+    "supertest": "^7.0.0",
     "ts-jest": "^28.0.5",
     "typescript": "^4.6.2"
   }

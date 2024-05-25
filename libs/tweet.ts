@@ -1,6 +1,8 @@
+import * as moment from "moment-timezone";
 import { Emojis } from "../enums/emojis";
-import { MonthIndexToFullMonth } from "../enums/months";
 import { Team } from "../constants/team";
+
+const UKTimeZoneName = "Europe/London";
 
 interface ITweetBody {
   hours_to_match: number;
@@ -10,20 +12,11 @@ interface ITweetBody {
   tournament: string;
 }
 
-function transformToReadableDate(date: Date): string {
-  const currentDate = date.getDate();
-  const currentMonth = MonthIndexToFullMonth[date.getMonth()];
-  const currentYear = date.getFullYear();
-  return `${currentMonth} ${currentDate}, ${currentYear}`;
+function convertTournamentToHashTag(tournament: string): string {
+  return `#${tournament.replace(/ /g, '')}`;
 }
 
-function transformToReadableTime(date: Date): string {
-  const currentHour = date.getHours();
-  const currentMinutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
-  return `${currentHour}:${currentMinutes}`;
-}
-
-export async function transformToTweetableContent(message: ITweetBody): Promise<string> {
+export function transformToTweetableContent(message: ITweetBody): string {
   let headerTitle: string;
   switch (message.hours_to_match) {
     case 1:
@@ -36,20 +29,18 @@ export async function transformToTweetableContent(message: ITweetBody): Promise<
       headerTitle = "";
   }
 
+  const UKDate = moment(message.date_time).tz(UKTimeZoneName).format("dddd, MMMM DD, YYYY");
+  const UKTime = moment(message.date_time).tz(UKTimeZoneName).format("HH:mm");
+
   const transformed = {
     header: headerTitle,
     tournament: `${Emojis.tournament} ${message.tournament}`,
     teams: `${Emojis.versus} ${message.participants}`,
     stadium: `${Emojis.stadium} ${message.stadium}`,
-    date: `${Emojis.date} ${transformToReadableDate(message.date_time)}`,
-    time: `${Emojis.time} ${transformToReadableTime(message.date_time)} GMT+7`,
-    hashtag: `${Team.hashtag}`
+    date_time: `${Emojis.date} ${UKDate} (UK Date)`,
+    time: `${Emojis.time} ${UKTime} (UK Time)`,
+    hashtag: `${Team.hashtag} ${convertTournamentToHashTag(message.tournament)}`
   };
 
   return Object.values(transformed).join("\n").toString() as string;
 }
-
-export const exportedForTesting = {
-  transformToReadableDate,
-  transformToReadableTime
-};

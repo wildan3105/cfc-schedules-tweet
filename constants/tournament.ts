@@ -1,4 +1,4 @@
-export const Tournament: { [key: string]: string } = {
+export const Tournament = {
   PL: "#PL",
   UCL: "#UCL",
   FACUP: "#FACup",

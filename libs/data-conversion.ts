@@ -2,7 +2,7 @@
 import parseFormat = require("moment-parseformat");
 import moment = require("moment");
 
-import { SingleFixture } from "../interfaces/serp-api";
+import { Fixture, GameSpotlight } from "../interfaces/serp-api";
 import { RedisFixture } from "../interfaces/redis";
 import { PartialMonthToIndex } from "../enums/months";
 import { Team } from "../constants/team";
@@ -11,9 +11,9 @@ import { Time, defaultTimeFormat, TBDFormat } from "../constants/time-conversion
 const MOMENT_DEFAULT_FORMAT = "MMM D";
 
 function cleanseDate(date: string): string {
-  const excludedMomentFormats = ["MMM YY", "ddd, MMM YY", "ddd, MMM k", "MMM k"];
+  const excludedMomentFormats = ["MMM YY", "ddd, MMM YY", "ddd, MMM k", "MMM k", "MMM DD", "MMMM YY", "ddd, MMMM YY"];
   const momentFormat = parseFormat(date);
-  let clean;
+  let clean: string;
   /**
    * excluded because it's being falsy read
    * e.g.
@@ -28,6 +28,7 @@ function cleanseDate(date: string): string {
   } else {
     clean = moment(date, momentFormat).format(MOMENT_DEFAULT_FORMAT);
   }
+
   return clean;
 }
 
@@ -75,15 +76,18 @@ function convertDateTimeToUTC(date: string, time: string): Date {
   return dateTimeInUTC;
 }
 
+export function removeIncompleteSerpAPIData(fixtures: Fixture[]): Fixture[] {
+  return fixtures.filter(f => f.time !== "TBD" && f.date !== undefined);
+}
+
 function convertToTwitterAccountForChelseaFC(team: string): string {
   return team.includes(Team.name) ? Team.twitterAccount : team;
 }
 
-export async function convertToStandardSerpAPIResults(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any,
+export function convertToStandardSerpAPIResults(
+  data: GameSpotlight | Fixture,
   fromSpotlight: boolean
-): Promise<Record<string, unknown>> {
+): Record<string, unknown> {
   let time: unknown, date: string | string[];
   if (fromSpotlight) {
     time = data.date.split(",")[1].trim();
@@ -93,7 +97,7 @@ export async function convertToStandardSerpAPIResults(
     date = data.date.toLowerCase().trim();
   }
   if (date.includes("tomorrow")) {
-    date = moment(await addHours(24, new Date())).format(MOMENT_DEFAULT_FORMAT);
+    date = moment(addHours(24, new Date())).format(MOMENT_DEFAULT_FORMAT);
   } else if (date.includes("today")) {
     date = moment(new Date()).format(MOMENT_DEFAULT_FORMAT);
   }
@@ -106,7 +110,7 @@ export async function convertToStandardSerpAPIResults(
   };
 }
 
-export async function serpApiToRedis(fixtures: SingleFixture[]): Promise<RedisFixture[]> {
+export function serpApiToRedis(fixtures: Fixture[]): RedisFixture[] {
   fixtures.forEach(elem => {
     elem.participants = `${convertToTwitterAccountForChelseaFC(
       elem.teams[0].name
@@ -119,7 +123,7 @@ export async function serpApiToRedis(fixtures: SingleFixture[]): Promise<RedisFi
   return fixtures;
 }
 
-export async function addHours(numOfHours: number, date: Date): Promise<Date> {
+export function addHours(numOfHours: number, date: Date): Date {
   const dateCopy = new Date(date.getTime());
 
   dateCopy.setHours(dateCopy.getHours() + numOfHours);
@@ -131,5 +135,6 @@ export const exportedForTesting = {
   convertDateTimeToUTC,
   convertTo24HourFormat,
   cleanseDate,
-  convertToTwitterAccountForChelseaFC
+  convertToTwitterAccountForChelseaFC,
+  removeIncompleteSerpAPIData
 };

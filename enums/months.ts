@@ -12,18 +12,3 @@ export enum PartialMonthToIndex {
   Nov = 10,
   Dec = 11
 }
-
-export enum MonthIndexToFullMonth {
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December"
-}

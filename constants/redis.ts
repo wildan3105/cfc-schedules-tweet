@@ -1,6 +1,6 @@
-export const RedisTerms: { [key: string]: string } = {
+export const RedisTerms = {
   keyName: "fixtures",
-  topicName: "upcoming-fixtures"
+  channelName: "upcoming-fixtures"
 };
 
 export const defaultTTLInSeconds = 432000; // 5 days in seconds

@@ -5,6 +5,73 @@ import {
   serpApiToRedis
 } from "./data-conversion";
 
+describe("test to remove incomplete data", () => {
+  test("removeIncompleteSerpAPIData to return empty array if objects inside array don't have any date and time information", () => {
+    const rawData = [
+      {
+        teams: [
+          {
+            name: "First Club Football"
+          },
+          {
+            name: "Second Club Football"
+          }
+        ],
+        tournament: "Competition Cup",
+        stadium: "Homeground Stadium"
+      },
+      {
+        teams: [
+          {
+            name: "First Club Football (2)"
+          },
+          {
+            name: "Second Club Football (2)"
+          }
+        ],
+        tournament: "Competition Cup (2)",
+        stadium: "Homeground Stadium (2)"
+      }
+    ]
+    const completedData = exportedForTesting.removeIncompleteSerpAPIData(rawData);
+    expect(completedData).toEqual([]);
+  });
+
+  test("removeIncompleteSerpAPIData to return an array of an object if some of the objects inside array don't have any date and time information", () => {
+    const rawData = [
+      {
+        teams: [
+          {
+            name: "First Club Football"
+          },
+          {
+            name: "Second Club Football"
+          }
+        ],
+        tournament: "Competition Cup",
+        stadium: "Homeground Stadium",
+        date: "Feb 20",
+        time: "7:15 PM"
+      },
+      {
+        teams: [
+          {
+            name: "First Club Football (2)"
+          },
+          {
+            name: "Second Club Football (2)"
+          }
+        ],
+        tournament: "Competition Cup (2)",
+        stadium: "Homeground Stadium (2)"
+      }
+    ]
+    const completedData = exportedForTesting.removeIncompleteSerpAPIData(rawData);
+    expect(completedData).toHaveLength(1);
+    expect(completedData[0].time).toEqual("7:15 PM");
+  })
+})
+
 describe("test to ensure cleanseDate is giving the correct result", () => {
   test("cleanseDate to return month and date only when format is ddd, MMM D", () => {
     const rawDate = "Sat, Jul 30";
@@ -54,20 +121,28 @@ describe("test to ensure cleanseDate is giving the correct result", () => {
     expect(cleansedDate).toBe("Jul 15");
   });
 
-  test("cleanseDate to return month and date only when format is ddd, D MMMM", () => {
-    const rawDate = "Sat, 30 July";
-    const cleansedDate = exportedForTesting.cleanseDate(rawDate);
-    expect(cleansedDate).toBeDefined();
-    expect(typeof cleansedDate).toBe("string");
-    expect(cleansedDate).toBe("Jul 30");
-  });
-
   test("cleanseDate to return month and date only when format is MMM k", () => {
     const rawDate = "Sep 4";
     const cleansedDate = exportedForTesting.cleanseDate(rawDate);
     expect(cleansedDate).toBeDefined();
     expect(typeof cleansedDate).toBe("string");
     expect(cleansedDate).toBe("Sep 4");
+  });
+
+  test("cleanseDate to return month and date only when format is MMMM YY", () => {
+    const rawDate = "May 11";
+    const cleansedDate = exportedForTesting.cleanseDate(rawDate);
+    expect(cleansedDate).toBeDefined();
+    expect(typeof cleansedDate).toBe("string");
+    expect(cleansedDate).toBe("May 11");
+  });
+
+  test("cleanseDate to return month and date only when format is ddd, MMMM YY", () => {
+    const rawDate = "Sun, May 19";
+    const cleansedDate = exportedForTesting.cleanseDate(rawDate);
+    expect(cleansedDate).toBeDefined();
+    expect(typeof cleansedDate).toBe("string");
+    expect(cleansedDate).toBe("May 19");
   });
 });
 
@@ -181,7 +256,7 @@ describe("serpApiToRedis to return the correct format of data that'll be fed int
         stadium: "Stamford Bridge"
       }
     ];
-    const convertedData = await serpApiToRedis(serpApiData);
+    const convertedData = serpApiToRedis(serpApiData);
     expect(convertedData).toBeDefined();
     expect(typeof convertedData).toBe("object");
     expect(convertedData).toHaveLength(1);
@@ -192,7 +267,7 @@ describe("serpApiToRedis to return the correct format of data that'll be fed int
 describe("addHours to return the correct date after adding N hours from certain date", () => {
   test("addHours to return the correct date after added 7 hours", async () => {
     const now = new Date();
-    const addedDate = await addHours(7, now);
+    const addedDate = addHours(7, now);
     expect(addedDate).toBeDefined();
     expect(typeof addedDate).toBe("object");
   });
@@ -215,8 +290,8 @@ describe("convertToTwitterAccountForChelseaFC to return the correct format for t
 });
 
 describe("convertToStandardSerpAPIResults to return the correct and standard format of serp API result", () => {
-  test("convertToStandardSerpAPIResults to return the standard format of game result from game highlight when 'tomorrow' date is provided inside game_spotlight", async () => {
-    const gameHighlight = {
+  test("convertToStandardSerpAPIResults to return the standard format of game result from game spotlight when 'tomorrow' date is provided inside game_spotlight", async () => {
+    const gameSpotlight = {
       league: "Florida Cup",
       date: "tomorrow, 7:00 am",
       stage: "Finale",
@@ -227,16 +302,17 @@ describe("convertToStandardSerpAPIResults to return the correct and standard for
         {
           name: "Arsenal"
         }
-      ]
+      ],
+      stadium: "Stamford Bridge"
     };
-    const convertedGameHighlight = await convertToStandardSerpAPIResults(gameHighlight, true);
-    expect(typeof convertedGameHighlight).toBe("object");
-    expect(typeof convertedGameHighlight.date).toBe("string");
-    expect(convertedGameHighlight.time).toEqual("7:00 am");
+    const convertedGameSpotlight = convertToStandardSerpAPIResults(gameSpotlight, true);
+    expect(typeof convertedGameSpotlight).toBe("object");
+    expect(typeof convertedGameSpotlight.date).toBe("string");
+    expect(convertedGameSpotlight.time).toEqual("7:00 am");
   });
 
   test("convertToStandardSerpAPIResults to return the standard format of game result from game highlight when 'today' date is provided outside of game_spotlight", async () => {
-    const gameHighlight = {
+    const gameSpotlight = {
       league: "Florida Cup",
       date: "today",
       time: "11:00 am",
@@ -248,11 +324,12 @@ describe("convertToStandardSerpAPIResults to return the correct and standard for
         {
           name: "Arsenal"
         }
-      ]
+      ],
+      stadium: "Stamford Bridge"
     };
-    const convertedGameHighlight = await convertToStandardSerpAPIResults(gameHighlight, false);
-    expect(typeof convertedGameHighlight).toBe("object");
-    expect(typeof convertedGameHighlight.date).toBe("string");
-    expect(convertedGameHighlight.time).toEqual("11:00 am");
+    const convertedGameSpotlight = convertToStandardSerpAPIResults(gameSpotlight, false);
+    expect(typeof convertedGameSpotlight).toBe("object");
+    expect(typeof convertedGameSpotlight.date).toBe("string");
+    expect(convertedGameSpotlight.time).toEqual("11:00 am");
   });
 });

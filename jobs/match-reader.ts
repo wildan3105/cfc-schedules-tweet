@@ -1,75 +1,108 @@
 import { RedisStorage } from "../modules/redis";
-import { publishMessage } from "../events/pub";
 import { injectEnv } from "../libs/inject-env";
 import { RedisTerms } from "../constants/redis";
 import { Time } from "../constants/time-conversion";
 import { calculateDateDiffsInHours } from "../libs/calculation";
+import { loggerService } from "../modules/log";
+import { RedisFixture } from "../interfaces/redis";
 
 injectEnv();
 
+const REDIS_URL = process.env.REDIS_URL;
 const redisConfig = {
-  redisURL: process.env.REDIS_URL
+  redisURL: REDIS_URL
 };
-
-const Redis = new RedisStorage(redisConfig);
 
 interface IBody {
   hours_to_match: number;
-  message: Record<string, unknown>;
+  message: RedisFixture;
 }
 
-async function getMatchesAndPublish(): Promise<void> {
-  await Redis.init();
-  const matches = JSON.parse(await Redis.get(RedisTerms.keyName));
-  const now = new Date();
-  const upcomingMatch = new Date(matches[0].date_time);
+export class MatchReader {
+  constructor(private redis: RedisStorage) {}
 
-  const diffInHours = await calculateDateDiffsInHours(now, upcomingMatch);
+  public async getMatchesAndPublish(): Promise<void> {
+    try {
+      const matches = await this.fetchMatches();
+      if (!this.isValidMatchList(matches)) {
+        loggerService.warn(`Nothing to read from redis. Exit early`);
+        return;
+      }
 
-  console.log(`diffInHours is : ${diffInHours}`);
+      const now = new Date();
+      const upcomingMatch = new Date(matches[0].date_time);
+      const diffInHours = calculateDateDiffsInHours(now, upcomingMatch);
 
-  if (diffInHours <= Time.hoursInADay) {
-    const msg: IBody = {
-      message: matches[0],
-      hours_to_match: diffInHours
-    };
-    await publishMessage({
-      channel: RedisTerms.topicName,
-      message: JSON.stringify(msg)
-    });
+      loggerService.info(`Upcoming match ${JSON.stringify(matches[0])} will be played in ${diffInHours} hour(s)`);
 
-    // remove the entry from the key if only difference is 1 hour
-    if (diffInHours === 1) {
-      matches.shift();
-      const currentTTL = await Redis.getTTL(RedisTerms.keyName);
+      if (diffInHours <= Time.hoursInADay) {
+        await this.publishMatch(matches[0], diffInHours);
 
-      await Redis.set(RedisTerms.keyName, JSON.stringify(matches), currentTTL);
+        if (diffInHours === 1) {
+          await this.removePublishedMatch(matches);
+        }
+      }
+    } catch (e) {
+      loggerService.error(`Failed to get matches and publish: ${e}`);
     }
   }
+
+  private async fetchMatches(): Promise<RedisFixture[]> {
+    const matchData = await this.redis.get(RedisTerms.keyName);
+    return JSON.parse(matchData);
+  }
+
+  private isValidMatchList(matches: RedisFixture[]): boolean {
+    return Array.isArray(matches) && matches.length > 0;
+  }
+
+  private async publishMatch(match: RedisFixture, diffInHours: number): Promise<void> {
+    const msg: IBody = {
+      message: match,
+      hours_to_match: diffInHours,
+    };
+    await this.redis.publish(RedisTerms.channelName, JSON.stringify(msg));
+  }
+
+  private async removePublishedMatch(matches: RedisFixture[]): Promise<void> {
+    matches.shift();
+    const currentTTL = await this.redis.getTTL(RedisTerms.keyName);
+    await this.redis.set(RedisTerms.keyName, JSON.stringify(matches), currentTTL);
+  }
 }
 
-process.on("uncaughtException", e => {
+const handleUncaughtException = (e: Error) => {
   setTimeout(() => {
-    console.log(`an error occured [uncaughtException]`, e);
+    loggerService.error(`An error occurred [uncaughtException]: ${e}`);
     process.exit(1);
   }, 3000);
-});
+};
 
-process.on("unhandledRejection", e => {
+const handleUnhandledRejection = (e: Error) => {
   setTimeout(() => {
-    console.log(`an error occured [unhandledRejection]`, e);
+    loggerService.error(`An error occurred [unhandledRejection]: ${e}`);
     process.exit(1);
   }, 3000);
-});
+};
 
-(async () => {
-  try {
-    await getMatchesAndPublish();
-    setTimeout(() => {
-      process.exit(0);
-    }, 3000);
-  } catch (e) {
-    console.log(`an error occured`, e);
-    process.exit(1);
-  }
-})();
+process.on("uncaughtException", handleUncaughtException);
+process.on("unhandledRejection", handleUnhandledRejection);
+
+if (require.main === module) {
+  (async () => {
+    const redisClient = new RedisStorage(redisConfig);
+    await redisClient.init();
+
+    const matchReader = new MatchReader(redisClient);
+
+    try {
+      await matchReader.getMatchesAndPublish();
+    } catch (e) {
+      loggerService.error(`An error occurred when executing match reader cron: ${e}`);
+      process.exit(1);
+    } finally {
+      loggerService.info(`Match reader cron executed.`);
+      await redisClient.close();
+    }
+  })();
+}
