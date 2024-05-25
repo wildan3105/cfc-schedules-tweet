@@ -66,7 +66,7 @@ export class HTTP {
     };
     const authHeader = {
       'X-ElasticEmail-ApiKey': ELASTIC_EMAIL_API_KEY
-    } as AxiosRequestHeaders;
+    } as unknown as AxiosRequestHeaders;
 
     try {
       await axios.post(request.url, request.body, { headers: authHeader });
