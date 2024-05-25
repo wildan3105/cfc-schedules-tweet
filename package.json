@@ -4,7 +4,7 @@
   "description": "Send tweet ahead of CFC's match",
   "main": "./build/jobs/match-fetcher.js",
   "dependencies": {
-    "axios": "0.27.2",
+    "axios": "^1.7.2",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.1",
     "ioredis": "^5.1.0",
@@ -15,7 +15,7 @@
     "ts-node-dev": "^2.0.0"
   },
   "engines": {
-    "node": "12.x"
+    "node": "20.x"
   },
   "scripts": {
     "build": "tsc",
@@ -27,7 +27,7 @@
     "lint": "eslint ./**/*.ts",
     "format": "prettier --config .prettierrc --write './**/*.ts'",
     "test": "jest --detectOpenHandles ./**/*.test.ts",
-    "test:match-fetcher": "jest --detectOpenHandles ./jobs/match-fetcher.test.ts"
+    "test:match-reader": "jest --detectOpenHandles ./jobs/match-reader.test.ts"
   },
   "husky": {
     "hooks": {
