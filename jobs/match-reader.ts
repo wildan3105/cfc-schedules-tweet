@@ -18,7 +18,7 @@ interface IBody {
   message: RedisFixture;
 }
 
-class MatchReader {
+export class MatchReader {
   constructor(private redis: RedisStorage) {}
 
   public async getMatchesAndPublish(): Promise<void> {
