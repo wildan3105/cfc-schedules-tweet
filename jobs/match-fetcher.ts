@@ -81,19 +81,22 @@ export class MatchFetcher {
   }
 }
 
-process.on("uncaughtException", e => {
+const handleUncaughtException = (e: Error) => {
   setTimeout(() => {
-    loggerService.error(`an error occurred [uncaughtException]: ${e}`);
+    loggerService.error(`An error occurred [uncaughtException]: ${e}`);
     process.exit(1);
   }, 3000);
-});
+};
 
-process.on("unhandledRejection", e => {
+const handleUnhandledRejection = (e: Error) => {
   setTimeout(() => {
-    loggerService.error(`an error occurred [unhandledRejection]: ${e}`);
+    loggerService.error(`An error occurred [unhandledRejection]: ${e}`);
     process.exit(1);
   }, 3000);
-});
+};
+
+process.on("uncaughtException", handleUncaughtException);
+process.on("unhandledRejection", handleUnhandledRejection);
 
 // this conditional is necessary so that other files importing this
 // won't execute the file immediately
