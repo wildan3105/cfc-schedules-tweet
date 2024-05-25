@@ -4,3 +4,8 @@ export interface RedisFixture {
   date_time?: Date;
   stadium?: string;
 }
+
+export interface IPublishedMessage {
+  hours_to_match: number;
+  message: RedisFixture
+}

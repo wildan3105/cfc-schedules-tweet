@@ -4,7 +4,7 @@ import { RedisTerms } from "../constants/redis";
 import { Time } from "../constants/time-conversion";
 import { calculateDateDiffsInHours } from "../libs/calculation";
 import { loggerService } from "../modules/log";
-import { RedisFixture } from "../interfaces/redis";
+import { IPublishedMessage, RedisFixture } from "../interfaces/redis";
 
 injectEnv();
 
@@ -57,7 +57,7 @@ export class MatchReader {
   }
 
   private async publishMatch(match: RedisFixture, diffInHours: number): Promise<void> {
-    const msg: IBody = {
+    const msg: IPublishedMessage = {
       message: match,
       hours_to_match: diffInHours,
     };
