@@ -28,7 +28,7 @@
     "lint": "eslint ./**/*.ts",
     "format": "prettier --config .prettierrc --write './**/*.ts'",
     "test": "jest --detectOpenHandles ./**/*.test.ts",
-    "test:match-reader": "jest --detectOpenHandles ./jobs/match-reader.test.ts"
+    "test:subscriber": "jest --detectOpenHandles ./events/subscriber.test.ts"
   },
   "husky": {
     "hooks": {
