@@ -24,7 +24,7 @@ interface ITweet {
   };
 }
 
-class Subscriber {
+export class Subscriber {
   private httpController: HTTP;
 
   constructor(
@@ -33,9 +33,29 @@ class Subscriber {
     this.httpController = new HTTP();
   }
 
-  private async initializeRedis(): Promise<void> {
-    if (!this.redis.initialized()) {
-      await this.redis.init();
+  public async subscribeToChannel(channel: string): Promise<void> {
+    loggerService.info(`Subscribing to ${channel} ...`);
+    try {
+      await this.redis.subscribe(channel);
+      this.redis.on("message", this.handleMessage.bind(this));
+    } catch (e) {
+      loggerService.error(`An error occurred when subscribing to ${channel}: ${e}`);
+    }
+  }
+
+  private async handleMessage(_: string, message: string): Promise<void> {
+    try {
+      const parsedMessage = JSON.parse(message);
+      loggerService.info(`New message received: ${JSON.stringify(parsedMessage)}`);
+
+      if (this.shouldSendReminder(parsedMessage.hours_to_match)) {
+        loggerService.info(
+          `Attempting to tweet a match that's about to begin in ${parsedMessage.hours_to_match} hours`
+        );
+        await this.sendTweet(parsedMessage);
+      }
+    } catch (error) {
+      loggerService.error(`Failed to handle message: ${error}`);
     }
   }
 
@@ -46,48 +66,36 @@ class Subscriber {
       stadium: tweetContent.message.stadium,
       participants: tweetContent.message.participants,
       tournament: tweetContent.message.tournament,
-      date_time: matchSchedule
+      date_time: matchSchedule,
     };
     const transformedTweetContent = transformToTweetableContent(contentToTransform);
-    const tweetMsg = {
-      text: transformedTweetContent
-    };
-    await this.httpController.post(tweetMsg);
-  }
-  
-  private shouldSendReminder(reminder_time: number): boolean {
-    if (remindInNHours.includes(reminder_time)) {
-      return true;
-    }
-    return false;
-  }
-  
-  public async subscribeMessage(channel: string): Promise<void> {
-    loggerService.info(`Subscribing to ${channel} ...`)
+    const tweetMsg = { text: transformedTweetContent };
+
     try {
-      await this.initializeRedis();
-      await this.redis.subscribe(channel);
-      this.redis.on("message", async (_, message) => {
-        const cleansed = JSON.parse(message);
-        loggerService.info(`New message received: ${cleansed}`);
-        if (this.shouldSendReminder(cleansed.hours_to_match)) {
-          loggerService.info(`This is attempting to tweet a match that's about to begin in ${cleansed.hours_to_match} hours`)
-          await this.sendTweet(cleansed);
-        }
-      });
-    } catch (e) {
-      loggerService.error(`an error occured when subscribing message to ${channel}: ${e} `);
+      await this.httpController.post(tweetMsg);
+    } catch (error) {
+      loggerService.error(`Failed to send tweet: ${error}`);
     }
   }
+
+  private shouldSendReminder(reminderTime: number): boolean {
+    return remindInNHours.includes(reminderTime);
+  }
+
 }
 
-(async () => {
-  try {
+
+if (require.main === module) {
+  (async () => {
     const redisClient = new RedisStorage(redisConfig);
+    await redisClient.init();
     const subscriber = new Subscriber(redisClient);
-    await subscriber.subscribeMessage(RedisTerms.channelName);
-  } catch (e) {
-    loggerService.error(`an error occured: ${e}`);
-    process.exit(1);
-  }
-})();
+  
+    try {
+      await subscriber.subscribeToChannel(RedisTerms.channelName);
+    } catch (e) {
+      loggerService.error(`an error occured: ${e}`);
+      process.exit(1);
+    }
+  })();  
+}
