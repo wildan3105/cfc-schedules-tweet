@@ -37,10 +37,6 @@ describe("Subscriber integration test", () => {
     })
 
     describe("Subscriber normal flow", () => {
-        it("should subscribe to a channel", async () => {
-
-        })
-
         it("should subscribe to a channel and log the error if any process encounters an error", async () => {
             const error = new Error("Subscribe error");
 
