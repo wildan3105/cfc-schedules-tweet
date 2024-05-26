@@ -13,11 +13,6 @@ const redisConfig = {
   redisURL: REDIS_URL
 };
 
-interface IBody {
-  hours_to_match: number;
-  message: RedisFixture;
-}
-
 export class MatchReader {
   constructor(private redis: RedisStorage) {}
 
