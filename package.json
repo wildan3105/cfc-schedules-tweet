@@ -28,11 +28,6 @@
     "format": "prettier --config .prettierrc --write './**/*.ts'",
     "test": "jest --detectOpenHandles ./**/*.test.ts"
   },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run lint && npm run test"
-    }
-  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -48,7 +43,7 @@
     "body-parser": "^1.20.2",
     "eslint": "^8.18.0",
     "express": "^4.19.2",
-    "husky": "^4.3.8",
+    "husky": "^9.0.11",
     "jest": "^28.1.2",
     "lint-staged": "^15.2.5",
     "prettier": "3.2.5",
