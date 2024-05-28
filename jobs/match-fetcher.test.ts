@@ -305,7 +305,7 @@ describe("MatchFetcher integration test", () => {
       expect(mockHttpGet).not.toHaveBeenCalled();
     });
 
-    it('should call sendReportingEmail when one of the functions inside fetchAndSet() is returning error', async () => {
+    it("should call sendReportingEmail when one of the functions inside fetchAndSet() is returning error", async () => {
       const error = new Error("API failure");
       mockHttpGet.mockRejectedValueOnce(error);
 
@@ -315,7 +315,7 @@ describe("MatchFetcher integration test", () => {
 
       expect(mockHttpGet).toHaveBeenCalled();
 
-      expect(mockSendEmail).toHaveBeenCalledWith(expect.stringContaining("API failure"), 'Match fetcher cron');
+      expect(mockSendEmail).toHaveBeenCalledWith(expect.stringContaining("API failure"), "Match fetcher cron");
     })
   });
 });
