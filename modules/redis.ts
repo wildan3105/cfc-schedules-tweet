@@ -41,7 +41,7 @@ export class RedisStorage extends EventEmitter {
     // for future use
     this.redisClient.on("ready", () => {});
     this.redisClient.on("error", e => {
-      loggerService.error(`an error occured: ${e}`);
+      loggerService.error(`an error occured: ${JSON.stringify(e)}`);
     });
     this.redisClient.on("close", async () => {});
     this.redisClient.on("reconnecting", () => {});

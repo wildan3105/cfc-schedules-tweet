@@ -1,5 +1,5 @@
 import oauth1a = require("oauth-1.0a");
-import legacyCrypto = require("crypto");
+import { createHmac, BinaryLike, KeyObjectType } from "crypto";
 
 import { Content } from "../interfaces/tweet";
 
@@ -13,10 +13,10 @@ export class Oauth1Helper {
       },
       signature_method: "HMAC-SHA1",
       hash_function(
-        base_string: legacyCrypto.BinaryLike,
-        key: legacyCrypto.BinaryLike | legacyCrypto.KeyObject
+        base_string: BinaryLike,
+        key: BinaryLike | KeyObjectType
       ) {
-        return legacyCrypto.createHmac("sha1", key).update(base_string).digest("base64");
+        return createHmac("sha1", key).update(base_string).digest("base64");
       }
     });
 

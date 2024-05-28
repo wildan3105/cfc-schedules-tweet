@@ -84,14 +84,14 @@ class SerpAPIHealthCheck {
 
 process.on("uncaughtException", e => {
     setTimeout(() => {
-        loggerService.error(`an error occured [uncaughtException]: ${e}`);
+        loggerService.error(`an error occured [uncaughtException]: ${JSON.stringify(e)}`);
         process.exit(1);
     }, 3000);
 });
   
 process.on("unhandledRejection", e => {
     setTimeout(() => {
-        loggerService.error(`an error occured [unhandledRejection]: ${e}`);
+        loggerService.error(`an error occured [unhandledRejection]: ${JSON.stringify(e)}`);
         process.exit(1);
     }, 3000);
 });
@@ -102,7 +102,7 @@ process.on("unhandledRejection", e => {
         const matches = await healthcheck.getMatches();
         await healthcheck.sendReportingEmail(matches);
     } catch (e) {
-        loggerService.error(`an error occured when performing serp API healthcheck cron: ${e}`);
+        loggerService.error(`an error occured when performing serp API healthcheck cron: ${JSON.stringify(e)}`);
         process.exit(1);
     } finally {
         loggerService.info(`SerpAPI Healthcheck cron executed.`)

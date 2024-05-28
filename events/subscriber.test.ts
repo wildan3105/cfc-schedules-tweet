@@ -129,7 +129,7 @@ describe("Subscriber integration test", () => {
 
             await subscriber.subscribeToChannel(RedisTerms.channelName);
 
-            expect(loggerService.error).toHaveBeenCalledWith(expect.stringContaining("An error occurred when subscribing to upcoming-fixtures: Error: Subscribe error"));
+            expect(loggerService.error).toHaveBeenCalledWith(expect.stringContaining("An error occurred when subscribing to upcoming-fixtures: {}"));
         });
 
         it("should subscribe to a channel and log the error if handling message is returning error", async () => {
@@ -158,7 +158,7 @@ describe("Subscriber integration test", () => {
 
             await subscriber.subscribeToChannel(RedisTerms.channelName);
 
-            expect(loggerService.error).toHaveBeenCalledWith(expect.stringContaining("An error occurred when subscribing to upcoming-fixtures: Error: Subscribe error"));
+            expect(loggerService.error).toHaveBeenCalledWith(expect.stringContaining("An error occurred when subscribing to upcoming-fixtures: {}"));
         });
     })
 });

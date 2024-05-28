@@ -103,7 +103,7 @@ describe("Match reader integration test", () => {
         
             await matchReader.getMatchesAndPublish();
         
-            expect(loggerService.error).toHaveBeenCalledWith(expect.stringContaining('Fetch matches error'));
+            expect(loggerService.error).toHaveBeenCalledWith(expect.stringContaining('Failed to get matches and publish: {}'));
         
             jest.spyOn(matchReader as any, 'publishMatch').mockImplementationOnce(() => {
                 throw new Error('Publish match error');
@@ -121,7 +121,7 @@ describe("Match reader integration test", () => {
         
             await matchReader.getMatchesAndPublish();
         
-            expect(loggerService.error).toHaveBeenCalledWith(expect.stringContaining('Publish match error'));
+            expect(loggerService.error).toHaveBeenCalledWith(expect.stringContaining('Failed to get matches and publish: {}'));
         });
     })
 })

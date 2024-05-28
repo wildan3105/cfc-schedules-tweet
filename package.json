@@ -5,7 +5,6 @@
   "main": "./build/jobs/match-fetcher.js",
   "dependencies": {
     "axios": "^1.7.2",
-    "crypto": "^1.0.1",
     "dotenv": "^16.0.1",
     "ioredis": "^5.1.0",
     "moment": "^2.29.4",
@@ -16,7 +15,7 @@
   },
   "engines": {
     "node": "20.x",
-    "npm": "9.x"
+    "npm": "10.x"
   },
   "scripts": {
     "build": "tsc",
@@ -27,8 +26,7 @@
     "subscriber-js": "node build/events/subscriber.js",
     "lint": "eslint ./**/*.ts",
     "format": "prettier --config .prettierrc --write './**/*.ts'",
-    "test": "jest --detectOpenHandles ./**/*.test.ts",
-    "test:subscriber": "jest --detectOpenHandles ./events/subscriber.test.ts"
+    "test": "jest --detectOpenHandles ./**/*.test.ts"
   },
   "husky": {
     "hooks": {

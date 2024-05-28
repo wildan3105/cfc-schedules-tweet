@@ -38,7 +38,7 @@ export class MatchReader {
         }
       }
     } catch (e) {
-      loggerService.error(`Failed to get matches and publish: ${e}`);
+      loggerService.error(`Failed to get matches and publish: ${JSON.stringify(e)}`);
     }
   }
 
@@ -68,14 +68,14 @@ export class MatchReader {
 
 const handleUncaughtException = (e: Error) => {
   setTimeout(() => {
-    loggerService.error(`An error occurred [uncaughtException]: ${e}`);
+    loggerService.error(`An error occurred [uncaughtException]: ${JSON.stringify(e)}`);
     process.exit(1);
   }, 3000);
 };
 
 const handleUnhandledRejection = (e: Error) => {
   setTimeout(() => {
-    loggerService.error(`An error occurred [unhandledRejection]: ${e}`);
+    loggerService.error(`An error occurred [unhandledRejection]: ${JSON.stringify(e)}`);
     process.exit(1);
   }, 3000);
 };
@@ -93,7 +93,7 @@ if (require.main === module) {
     try {
       await matchReader.getMatchesAndPublish();
     } catch (e) {
-      loggerService.error(`An error occurred when executing match reader cron: ${e}`);
+      loggerService.error(`An error occurred when executing match reader cron: ${JSON.stringify(e)}`);
       process.exit(1);
     } finally {
       loggerService.info(`Match reader cron executed.`);
