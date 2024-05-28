@@ -23,7 +23,7 @@ export class HTTP {
     try {
       await axios.post(request.url, request.body, { headers: authHeader });
     } catch (e) {
-      loggerService.error(`There's an error when calling twitter API. Details: ${e}`);
+      loggerService.error(`There's an error when calling twitter API. Details: ${JSON.stringify(e)}`);
     }
   }
 
@@ -39,7 +39,7 @@ export class HTTP {
       });
       return response.data;
     } catch (e) {
-      loggerService.error(`There's an error when calling Serp API. Details: ${e}`);
+      loggerService.error(`There's an error when calling Serp API. Details: ${JSON.stringify(e)}`);
     }
   }
 
@@ -71,7 +71,7 @@ export class HTTP {
     try {
       await axios.post(request.url, request.body, { headers: authHeader });
     } catch (e) {
-      loggerService.error(`There's an error when calling Elastic Email API. Details: ${e}`);
+      loggerService.error(`There's an error when calling Elastic Email API. Details: ${JSON.stringify(e)}`);
     }
   }
 }

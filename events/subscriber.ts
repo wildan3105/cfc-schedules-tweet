@@ -39,7 +39,7 @@ export class Subscriber {
       await this.redis.subscribe(channel);
       this.redis.on("message", this.handleMessage.bind(this));
     } catch (e) {
-      loggerService.error(`An error occurred when subscribing to ${channel}: ${e}`);
+      loggerService.error(`An error occurred when subscribing to ${channel}: ${JSON.stringify(e)}`);
     }
   }
 
@@ -54,8 +54,8 @@ export class Subscriber {
         );
         await this.sendTweet(parsedMessage);
       }
-    } catch (error) {
-      loggerService.error(`Failed to handle message: ${error}`);
+    } catch (e) {
+      loggerService.error(`Failed to handle message: ${JSON.stringify(e)}`);
     }
   }
 
@@ -73,8 +73,8 @@ export class Subscriber {
 
     try {
       await this.httpController.post(tweetMsg);
-    } catch (error) {
-      loggerService.error(`Failed to send tweet: ${error}`);
+    } catch (e) {
+      loggerService.error(`Failed to send tweet: ${JSON.stringify(e)}`);
     }
   }
 
@@ -94,7 +94,7 @@ if (require.main === module) {
     try {
       await subscriber.subscribeToChannel(RedisTerms.channelName);
     } catch (e) {
-      loggerService.error(`an error occured: ${e}`);
+      loggerService.error(`an error occured: ${JSON.stringify(e)}`);
       process.exit(1);
     }
   })();  

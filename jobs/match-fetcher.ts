@@ -33,7 +33,7 @@ export class MatchFetcher {
         await this.processAndStoreData(data);
       }
     } catch (e) {
-      loggerService.error(`Failed to fetch matches from SerpAPI: ${e}`);
+      loggerService.error(`Failed to fetch matches from SerpAPI: ${JSON.stringify(e)}`);
       const error = new Error(e);
       const errorMessage = `Title: <b> ${error.name} </b> <br><br> Message: ${error.message} <br><br> Stack: ${error.stack ? error.stack : ''}`;
       await this.sendReportingEmail(errorMessage, 'Match fetcher cron');
@@ -83,14 +83,14 @@ export class MatchFetcher {
 
 const handleUncaughtException = (e: Error) => {
   setTimeout(() => {
-    loggerService.error(`An error occurred [uncaughtException]: ${e}`);
+    loggerService.error(`An error occurred [uncaughtException]: ${JSON.stringify(e)}`);
     process.exit(1);
   }, 3000);
 };
 
 const handleUnhandledRejection = (e: Error) => {
   setTimeout(() => {
-    loggerService.error(`An error occurred [unhandledRejection]: ${e}`);
+    loggerService.error(`An error occurred [unhandledRejection]: ${JSON.stringify(e)}`);
     process.exit(1);
   }, 3000);
 };
@@ -110,7 +110,7 @@ if (require.main === module) {
     try {
       await matchFetcher.fetchAndSet();
     } catch (e) {
-      loggerService.error(`an error occurred when executing match fetcher cron: ${e}`);
+      loggerService.error(`an error occurred when executing match fetcher cron: ${JSON.stringify(e)}`);
       process.exit(1);
     } finally {
       loggerService.info(`Match fetcher cron executed.`)
