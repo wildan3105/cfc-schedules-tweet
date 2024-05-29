@@ -126,18 +126,10 @@ describe("MatchFetcher integration test", () => {
 
       const jsonData: RedisWithReminder[] = JSON.parse(storedData);
       expect(jsonData).toHaveLength(expectedMatchesLength * remindInNHours.length);
-      expect(jsonData[0].hours_to_match).toEqual(
-        1
-      );
-      expect(jsonData[1].hours_to_match).toEqual(
-        24
-      );
-      expect(jsonData[2].hours_to_match).toEqual(
-        1
-      );
-      expect(jsonData[3].hours_to_match).toEqual(
-        24
-      );
+      expect(jsonData[0].hours_to_match).toEqual(1);
+      expect(jsonData[1].hours_to_match).toEqual(24);
+      expect(jsonData[2].hours_to_match).toEqual(1);
+      expect(jsonData[3].hours_to_match).toEqual(24);
       expect(jsonData[0].participants).toEqual("@ChelseaFC vs Manchester City");
       expect(jsonData[0].tournament).toEqual("FA Cup");
       expect(jsonData[0].date_time).toBeTruthy();
@@ -237,24 +229,12 @@ describe("MatchFetcher integration test", () => {
 
       const jsonData: RedisWithReminder[] = JSON.parse(storedData);
       expect(jsonData).toHaveLength(expectedMatchesLength * remindInNHours.length);
-      expect(jsonData[0].hours_to_match).toEqual(
-        1
-      );
-      expect(jsonData[1].hours_to_match).toEqual(
-        24
-      );
-      expect(jsonData[2].hours_to_match).toEqual(
-        1
-      );
-      expect(jsonData[3].hours_to_match).toEqual(
-        24
-      );
-      expect(jsonData[4].hours_to_match).toEqual(
-        1
-      );
-      expect(jsonData[5].hours_to_match).toEqual(
-        24
-      );
+      expect(jsonData[0].hours_to_match).toEqual(1);
+      expect(jsonData[1].hours_to_match).toEqual(24);
+      expect(jsonData[2].hours_to_match).toEqual(1);
+      expect(jsonData[3].hours_to_match).toEqual(24);
+      expect(jsonData[4].hours_to_match).toEqual(1);
+      expect(jsonData[5].hours_to_match).toEqual(24);
       expect(jsonData[0].participants).toEqual("@ChelseaFC vs Manchester United");
       expect(jsonData[0].tournament).toEqual("Carabao Cup");
       expect(jsonData[0].date_time).toBeTruthy();
@@ -346,18 +326,10 @@ describe("MatchFetcher integration test", () => {
 
       const jsonData: RedisWithReminder[] = JSON.parse(storedData);
       expect(jsonData).toHaveLength(expectedMatchesLength * remindInNHours.length);
-      expect(jsonData[0].hours_to_match).toEqual(
-        1
-      );
-      expect(jsonData[1].hours_to_match).toEqual(
-        24
-      );
-      expect(jsonData[2].hours_to_match).toEqual(
-        1
-      );
-      expect(jsonData[3].hours_to_match).toEqual(
-        24
-      );
+      expect(jsonData[0].hours_to_match).toEqual(1);
+      expect(jsonData[1].hours_to_match).toEqual(24);
+      expect(jsonData[2].hours_to_match).toEqual(1);
+      expect(jsonData[3].hours_to_match).toEqual(24);
       expect(jsonData[0].participants).toEqual("Liverpool vs @ChelseaFC");
       expect(jsonData[0].tournament).toEqual("Premier League");
       expect(jsonData[0].date_time).toBeTruthy();
