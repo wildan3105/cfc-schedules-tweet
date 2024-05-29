@@ -7,9 +7,6 @@ import { RedisTerms } from "../constants/redis";
 import { lowerLimitToFetchAPI, remindInNHours } from "../constants/time-conversion";
 import { APIResponse } from "../interfaces/serp-api";
 import { RedisWithReminder } from "../interfaces/redis";
-import { calculateDateDiffsInHours } from "../libs/calculation";
-
-jest.mock("../modules/http");
 
 const baseSerpAPIResponse = {
   search_metadata: {
@@ -129,16 +126,16 @@ describe("MatchFetcher integration test", () => {
 
       const jsonData: RedisWithReminder[] = JSON.parse(storedData);
       expect(jsonData).toHaveLength(expectedMatchesLength * remindInNHours.length);
-      expect(calculateDateDiffsInHours(jsonData[0].reminder_time, jsonData[0].date_time)).toEqual(
+      expect(jsonData[0].hours_to_match).toEqual(
         1
       );
-      expect(calculateDateDiffsInHours(jsonData[1].reminder_time, jsonData[1].date_time)).toEqual(
+      expect(jsonData[1].hours_to_match).toEqual(
         24
       );
-      expect(calculateDateDiffsInHours(jsonData[2].reminder_time, jsonData[2].date_time)).toEqual(
+      expect(jsonData[2].hours_to_match).toEqual(
         1
       );
-      expect(calculateDateDiffsInHours(jsonData[3].reminder_time, jsonData[3].date_time)).toEqual(
+      expect(jsonData[3].hours_to_match).toEqual(
         24
       );
       expect(jsonData[0].participants).toEqual("@ChelseaFC vs Manchester City");
@@ -240,22 +237,22 @@ describe("MatchFetcher integration test", () => {
 
       const jsonData: RedisWithReminder[] = JSON.parse(storedData);
       expect(jsonData).toHaveLength(expectedMatchesLength * remindInNHours.length);
-      expect(calculateDateDiffsInHours(jsonData[0].reminder_time, jsonData[0].date_time)).toEqual(
+      expect(jsonData[0].hours_to_match).toEqual(
         1
       );
-      expect(calculateDateDiffsInHours(jsonData[1].reminder_time, jsonData[1].date_time)).toEqual(
+      expect(jsonData[1].hours_to_match).toEqual(
         24
       );
-      expect(calculateDateDiffsInHours(jsonData[2].reminder_time, jsonData[2].date_time)).toEqual(
+      expect(jsonData[2].hours_to_match).toEqual(
         1
       );
-      expect(calculateDateDiffsInHours(jsonData[3].reminder_time, jsonData[3].date_time)).toEqual(
+      expect(jsonData[3].hours_to_match).toEqual(
         24
       );
-      expect(calculateDateDiffsInHours(jsonData[4].reminder_time, jsonData[4].date_time)).toEqual(
+      expect(jsonData[4].hours_to_match).toEqual(
         1
       );
-      expect(calculateDateDiffsInHours(jsonData[5].reminder_time, jsonData[5].date_time)).toEqual(
+      expect(jsonData[5].hours_to_match).toEqual(
         24
       );
       expect(jsonData[0].participants).toEqual("@ChelseaFC vs Manchester United");
@@ -349,16 +346,16 @@ describe("MatchFetcher integration test", () => {
 
       const jsonData: RedisWithReminder[] = JSON.parse(storedData);
       expect(jsonData).toHaveLength(expectedMatchesLength * remindInNHours.length);
-      expect(calculateDateDiffsInHours(jsonData[0].reminder_time, jsonData[0].date_time)).toEqual(
+      expect(jsonData[0].hours_to_match).toEqual(
         1
       );
-      expect(calculateDateDiffsInHours(jsonData[1].reminder_time, jsonData[1].date_time)).toEqual(
+      expect(jsonData[1].hours_to_match).toEqual(
         24
       );
-      expect(calculateDateDiffsInHours(jsonData[2].reminder_time, jsonData[2].date_time)).toEqual(
+      expect(jsonData[2].hours_to_match).toEqual(
         1
       );
-      expect(calculateDateDiffsInHours(jsonData[3].reminder_time, jsonData[3].date_time)).toEqual(
+      expect(jsonData[3].hours_to_match).toEqual(
         24
       );
       expect(jsonData[0].participants).toEqual("Liverpool vs @ChelseaFC");

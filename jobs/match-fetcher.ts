@@ -68,6 +68,7 @@ export class MatchFetcher {
       remindInNHours.forEach(hours => {
         acc.push({
           reminder_time: adjustHours("substract", hours, c.date_time),
+          hours_to_match: hours,
           ...c
         });
       });
