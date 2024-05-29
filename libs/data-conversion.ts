@@ -106,7 +106,7 @@ export function convertToStandardSerpAPIResults(
     date = data.date.toLowerCase().trim();
   }
   if (date.includes("tomorrow")) {
-    date = moment(operateHours("add", 24, new Date())).format(MOMENT_DEFAULT_FORMAT);
+    date = moment(adjustHours("add", 24, new Date())).format(MOMENT_DEFAULT_FORMAT);
   } else if (date.includes("today")) {
     date = moment(new Date()).format(MOMENT_DEFAULT_FORMAT);
   }
@@ -143,7 +143,6 @@ export function adjustHours(opType: Operation, numOfHours: number, date: Date): 
 
   return dateCopy;
 }
-
 
 export const exportedForTesting = {
   convertDateTimeToUTC,
