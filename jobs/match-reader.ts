@@ -28,7 +28,9 @@ export class MatchReader {
       const upcomingMatch = new Date(matches[0].date_time);
       const diffInHours = calculateDateDiffsInHours(now, upcomingMatch);
 
-      loggerService.info(`Upcoming match ${JSON.stringify(matches[0])} will be played in ${diffInHours} hour(s)`);
+      loggerService.info(
+        `Upcoming match ${JSON.stringify(matches[0])} will be played in ${diffInHours} hour(s)`
+      );
 
       if (diffInHours <= Time.hoursInADay) {
         await this.publishMatch(matches[0], diffInHours);
@@ -54,7 +56,7 @@ export class MatchReader {
   private async publishMatch(match: RedisFixture, diffInHours: number): Promise<void> {
     const msg: IPublishedMessage = {
       message: match,
-      hours_to_match: diffInHours,
+      hours_to_match: diffInHours
     };
     await this.redis.publish(RedisTerms.channelName, JSON.stringify(msg));
   }
@@ -93,7 +95,9 @@ if (require.main === module) {
     try {
       await matchReader.getMatchesAndPublish();
     } catch (e) {
-      loggerService.error(`An error occurred when executing match reader cron: ${JSON.stringify(e)}`);
+      loggerService.error(
+        `An error occurred when executing match reader cron: ${JSON.stringify(e)}`
+      );
       process.exit(1);
     } finally {
       loggerService.info(`Match reader cron executed.`);

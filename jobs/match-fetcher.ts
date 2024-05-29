@@ -2,7 +2,11 @@ import { injectEnv } from "../libs/inject-env";
 import { HTTP } from "../modules/http";
 import { RedisStorage } from "../modules/redis";
 import { RedisTerms, defaultTTLInSeconds } from "../constants/redis";
-import { serpApiToRedis, convertToStandardSerpAPIResults, removeIncompleteSerpAPIData } from "../libs/data-conversion";
+import {
+  serpApiToRedis,
+  convertToStandardSerpAPIResults,
+  removeIncompleteSerpAPIData
+} from "../libs/data-conversion";
 import { lowerLimitToFetchAPI } from "../constants/time-conversion";
 import { loggerService } from "../modules/log";
 import { APIResponse, Fixture } from "../interfaces/serp-api";
@@ -19,9 +23,7 @@ const customDateFormats = ["tomorrow", "today"];
 export class MatchFetcher {
   private httpController: HTTP;
 
-  constructor(
-    private redis: RedisStorage
-  ) {
+  constructor(private redis: RedisStorage) {
     this.httpController = new HTTP();
   }
 
@@ -35,8 +37,8 @@ export class MatchFetcher {
     } catch (e) {
       loggerService.error(`Failed to fetch matches from SerpAPI: ${JSON.stringify(e)}`);
       const error = new Error(e);
-      const errorMessage = `Title: <b> ${error.name} </b> <br><br> Message: ${error.message} <br><br> Stack: ${error.stack ? error.stack : ''}`;
-      await this.sendReportingEmail(errorMessage, 'Match fetcher cron');
+      const errorMessage = `Title: <b> ${error.name} </b> <br><br> Message: ${error.message} <br><br> Stack: ${error.stack ? error.stack : ""}`;
+      await this.sendReportingEmail(errorMessage, "Match fetcher cron");
     }
   }
 
@@ -50,7 +52,7 @@ export class MatchFetcher {
     const completedData = removeIncompleteSerpAPIData(fixtures);
     const convertedData = serpApiToRedis(completedData);
 
-    loggerService.info(`Storing ${convertedData.length} fixture(s) into redis.`)
+    loggerService.info(`Storing ${convertedData.length} fixture(s) into redis.`);
     await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
   }
 
@@ -75,7 +77,7 @@ export class MatchFetcher {
     }
     return fixtures;
   }
-  
+
   private async sendReportingEmail(content: string, title: string): Promise<void> {
     await this.httpController.sendEmail(content, title);
   }
@@ -110,11 +112,13 @@ if (require.main === module) {
     try {
       await matchFetcher.fetchAndSet();
     } catch (e) {
-      loggerService.error(`an error occurred when executing match fetcher cron: ${JSON.stringify(e)}`);
+      loggerService.error(
+        `an error occurred when executing match fetcher cron: ${JSON.stringify(e)}`
+      );
       process.exit(1);
     } finally {
-      loggerService.info(`Match fetcher cron executed.`)
-      await redisClient.close()
+      loggerService.info(`Match fetcher cron executed.`);
+      await redisClient.close();
     }
   })();
 }

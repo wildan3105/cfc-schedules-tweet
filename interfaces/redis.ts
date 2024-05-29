@@ -7,5 +7,5 @@ export interface RedisFixture {
 
 export interface IPublishedMessage {
   hours_to_match: number;
-  message: RedisFixture
+  message: RedisFixture;
 }

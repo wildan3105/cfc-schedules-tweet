@@ -9,156 +9,178 @@ jest.mock("../modules/http");
 jest.mock("../modules/log");
 
 describe("Subscriber integration test", () => {
-    let redisClient: RedisStorage;
-    let redisPublishClient: RedisStorage;
-    let subscriber: Subscriber;
-    let mockHttpPost: jest.Mock;
+  let redisClient: RedisStorage;
+  let redisPublishClient: RedisStorage;
+  let subscriber: Subscriber;
+  let mockHttpPost: jest.Mock;
 
-    beforeAll(async () => {
-        redisClient = new RedisStorage({
-            redisURL: process.env.REDIS_URL
-        })
-        redisPublishClient = new RedisStorage({
-            redisURL: process.env.REDIS_URL
-        })
+  beforeAll(async () => {
+    redisClient = new RedisStorage({
+      redisURL: process.env.REDIS_URL
+    });
+    redisPublishClient = new RedisStorage({
+      redisURL: process.env.REDIS_URL
+    });
 
-        await redisClient.init();
-        await redisPublishClient.init();
+    await redisClient.init();
+    await redisPublishClient.init();
 
-        subscriber = new Subscriber(redisClient);
-    })
+    subscriber = new Subscriber(redisClient);
+  });
 
-    afterAll(async () => {
-        await redisClient.close();
-        await redisPublishClient.close();
-    })
+  afterAll(async () => {
+    await redisClient.close();
+    await redisPublishClient.close();
+  });
 
-    beforeEach(async () => {
-        jest.clearAllMocks();
-        mockHttpPost = HTTP.prototype.post as jest.Mock;
-    })
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    mockHttpPost = HTTP.prototype.post as jest.Mock;
+  });
 
-    afterEach(async () => {
-        jest.clearAllMocks();
-    })
+  afterEach(async () => {
+    jest.clearAllMocks();
+  });
 
-    describe("Subscriber normal flow", () => {
-        it("should subscribe to a channel and print the parsed message to the terminal", async () => {
-            await subscriber.subscribeToChannel(RedisTerms.channelName);
-            expect(loggerService.info).toHaveBeenCalledWith(expect.stringContaining(`Subscribing to ${RedisTerms.channelName} ...`));
-            
-            const hoursToMatch = 48;
-            const futureDate: Date = new Date(Date.now() + hoursToMatch * 60 * 60 * 1000);
-            const messageToPublish: IPublishedMessage = {
-                message: {
-                    participants: "Inter vs @ChelseaFC",
-                    tournament: "Champions League",
-                    date_time: futureDate,
-                    stadium: "San Siro"
-                },
-                hours_to_match: hoursToMatch
-            }
+  describe("Subscriber normal flow", () => {
+    it("should subscribe to a channel and print the parsed message to the terminal", async () => {
+      await subscriber.subscribeToChannel(RedisTerms.channelName);
+      expect(loggerService.info).toHaveBeenCalledWith(
+        expect.stringContaining(`Subscribing to ${RedisTerms.channelName} ...`)
+      );
 
-            await redisPublishClient.publish(RedisTerms.channelName, JSON.stringify(messageToPublish));
+      const hoursToMatch = 48;
+      const futureDate: Date = new Date(Date.now() + hoursToMatch * 60 * 60 * 1000);
+      const messageToPublish: IPublishedMessage = {
+        message: {
+          participants: "Inter vs @ChelseaFC",
+          tournament: "Champions League",
+          date_time: futureDate,
+          stadium: "San Siro"
+        },
+        hours_to_match: hoursToMatch
+      };
 
-            await new Promise(resolve => setTimeout(resolve, 1000));
+      await redisPublishClient.publish(RedisTerms.channelName, JSON.stringify(messageToPublish));
 
-            expect(loggerService.info).toHaveBeenCalledWith(`New message received: ${JSON.stringify(messageToPublish)}`);
-        });
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-        it("should subscribe to a channel and print the parsed message to the terminal and then print the message that's about to be tweeted if hours to match is 24", async () => {
-            await subscriber.subscribeToChannel(RedisTerms.channelName);
-            expect(loggerService.info).toHaveBeenCalledWith(expect.stringContaining(`Subscribing to ${RedisTerms.channelName} ...`));
-            
-            const hoursToMatch = 24;
-            const futureDate: Date = new Date(Date.now() + hoursToMatch * 60 * 60 * 1000);
-            const messageToPublish: IPublishedMessage = {
-                message: {
-                    participants: "Inter vs @ChelseaFC",
-                    tournament: "Champions League",
-                    date_time: futureDate,
-                    stadium: "San Siro"
-                },
-                hours_to_match: hoursToMatch
-            }
+      expect(loggerService.info).toHaveBeenCalledWith(
+        `New message received: ${JSON.stringify(messageToPublish)}`
+      );
+    });
 
-            await redisPublishClient.publish(RedisTerms.channelName, JSON.stringify(messageToPublish));
+    it("should subscribe to a channel and print the parsed message to the terminal and then print the message that's about to be tweeted if hours to match is 24", async () => {
+      await subscriber.subscribeToChannel(RedisTerms.channelName);
+      expect(loggerService.info).toHaveBeenCalledWith(
+        expect.stringContaining(`Subscribing to ${RedisTerms.channelName} ...`)
+      );
 
-            await new Promise(resolve => setTimeout(resolve, 1000));
+      const hoursToMatch = 24;
+      const futureDate: Date = new Date(Date.now() + hoursToMatch * 60 * 60 * 1000);
+      const messageToPublish: IPublishedMessage = {
+        message: {
+          participants: "Inter vs @ChelseaFC",
+          tournament: "Champions League",
+          date_time: futureDate,
+          stadium: "San Siro"
+        },
+        hours_to_match: hoursToMatch
+      };
 
-            expect(loggerService.info).toHaveBeenCalledWith(`New message received: ${JSON.stringify(messageToPublish)}`);
+      await redisPublishClient.publish(RedisTerms.channelName, JSON.stringify(messageToPublish));
 
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            expect(loggerService.info).toHaveBeenCalledWith(`Attempting to tweet a match that's about to begin in ${hoursToMatch} hours`);
-            expect(mockHttpPost).toHaveBeenCalled();
-        });
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-        it("should subscribe to a channel and print the parsed message to the terminal and then print the message that's about to be tweeted if hours to match is 1", async () => {
-            await subscriber.subscribeToChannel(RedisTerms.channelName);
-            expect(loggerService.info).toHaveBeenCalledWith(expect.stringContaining(`Subscribing to ${RedisTerms.channelName} ...`));
-            
-            const hoursToMatch = 1;
-            const futureDate: Date = new Date(Date.now() + hoursToMatch * 60 * 60 * 1000);
-            const messageToPublish: IPublishedMessage = {
-                message: {
-                    participants: "Inter vs @ChelseaFC",
-                    tournament: "Champions League",
-                    date_time: futureDate,
-                    stadium: "San Siro"
-                },
-                hours_to_match: hoursToMatch
-            }
+      expect(loggerService.info).toHaveBeenCalledWith(
+        `New message received: ${JSON.stringify(messageToPublish)}`
+      );
 
-            await redisPublishClient.publish(RedisTerms.channelName, JSON.stringify(messageToPublish));
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      expect(loggerService.info).toHaveBeenCalledWith(
+        `Attempting to tweet a match that's about to begin in ${hoursToMatch} hours`
+      );
+      expect(mockHttpPost).toHaveBeenCalled();
+    });
 
-            await new Promise(resolve => setTimeout(resolve, 1000));
+    it("should subscribe to a channel and print the parsed message to the terminal and then print the message that's about to be tweeted if hours to match is 1", async () => {
+      await subscriber.subscribeToChannel(RedisTerms.channelName);
+      expect(loggerService.info).toHaveBeenCalledWith(
+        expect.stringContaining(`Subscribing to ${RedisTerms.channelName} ...`)
+      );
 
-            expect(loggerService.info).toHaveBeenCalledWith(`New message received: ${JSON.stringify(messageToPublish)}`);
+      const hoursToMatch = 1;
+      const futureDate: Date = new Date(Date.now() + hoursToMatch * 60 * 60 * 1000);
+      const messageToPublish: IPublishedMessage = {
+        message: {
+          participants: "Inter vs @ChelseaFC",
+          tournament: "Champions League",
+          date_time: futureDate,
+          stadium: "San Siro"
+        },
+        hours_to_match: hoursToMatch
+      };
 
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            expect(loggerService.info).toHaveBeenCalledWith(`Attempting to tweet a match that's about to begin in ${hoursToMatch} hours`);
-            expect(mockHttpPost).toHaveBeenCalled();
-        });
+      await redisPublishClient.publish(RedisTerms.channelName, JSON.stringify(messageToPublish));
 
-        it("should subscribe to a channel and log the error if any process encounters an error", async () => {
-            const error = new Error("Subscribe error");
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-            jest.spyOn(redisClient, 'subscribe').mockImplementation(() => {
-                throw error;
-            });
+      expect(loggerService.info).toHaveBeenCalledWith(
+        `New message received: ${JSON.stringify(messageToPublish)}`
+      );
 
-            await subscriber.subscribeToChannel(RedisTerms.channelName);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      expect(loggerService.info).toHaveBeenCalledWith(
+        `Attempting to tweet a match that's about to begin in ${hoursToMatch} hours`
+      );
+      expect(mockHttpPost).toHaveBeenCalled();
+    });
 
-            expect(loggerService.error).toHaveBeenCalledWith(expect.stringContaining("An error occurred when subscribing to upcoming-fixtures: {}"));
-        });
+    it("should subscribe to a channel and log the error if any process encounters an error", async () => {
+      const error = new Error("Subscribe error");
 
-        it("should subscribe to a channel and log the error if handling message is returning error", async () => {
-            await subscriber.subscribeToChannel(RedisTerms.channelName);
-            expect(loggerService.info).toHaveBeenCalledWith(expect.stringContaining(`Subscribing to ${RedisTerms.channelName} ...`));
-            
-            const hoursToMatch = 1;
-            const futureDate: Date = new Date(Date.now() + hoursToMatch * 60 * 60 * 1000);
-            const messageToPublish: IPublishedMessage = {
-                message: {
-                    participants: "Inter vs @ChelseaFC",
-                    tournament: "Champions League",
-                    date_time: futureDate,
-                    stadium: "San Siro"
-                },
-                hours_to_match: hoursToMatch
-            }
+      jest.spyOn(redisClient, "subscribe").mockImplementation(() => {
+        throw error;
+      });
 
-            await redisPublishClient.publish(RedisTerms.channelName, JSON.stringify(messageToPublish));
-            
-            const error = new Error("Handle message error");
+      await subscriber.subscribeToChannel(RedisTerms.channelName);
 
-            jest.spyOn(JSON, 'parse').mockImplementation(() => {
-                throw error;
-            });
+      expect(loggerService.error).toHaveBeenCalledWith(
+        expect.stringContaining("An error occurred when subscribing to upcoming-fixtures: {}")
+      );
+    });
 
-            await subscriber.subscribeToChannel(RedisTerms.channelName);
+    it("should subscribe to a channel and log the error if handling message is returning error", async () => {
+      await subscriber.subscribeToChannel(RedisTerms.channelName);
+      expect(loggerService.info).toHaveBeenCalledWith(
+        expect.stringContaining(`Subscribing to ${RedisTerms.channelName} ...`)
+      );
 
-            expect(loggerService.error).toHaveBeenCalledWith(expect.stringContaining("An error occurred when subscribing to upcoming-fixtures: {}"));
-        });
-    })
+      const hoursToMatch = 1;
+      const futureDate: Date = new Date(Date.now() + hoursToMatch * 60 * 60 * 1000);
+      const messageToPublish: IPublishedMessage = {
+        message: {
+          participants: "Inter vs @ChelseaFC",
+          tournament: "Champions League",
+          date_time: futureDate,
+          stadium: "San Siro"
+        },
+        hours_to_match: hoursToMatch
+      };
+
+      await redisPublishClient.publish(RedisTerms.channelName, JSON.stringify(messageToPublish));
+
+      const error = new Error("Handle message error");
+
+      jest.spyOn(JSON, "parse").mockImplementation(() => {
+        throw error;
+      });
+
+      await subscriber.subscribeToChannel(RedisTerms.channelName);
+
+      expect(loggerService.error).toHaveBeenCalledWith(
+        expect.stringContaining("An error occurred when subscribing to upcoming-fixtures: {}")
+      );
+    });
+  });
 });

@@ -21,7 +21,7 @@ const baseSerpAPIResponse = {
     processed_at: "string",
     google_url: "string",
     raw_html_file: "string",
-    total_time_taken: 0.11,
+    total_time_taken: 0.11
   },
   search_parameters: {
     engine: "string",
@@ -29,15 +29,15 @@ const baseSerpAPIResponse = {
     location_requested: "string",
     location_used: "string",
     google_domain: "string",
-    device: "string",
+    device: "string"
   },
   search_information: {
     query_displayed: "string",
     total_result: 1212,
     time_taken_displayed: 0.12,
-    organic_results_state: "string",
+    organic_results_state: "string"
   }
-}
+};
 
 describe("MatchFetcher integration test", () => {
   let redisClient: RedisStorage;
@@ -47,7 +47,7 @@ describe("MatchFetcher integration test", () => {
 
   beforeAll(async () => {
     redisClient = new RedisStorage({
-      redisURL: process.env.REDIS_URL,
+      redisURL: process.env.REDIS_URL
     });
     await redisClient.init();
 
@@ -67,53 +67,54 @@ describe("MatchFetcher integration test", () => {
   afterEach(async () => {
     jest.clearAllMocks();
     await redisClient.delete(RedisTerms.keyName);
-  })
+  });
 
   describe("Match fetcher normal flow", () => {
     it("should call serp API and then return games without spotlight and then store data in redis when existing key TTL is lower than the threshold", async () => {
       const mockApiResponse: APIResponse = {
-          ...baseSerpAPIResponse,
-          sports_results: {
-            title: "Chelsea FC",
-            rankings: "xth in Premier League",
-            thumbnail: "https://serpapi.com/searches/664c6debd5a531e26c40de85/images/5c2e766222da2daf89a3f8923a77c1b481e15eaedf850cab6c2d44ed889d174f.png",
-            games: [
+        ...baseSerpAPIResponse,
+        sports_results: {
+          title: "Chelsea FC",
+          rankings: "xth in Premier League",
+          thumbnail:
+            "https://serpapi.com/searches/664c6debd5a531e26c40de85/images/5c2e766222da2daf89a3f8923a77c1b481e15eaedf850cab6c2d44ed889d174f.png",
+          games: [
+            {
+              tournament: "FA Cup",
+              stage: "Final",
+              stadium: "Wembley",
+              date: "May 23",
+              time: "2:00 AM",
+              teams: [
                 {
-                    tournament: "FA Cup",
-                    stage: "Final",
-                    stadium: "Wembley",
-                    date: "May 23",
-                    time: "2:00 AM",
-                    teams: [
-                        {
-                            name: "Chelsea",
-                            thumbnail: ""
-                        },
-                        {
-                            name: "Manchester City",
-                            thumbnail: ""
-                        }
-                    ]
+                  name: "Chelsea",
+                  thumbnail: ""
                 },
                 {
-                    tournament: "Champions League",
-                    stage: "Final",
-                    stadium: "Wembley",
-                    date: "May 31",
-                    time: "4:00 AM",
-                    teams: [
-                        {
-                            name: "Chelsea",
-                            thumbnail: ""
-                        },
-                        {
-                            name: "Bayern Munich",
-                            thumbnail: ""
-                        }
-                    ]
+                  name: "Manchester City",
+                  thumbnail: ""
+                }
+              ]
+            },
+            {
+              tournament: "Champions League",
+              stage: "Final",
+              stadium: "Wembley",
+              date: "May 31",
+              time: "4:00 AM",
+              teams: [
+                {
+                  name: "Chelsea",
+                  thumbnail: ""
                 },
-            ]
-        },
+                {
+                  name: "Bayern Munich",
+                  thumbnail: ""
+                }
+              ]
+            }
+          ]
+        }
       };
 
       mockHttpGet.mockResolvedValueOnce(mockApiResponse);
@@ -123,7 +124,9 @@ describe("MatchFetcher integration test", () => {
       const expectedMatchesLength = mockApiResponse.sports_results.games.length;
 
       expect(mockHttpGet).toHaveBeenCalled();
-      expect(loggerService.info).toHaveBeenCalledWith(expect.stringContaining(`Storing ${expectedMatchesLength} fixture(s) into redis.`));
+      expect(loggerService.info).toHaveBeenCalledWith(
+        expect.stringContaining(`Storing ${expectedMatchesLength} fixture(s) into redis.`)
+      );
 
       const storedData = await redisClient.get(RedisTerms.keyName);
       expect(storedData).toBeTruthy();
@@ -142,74 +145,78 @@ describe("MatchFetcher integration test", () => {
 
     it("should call serp API and then return games with spotlight and then store data in redis when existing key TTL is lower than the threshold", async () => {
       const mockApiResponseWithGameSpotlight: APIResponse = {
-          ...baseSerpAPIResponse,
-          sports_results: {
-            title: "Chelsea FC",
-            rankings: "xth in Premier League",
-            thumbnail: "https://serpapi.com/searches/664c6debd5a531e26c40de85/images/5c2e766222da2daf89a3f8923a77c1b481e15eaedf850cab6c2d44ed889d174f.png",
-            game_spotlight: {
-              tournament: "Carabao Cup",
+        ...baseSerpAPIResponse,
+        sports_results: {
+          title: "Chelsea FC",
+          rankings: "xth in Premier League",
+          thumbnail:
+            "https://serpapi.com/searches/664c6debd5a531e26c40de85/images/5c2e766222da2daf89a3f8923a77c1b481e15eaedf850cab6c2d44ed889d174f.png",
+          game_spotlight: {
+            tournament: "Carabao Cup",
+            stage: "Final",
+            stadium: "Stamford Bridge",
+            date: "tomorrow, 7:00 AM",
+            teams: [
+              {
+                name: "Chelsea",
+                thumbnail: ""
+              },
+              {
+                name: "Manchester United",
+                thumbnail: ""
+              }
+            ]
+          },
+          games: [
+            {
+              tournament: "FA Cup",
               stage: "Final",
-              stadium: "Stamford Bridge",
-              date: "tomorrow, 7:00 AM",
+              stadium: "Wembley",
+              date: "May 23",
+              time: "2:00 AM",
               teams: [
-                  {
-                      name: "Chelsea",
-                      thumbnail: ""
-                  },
-                  {
-                      name: "Manchester United",
-                      thumbnail: ""
-                  }
+                {
+                  name: "Chelsea",
+                  thumbnail: ""
+                },
+                {
+                  name: "Blackburn",
+                  thumbnail: ""
+                }
               ]
             },
-            games: [
+            {
+              tournament: "Champions League",
+              stage: "Final",
+              stadium: "Camp Nou",
+              date: "May 31",
+              time: "4:00 AM",
+              teams: [
                 {
-                    tournament: "FA Cup",
-                    stage: "Final",
-                    stadium: "Wembley",
-                    date: "May 23",
-                    time: "2:00 AM",
-                    teams: [
-                        {
-                            name: "Chelsea",
-                            thumbnail: ""
-                        },
-                        {
-                            name: "Blackburn",
-                            thumbnail: ""
-                        }
-                    ]
+                  name: "Chelsea",
+                  thumbnail: ""
                 },
                 {
-                    tournament: "Champions League",
-                    stage: "Final",
-                    stadium: "Camp Nou",
-                    date: "May 31",
-                    time: "4:00 AM",
-                    teams: [
-                        {
-                            name: "Chelsea",
-                            thumbnail: ""
-                        },
-                        {
-                            name: "Bayer Leverkusen",
-                            thumbnail: ""
-                        }
-                    ]
-                },
-            ],
-        },
+                  name: "Bayer Leverkusen",
+                  thumbnail: ""
+                }
+              ]
+            }
+          ]
+        }
       };
 
       mockHttpGet.mockResolvedValueOnce(mockApiResponseWithGameSpotlight);
 
       await matchFetcher.fetchAndSet();
 
-      const expectedMatchesLength = mockApiResponseWithGameSpotlight.sports_results.games.length + 1; // 1 is from game spotlight match
+      const expectedMatchesLength =
+        mockApiResponseWithGameSpotlight.sports_results.games.length + 1; // 1 is from game spotlight match
 
       expect(mockHttpGet).toHaveBeenCalled();
-      expect(loggerService.info).toHaveBeenCalledWith(expect.stringContaining(`Storing ${expectedMatchesLength} fixture(s) into redis.`));
+      expect(loggerService.info).toHaveBeenCalledWith(
+        expect.stringContaining(`Storing ${expectedMatchesLength} fixture(s) into redis.`)
+      );
 
       const storedData = await redisClient.get(RedisTerms.keyName);
       expect(storedData).toBeTruthy();
@@ -232,47 +239,48 @@ describe("MatchFetcher integration test", () => {
 
     it("should call serp API and then return games with custom date format and then store data in redis when existing key TTL is lower than the threshold", async () => {
       const mockApiResponseWithCustomDateFormat: APIResponse = {
-          ...baseSerpAPIResponse,
-          sports_results: {
-            title: "Chelsea FC",
-            rankings: "xth in Premier League",
-            thumbnail: "https://serpapi.com/searches/664c6debd5a531e26c40de85/images/5c2e766222da2daf89a3f8923a77c1b481e15eaedf850cab6c2d44ed889d174f.png",
-            games: [
+        ...baseSerpAPIResponse,
+        sports_results: {
+          title: "Chelsea FC",
+          rankings: "xth in Premier League",
+          thumbnail:
+            "https://serpapi.com/searches/664c6debd5a531e26c40de85/images/5c2e766222da2daf89a3f8923a77c1b481e15eaedf850cab6c2d44ed889d174f.png",
+          games: [
+            {
+              tournament: "Premier League",
+              stadium: "Anfield",
+              date: "tomorrow",
+              time: "2:00 AM",
+              teams: [
                 {
-                    tournament: "Premier League",
-                    stadium: "Anfield",
-                    date: "tomorrow",
-                    time: "2:00 AM",
-                    teams: [
-                        {
-                            name: "Liverpool",
-                            thumbnail: ""
-                        },
-                        {
-                            name: "Chelsea",
-                            thumbnail: ""
-                        }
-                    ]
+                  name: "Liverpool",
+                  thumbnail: ""
                 },
                 {
-                    tournament: "Champions League",
-                    stage: "Final",
-                    stadium: "San Siro",
-                    date: "May 31",
-                    time: "4:00 AM",
-                    teams: [
-                        {
-                            name: "Chelsea",
-                            thumbnail: ""
-                        },
-                        {
-                            name: "Bayern Munich",
-                            thumbnail: ""
-                        }
-                    ]
+                  name: "Chelsea",
+                  thumbnail: ""
+                }
+              ]
+            },
+            {
+              tournament: "Champions League",
+              stage: "Final",
+              stadium: "San Siro",
+              date: "May 31",
+              time: "4:00 AM",
+              teams: [
+                {
+                  name: "Chelsea",
+                  thumbnail: ""
                 },
-            ],
-        },
+                {
+                  name: "Bayern Munich",
+                  thumbnail: ""
+                }
+              ]
+            }
+          ]
+        }
       };
 
       mockHttpGet.mockResolvedValueOnce(mockApiResponseWithCustomDateFormat);
@@ -282,7 +290,9 @@ describe("MatchFetcher integration test", () => {
       const expectedMatchesLength = mockApiResponseWithCustomDateFormat.sports_results.games.length;
 
       expect(mockHttpGet).toHaveBeenCalled();
-      expect(loggerService.info).toHaveBeenCalledWith(expect.stringContaining(`Storing ${expectedMatchesLength} fixture(s) into redis.`));
+      expect(loggerService.info).toHaveBeenCalledWith(
+        expect.stringContaining(`Storing ${expectedMatchesLength} fixture(s) into redis.`)
+      );
 
       const storedData = await redisClient.get(RedisTerms.keyName);
       expect(storedData).toBeTruthy();
@@ -315,7 +325,10 @@ describe("MatchFetcher integration test", () => {
 
       expect(mockHttpGet).toHaveBeenCalled();
 
-      expect(mockSendEmail).toHaveBeenCalledWith(expect.stringContaining("API failure"), "Match fetcher cron");
-    })
+      expect(mockSendEmail).toHaveBeenCalledWith(
+        expect.stringContaining("API failure"),
+        "Match fetcher cron"
+      );
+    });
   });
 });

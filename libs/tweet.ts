@@ -13,7 +13,7 @@ interface ITweetBody {
 }
 
 function convertTournamentToHashTag(tournament: string): string {
-  return `#${tournament.replace(/ /g, '')}`;
+  return `#${tournament.replace(/ /g, "")}`;
 }
 
 export function transformToTweetableContent(message: ITweetBody): string {

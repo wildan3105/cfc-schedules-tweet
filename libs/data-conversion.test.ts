@@ -32,7 +32,7 @@ describe("test to remove incomplete data", () => {
         tournament: "Competition Cup (2)",
         stadium: "Homeground Stadium (2)"
       }
-    ]
+    ];
     const completedData = exportedForTesting.removeIncompleteSerpAPIData(rawData);
     expect(completedData).toEqual([]);
   });
@@ -65,12 +65,12 @@ describe("test to remove incomplete data", () => {
         tournament: "Competition Cup (2)",
         stadium: "Homeground Stadium (2)"
       }
-    ]
+    ];
     const completedData = exportedForTesting.removeIncompleteSerpAPIData(rawData);
     expect(completedData).toHaveLength(1);
     expect(completedData[0].time).toEqual("7:15 PM");
-  })
-})
+  });
+});
 
 describe("test to ensure cleanseDate is giving the correct result", () => {
   test("cleanseDate to return month and date only when format is ddd, MMM D", () => {

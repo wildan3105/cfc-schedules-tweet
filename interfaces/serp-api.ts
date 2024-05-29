@@ -1,8 +1,8 @@
 export interface APIResponse {
-  search_metadata: searchMetadata,
-  search_parameters: searchParameters,
-  search_information: searchInformation,
-  sports_results: SportsResults
+  search_metadata: searchMetadata;
+  search_parameters: searchParameters;
+  search_information: searchInformation;
+  sports_results: SportsResults;
 }
 
 export interface Fixture {
@@ -15,7 +15,7 @@ export interface Fixture {
   date_time?: Date;
   stage?: string;
   league?: string;
-  video_highlights?: VideoHighlight[]
+  video_highlights?: VideoHighlight[];
 }
 
 export interface GameSpotlight {
@@ -26,15 +26,15 @@ export interface GameSpotlight {
   stage?: string;
   date?: string;
   time?: string;
-  video_highlight_carousel?: VideoHighlight[]
+  video_highlight_carousel?: VideoHighlight[];
 }
 
 export interface SportsResults {
   title: string;
   rankings: string;
   thumbnail: string;
-  games: Fixture[]
-  game_spotlight?: GameSpotlight
+  games: Fixture[];
+  game_spotlight?: GameSpotlight;
 }
 
 interface searchMetadata {
