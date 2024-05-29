@@ -5,11 +5,14 @@ import { RedisTerms, defaultTTLInSeconds } from "../constants/redis";
 import {
   serpApiToRedis,
   convertToStandardSerpAPIResults,
-  removeIncompleteSerpAPIData
+  removeIncompleteSerpAPIData,
+  adjustHours
 } from "../libs/data-conversion";
 import { lowerLimitToFetchAPI } from "../constants/time-conversion";
 import { loggerService } from "../modules/log";
 import { APIResponse, Fixture } from "../interfaces/serp-api";
+import { remindInNHours } from "../constants/time-conversion";
+import { RedisFixture, RedisWithReminder } from "../interfaces/redis";
 
 injectEnv();
 
@@ -35,7 +38,6 @@ export class MatchFetcher {
         await this.processAndStoreData(data);
       }
     } catch (e) {
-      loggerService.error(`Failed to fetch matches from SerpAPI: ${JSON.stringify(e)}`);
       const error = new Error(e);
       const errorMessage = `Title: <b> ${error.name} </b> <br><br> Message: ${error.message} <br><br> Stack: ${error.stack ? error.stack : ""}`;
       await this.sendReportingEmail(errorMessage, "Match fetcher cron");
@@ -52,8 +54,25 @@ export class MatchFetcher {
     const completedData = removeIncompleteSerpAPIData(fixtures);
     const convertedData = serpApiToRedis(completedData);
 
-    loggerService.info(`Storing ${convertedData.length} fixture(s) into redis.`);
-    await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
+    const matchWithReminders = this.convertToReminders(convertedData);
+
+    await this.redis.set(
+      RedisTerms.keyName,
+      JSON.stringify(matchWithReminders),
+      defaultTTLInSeconds
+    );
+  }
+
+  private convertToReminders(data: RedisFixture[]): RedisWithReminder[] {
+    return data.reduce((acc, c) => {
+      remindInNHours.forEach(hours => {
+        acc.push({
+          reminder_time: adjustHours("substract", hours, c.date_time),
+          ...c
+        });
+      });
+      return acc;
+    }, []);
   }
 
   private extractFeatures(data: APIResponse): Fixture[] {

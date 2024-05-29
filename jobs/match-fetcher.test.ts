@@ -2,15 +2,14 @@ import { MatchFetcher } from "../jobs/match-fetcher";
 import { RedisStorage } from "../modules/redis";
 
 import { HTTP } from "../modules/http";
-import { loggerService } from "../modules/log";
 import { RedisTerms } from "../constants/redis";
 
-import { lowerLimitToFetchAPI } from "../constants/time-conversion";
+import { lowerLimitToFetchAPI, remindInNHours } from "../constants/time-conversion";
 import { APIResponse } from "../interfaces/serp-api";
-import { RedisFixture } from "../interfaces/redis";
+import { RedisWithReminder } from "../interfaces/redis";
+import { calculateDateDiffsInHours } from "../libs/calculation";
 
 jest.mock("../modules/http");
-jest.mock("../modules/log");
 
 const baseSerpAPIResponse = {
   search_metadata: {
@@ -124,23 +123,44 @@ describe("MatchFetcher integration test", () => {
       const expectedMatchesLength = mockApiResponse.sports_results.games.length;
 
       expect(mockHttpGet).toHaveBeenCalled();
-      expect(loggerService.info).toHaveBeenCalledWith(
-        expect.stringContaining(`Storing ${expectedMatchesLength} fixture(s) into redis.`)
-      );
 
       const storedData = await redisClient.get(RedisTerms.keyName);
       expect(storedData).toBeTruthy();
 
-      const jsonData: RedisFixture[] = JSON.parse(storedData);
-      expect(jsonData).toHaveLength(expectedMatchesLength);
+      const jsonData: RedisWithReminder[] = JSON.parse(storedData);
+      expect(jsonData).toHaveLength(expectedMatchesLength * remindInNHours.length);
+      expect(calculateDateDiffsInHours(jsonData[0].reminder_time, jsonData[0].date_time)).toEqual(
+        1
+      );
+      expect(calculateDateDiffsInHours(jsonData[1].reminder_time, jsonData[1].date_time)).toEqual(
+        24
+      );
+      expect(calculateDateDiffsInHours(jsonData[2].reminder_time, jsonData[2].date_time)).toEqual(
+        1
+      );
+      expect(calculateDateDiffsInHours(jsonData[3].reminder_time, jsonData[3].date_time)).toEqual(
+        24
+      );
       expect(jsonData[0].participants).toEqual("@ChelseaFC vs Manchester City");
       expect(jsonData[0].tournament).toEqual("FA Cup");
       expect(jsonData[0].date_time).toBeTruthy();
+      expect(jsonData[0].reminder_time).toBeTruthy();
       expect(jsonData[0].stadium).toEqual("Wembley");
-      expect(jsonData[1].participants).toEqual("@ChelseaFC vs Bayern Munich");
-      expect(jsonData[1].tournament).toEqual("Champions League");
+      expect(jsonData[1].participants).toEqual("@ChelseaFC vs Manchester City");
+      expect(jsonData[1].tournament).toEqual("FA Cup");
       expect(jsonData[1].date_time).toBeTruthy();
+      expect(jsonData[1].reminder_time).toBeTruthy();
       expect(jsonData[1].stadium).toEqual("Wembley");
+      expect(jsonData[2].participants).toEqual("@ChelseaFC vs Bayern Munich");
+      expect(jsonData[2].tournament).toEqual("Champions League");
+      expect(jsonData[2].date_time).toBeTruthy();
+      expect(jsonData[2].reminder_time).toBeTruthy();
+      expect(jsonData[2].stadium).toEqual("Wembley");
+      expect(jsonData[3].participants).toEqual("@ChelseaFC vs Bayern Munich");
+      expect(jsonData[3].tournament).toEqual("Champions League");
+      expect(jsonData[3].date_time).toBeTruthy();
+      expect(jsonData[3].reminder_time).toBeTruthy();
+      expect(jsonData[3].stadium).toEqual("Wembley");
     });
 
     it("should call serp API and then return games with spotlight and then store data in redis when existing key TTL is lower than the threshold", async () => {
@@ -214,27 +234,60 @@ describe("MatchFetcher integration test", () => {
         mockApiResponseWithGameSpotlight.sports_results.games.length + 1; // 1 is from game spotlight match
 
       expect(mockHttpGet).toHaveBeenCalled();
-      expect(loggerService.info).toHaveBeenCalledWith(
-        expect.stringContaining(`Storing ${expectedMatchesLength} fixture(s) into redis.`)
-      );
 
       const storedData = await redisClient.get(RedisTerms.keyName);
       expect(storedData).toBeTruthy();
 
-      const jsonData: RedisFixture[] = JSON.parse(storedData);
-      expect(jsonData).toHaveLength(expectedMatchesLength);
+      const jsonData: RedisWithReminder[] = JSON.parse(storedData);
+      expect(jsonData).toHaveLength(expectedMatchesLength * remindInNHours.length);
+      expect(calculateDateDiffsInHours(jsonData[0].reminder_time, jsonData[0].date_time)).toEqual(
+        1
+      );
+      expect(calculateDateDiffsInHours(jsonData[1].reminder_time, jsonData[1].date_time)).toEqual(
+        24
+      );
+      expect(calculateDateDiffsInHours(jsonData[2].reminder_time, jsonData[2].date_time)).toEqual(
+        1
+      );
+      expect(calculateDateDiffsInHours(jsonData[3].reminder_time, jsonData[3].date_time)).toEqual(
+        24
+      );
+      expect(calculateDateDiffsInHours(jsonData[4].reminder_time, jsonData[4].date_time)).toEqual(
+        1
+      );
+      expect(calculateDateDiffsInHours(jsonData[5].reminder_time, jsonData[5].date_time)).toEqual(
+        24
+      );
       expect(jsonData[0].participants).toEqual("@ChelseaFC vs Manchester United");
       expect(jsonData[0].tournament).toEqual("Carabao Cup");
       expect(jsonData[0].date_time).toBeTruthy();
+      expect(jsonData[0].reminder_time).toBeTruthy();
       expect(jsonData[0].stadium).toEqual("Stamford Bridge");
-      expect(jsonData[1].participants).toEqual("@ChelseaFC vs Blackburn");
-      expect(jsonData[1].tournament).toEqual("FA Cup");
+      expect(jsonData[1].participants).toEqual("@ChelseaFC vs Manchester United");
+      expect(jsonData[1].tournament).toEqual("Carabao Cup");
       expect(jsonData[1].date_time).toBeTruthy();
-      expect(jsonData[1].stadium).toEqual("Wembley");
-      expect(jsonData[2].participants).toEqual("@ChelseaFC vs Bayer Leverkusen");
-      expect(jsonData[2].tournament).toEqual("Champions League");
+      expect(jsonData[1].reminder_time).toBeTruthy();
+      expect(jsonData[1].stadium).toEqual("Stamford Bridge");
+      expect(jsonData[2].participants).toEqual("@ChelseaFC vs Blackburn");
+      expect(jsonData[2].tournament).toEqual("FA Cup");
       expect(jsonData[2].date_time).toBeTruthy();
-      expect(jsonData[2].stadium).toEqual("Camp Nou");
+      expect(jsonData[2].reminder_time).toBeTruthy();
+      expect(jsonData[2].stadium).toEqual("Wembley");
+      expect(jsonData[3].participants).toEqual("@ChelseaFC vs Blackburn");
+      expect(jsonData[3].tournament).toEqual("FA Cup");
+      expect(jsonData[3].date_time).toBeTruthy();
+      expect(jsonData[3].reminder_time).toBeTruthy();
+      expect(jsonData[3].stadium).toEqual("Wembley");
+      expect(jsonData[4].participants).toEqual("@ChelseaFC vs Bayer Leverkusen");
+      expect(jsonData[4].tournament).toEqual("Champions League");
+      expect(jsonData[4].date_time).toBeTruthy();
+      expect(jsonData[4].reminder_time).toBeTruthy();
+      expect(jsonData[4].stadium).toEqual("Camp Nou");
+      expect(jsonData[5].participants).toEqual("@ChelseaFC vs Bayer Leverkusen");
+      expect(jsonData[5].tournament).toEqual("Champions League");
+      expect(jsonData[5].date_time).toBeTruthy();
+      expect(jsonData[5].reminder_time).toBeTruthy();
+      expect(jsonData[5].stadium).toEqual("Camp Nou");
     });
 
     it("should call serp API and then return games with custom date format and then store data in redis when existing key TTL is lower than the threshold", async () => {
@@ -290,23 +343,44 @@ describe("MatchFetcher integration test", () => {
       const expectedMatchesLength = mockApiResponseWithCustomDateFormat.sports_results.games.length;
 
       expect(mockHttpGet).toHaveBeenCalled();
-      expect(loggerService.info).toHaveBeenCalledWith(
-        expect.stringContaining(`Storing ${expectedMatchesLength} fixture(s) into redis.`)
-      );
 
       const storedData = await redisClient.get(RedisTerms.keyName);
       expect(storedData).toBeTruthy();
 
-      const jsonData: RedisFixture[] = JSON.parse(storedData);
-      expect(jsonData).toHaveLength(expectedMatchesLength);
+      const jsonData: RedisWithReminder[] = JSON.parse(storedData);
+      expect(jsonData).toHaveLength(expectedMatchesLength * remindInNHours.length);
+      expect(calculateDateDiffsInHours(jsonData[0].reminder_time, jsonData[0].date_time)).toEqual(
+        1
+      );
+      expect(calculateDateDiffsInHours(jsonData[1].reminder_time, jsonData[1].date_time)).toEqual(
+        24
+      );
+      expect(calculateDateDiffsInHours(jsonData[2].reminder_time, jsonData[2].date_time)).toEqual(
+        1
+      );
+      expect(calculateDateDiffsInHours(jsonData[3].reminder_time, jsonData[3].date_time)).toEqual(
+        24
+      );
       expect(jsonData[0].participants).toEqual("Liverpool vs @ChelseaFC");
       expect(jsonData[0].tournament).toEqual("Premier League");
       expect(jsonData[0].date_time).toBeTruthy();
+      expect(jsonData[0].reminder_time).toBeTruthy();
       expect(jsonData[0].stadium).toEqual("Anfield");
-      expect(jsonData[1].participants).toEqual("@ChelseaFC vs Bayern Munich");
-      expect(jsonData[1].tournament).toEqual("Champions League");
+      expect(jsonData[1].participants).toEqual("Liverpool vs @ChelseaFC");
+      expect(jsonData[1].tournament).toEqual("Premier League");
       expect(jsonData[1].date_time).toBeTruthy();
-      expect(jsonData[1].stadium).toEqual("San Siro");
+      expect(jsonData[1].reminder_time).toBeTruthy();
+      expect(jsonData[1].stadium).toEqual("Anfield");
+      expect(jsonData[2].participants).toEqual("@ChelseaFC vs Bayern Munich");
+      expect(jsonData[2].tournament).toEqual("Champions League");
+      expect(jsonData[2].date_time).toBeTruthy();
+      expect(jsonData[2].reminder_time).toBeTruthy();
+      expect(jsonData[2].stadium).toEqual("San Siro");
+      expect(jsonData[3].participants).toEqual("@ChelseaFC vs Bayern Munich");
+      expect(jsonData[3].tournament).toEqual("Champions League");
+      expect(jsonData[3].date_time).toBeTruthy();
+      expect(jsonData[3].reminder_time).toBeTruthy();
+      expect(jsonData[3].stadium).toEqual("San Siro");
     });
 
     it("should not call serp API when existing key TTL is greater than the threshold", async () => {

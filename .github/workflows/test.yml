@@ -2,9 +2,9 @@ name: Unit and integration test
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "refactor/base-fix-duplicated-tweets" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "refactor/base-fix-duplicated-tweets" ]
 
 jobs:
   build:
