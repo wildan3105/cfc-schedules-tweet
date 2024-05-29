@@ -38,7 +38,8 @@ export class MatchFetcher {
         await this.processAndStoreData(data);
       }
     } catch (e) {
-      throw e;
+      const errorMessage = `Error during fetch and set. Details: ${e}`;
+      throw errorMessage;
     }
   }
 
