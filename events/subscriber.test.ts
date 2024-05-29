@@ -3,7 +3,7 @@ import { loggerService } from "../modules/log";
 import { HTTP } from "../modules/http";
 import { RedisStorage } from "../modules/redis";
 import { RedisTerms } from "../constants/redis";
-import { IPublishedMessage, RedisFixture } from "../interfaces/redis";
+import { IPublishedMessage } from "../interfaces/redis";
 
 jest.mock("../modules/http");
 jest.mock("../modules/log");
