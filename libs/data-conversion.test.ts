@@ -1,5 +1,5 @@
 import {
-  addHours,
+  adjustHours,
   convertToStandardSerpAPIResults,
   exportedForTesting,
   serpApiToRedis
@@ -264,10 +264,10 @@ describe("serpApiToRedis to return the correct format of data that'll be fed int
   });
 });
 
-describe("addHours to return the correct date after adding N hours from certain date", () => {
-  test("addHours to return the correct date after added 7 hours", async () => {
+describe("adjustHours to return the correct date after adding N hours from certain date", () => {
+  test("adjustHours to return the correct date after added 7 hours", async () => {
     const now = new Date();
-    const addedDate = addHours(7, now);
+    const addedDate = adjustHours("add", 7, now);
     expect(addedDate).toBeDefined();
     expect(typeof addedDate).toBe("object");
   });

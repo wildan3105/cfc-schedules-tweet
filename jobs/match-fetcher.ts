@@ -5,11 +5,14 @@ import { RedisTerms, defaultTTLInSeconds } from "../constants/redis";
 import {
   serpApiToRedis,
   convertToStandardSerpAPIResults,
-  removeIncompleteSerpAPIData
+  removeIncompleteSerpAPIData,
+  adjustHours
 } from "../libs/data-conversion";
 import { lowerLimitToFetchAPI } from "../constants/time-conversion";
 import { loggerService } from "../modules/log";
 import { APIResponse, Fixture } from "../interfaces/serp-api";
+import { remindInNHours } from "../constants/time-conversion";
+import { RedisFixture } from "../interfaces/redis";
 
 injectEnv();
 
@@ -51,9 +54,24 @@ export class MatchFetcher {
     fixtures = this.handleCustomDateFormats(fixtures);
     const completedData = removeIncompleteSerpAPIData(fixtures);
     const convertedData = serpApiToRedis(completedData);
+    
+    const matchWithReminders = this.convertToReminders(convertedData);
 
-    loggerService.info(`Storing ${convertedData.length} fixture(s) into redis.`);
+    console.log(matchWithReminders);
+
     await this.redis.set(RedisTerms.keyName, JSON.stringify(convertedData), defaultTTLInSeconds);
+  }
+
+  private convertToReminders(data: RedisFixture[]): Partial<RedisFixture>[] {
+    return data.reduce((acc, c) => {
+      remindInNHours.forEach((hours) => {
+          acc.push({
+              reminder_time: adjustHours("substract", hours, c.date_time),
+              ...c
+          });
+      });
+      return acc;
+  }, []);
   }
 
   private extractFeatures(data: APIResponse): Fixture[] {

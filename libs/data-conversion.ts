@@ -9,6 +9,7 @@ import { Team } from "../constants/team";
 import { Time, defaultTimeFormat, TBDFormat } from "../constants/time-conversion";
 
 const MOMENT_DEFAULT_FORMAT = "MMM D";
+type Operation = "add" | "substract";
 
 function cleanseDate(date: string): string {
   const excludedMomentFormats = [
@@ -105,7 +106,7 @@ export function convertToStandardSerpAPIResults(
     date = data.date.toLowerCase().trim();
   }
   if (date.includes("tomorrow")) {
-    date = moment(addHours(24, new Date())).format(MOMENT_DEFAULT_FORMAT);
+    date = moment(operateHours("add", 24, new Date())).format(MOMENT_DEFAULT_FORMAT);
   } else if (date.includes("today")) {
     date = moment(new Date()).format(MOMENT_DEFAULT_FORMAT);
   }
@@ -131,13 +132,18 @@ export function serpApiToRedis(fixtures: Fixture[]): RedisFixture[] {
   return fixtures;
 }
 
-export function addHours(numOfHours: number, date: Date): Date {
+export function adjustHours(opType: Operation, numOfHours: number, date: Date): Date {
   const dateCopy = new Date(date.getTime());
 
-  dateCopy.setHours(dateCopy.getHours() + numOfHours);
+  if (opType === "add") {
+    dateCopy.setHours(dateCopy.getHours() + numOfHours);
+  } else if (opType === "substract") {
+    dateCopy.setHours(dateCopy.getHours() - numOfHours);
+  }
 
   return dateCopy;
 }
+
 
 export const exportedForTesting = {
   convertDateTimeToUTC,
