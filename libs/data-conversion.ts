@@ -11,7 +11,15 @@ import { Time, defaultTimeFormat, TBDFormat } from "../constants/time-conversion
 const MOMENT_DEFAULT_FORMAT = "MMM D";
 
 function cleanseDate(date: string): string {
-  const excludedMomentFormats = ["MMM YY", "ddd, MMM YY", "ddd, MMM k", "MMM k", "MMM DD", "MMMM YY", "ddd, MMMM YY"];
+  const excludedMomentFormats = [
+    "MMM YY",
+    "ddd, MMM YY",
+    "ddd, MMM k",
+    "MMM k",
+    "MMM DD",
+    "MMMM YY",
+    "ddd, MMMM YY"
+  ];
   const momentFormat = parseFormat(date);
   let clean: string;
   /**

@@ -27,9 +27,7 @@ interface ITweet {
 export class Subscriber {
   private httpController: HTTP;
 
-  constructor(
-    private redis: RedisStorage
-  ) {
+  constructor(private redis: RedisStorage) {
     this.httpController = new HTTP();
   }
 
@@ -66,7 +64,7 @@ export class Subscriber {
       stadium: tweetContent.message.stadium,
       participants: tweetContent.message.participants,
       tournament: tweetContent.message.tournament,
-      date_time: matchSchedule,
+      date_time: matchSchedule
     };
     const transformedTweetContent = transformToTweetableContent(contentToTransform);
     const tweetMsg = { text: transformedTweetContent };
@@ -81,21 +79,19 @@ export class Subscriber {
   private shouldSendReminder(reminderTime: number): boolean {
     return remindInNHours.includes(reminderTime);
   }
-
 }
-
 
 if (require.main === module) {
   (async () => {
     const redisClient = new RedisStorage(redisConfig);
     await redisClient.init();
     const subscriber = new Subscriber(redisClient);
-  
+
     try {
       await subscriber.subscribeToChannel(RedisTerms.channelName);
     } catch (e) {
       loggerService.error(`an error occured: ${JSON.stringify(e)}`);
       process.exit(1);
     }
-  })();  
+  })();
 }

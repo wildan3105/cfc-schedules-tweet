@@ -23,7 +23,9 @@ export class HTTP {
     try {
       await axios.post(request.url, request.body, { headers: authHeader });
     } catch (e) {
-      loggerService.error(`There's an error when calling twitter API. Details: ${JSON.stringify(e)}`);
+      loggerService.error(
+        `There's an error when calling twitter API. Details: ${JSON.stringify(e)}`
+      );
     }
   }
 
@@ -52,26 +54,30 @@ export class HTTP {
       Content: {
         From: ElasticEmailDefaultContent.senderAddress,
         Subject: subject || ElasticEmailDefaultContent.subject,
-        Body: [{
-          ContentType: "HTML",
-          Content: content,
-          Charset: "UTF-8"
-        }]
+        Body: [
+          {
+            ContentType: "HTML",
+            Content: content,
+            Charset: "UTF-8"
+          }
+        ]
       }
-    }
+    };
     const request = {
       url: ELASTIC_EMAIL_BASE_URL + "/emails/transactional",
       method: "POST",
       body: requestBody
     };
     const authHeader = {
-      'X-ElasticEmail-ApiKey': ELASTIC_EMAIL_API_KEY
+      "X-ElasticEmail-ApiKey": ELASTIC_EMAIL_API_KEY
     } as unknown as AxiosRequestHeaders;
 
     try {
       await axios.post(request.url, request.body, { headers: authHeader });
     } catch (e) {
-      loggerService.error(`There's an error when calling Elastic Email API. Details: ${JSON.stringify(e)}`);
+      loggerService.error(
+        `There's an error when calling Elastic Email API. Details: ${JSON.stringify(e)}`
+      );
     }
   }
 }

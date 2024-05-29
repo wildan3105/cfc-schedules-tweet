@@ -12,10 +12,7 @@ export class Oauth1Helper {
         secret: API_SECRET_KEY
       },
       signature_method: "HMAC-SHA1",
-      hash_function(
-        base_string: BinaryLike,
-        key: BinaryLike | KeyObjectType
-      ) {
+      hash_function(base_string: BinaryLike, key: BinaryLike | KeyObjectType) {
         return createHmac("sha1", key).update(base_string).digest("base64");
       }
     });

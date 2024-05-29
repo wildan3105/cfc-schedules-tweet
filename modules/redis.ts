@@ -22,12 +22,10 @@ export class RedisStorage extends EventEmitter {
     await this.setupListeners();
     await this.waitToConnect();
   }
-  
 
   private async waitToConnect() {
     return new Promise<void>(resolve => {
       this.redisClient.on("connect", () => {
-
         return resolve();
       });
     });

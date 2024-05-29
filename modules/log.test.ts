@@ -4,48 +4,48 @@ import { LoggerService } from "./log";
 const momentFormat = "YYYY-M-D HH:mm:ss";
 
 describe("Log service", () => {
-    let loggerService: LoggerService;
-    let consoleLogSpy: jest.SpyInstance;
+  let loggerService: LoggerService;
+  let consoleLogSpy: jest.SpyInstance;
 
-    beforeEach(() => {
-        loggerService = LoggerService.getInstance();
-        consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
-    })
+  beforeEach(() => {
+    loggerService = LoggerService.getInstance();
+    consoleLogSpy = jest.spyOn(console, "log").mockImplementation();
+  });
 
-    afterEach(() => {
-        consoleLogSpy.mockRestore();
-    })
+  afterEach(() => {
+    consoleLogSpy.mockRestore();
+  });
 
-    it("should log with info level", () => {
-        const message = "This is an info message";
-        const timestamp = moment(new Date()).format(momentFormat);
+  it("should log with info level", () => {
+    const message = "This is an info message";
+    const timestamp = moment(new Date()).format(momentFormat);
 
-        loggerService.info(message);
+    loggerService.info(message);
 
-        expect(consoleLogSpy).toHaveBeenCalledWith(`${timestamp} [INFO] ${message}`);
-    });
+    expect(consoleLogSpy).toHaveBeenCalledWith(`${timestamp} [INFO] ${message}`);
+  });
 
-    it("should log with warn level", () => {
-        const message = "This is a warning message";
-        const timestamp = moment(new Date()).format(momentFormat);
+  it("should log with warn level", () => {
+    const message = "This is a warning message";
+    const timestamp = moment(new Date()).format(momentFormat);
 
-        loggerService.warn(message);
+    loggerService.warn(message);
 
-        expect(consoleLogSpy).toHaveBeenCalledWith(`${timestamp} [WARN] ${message}`);
-    });
+    expect(consoleLogSpy).toHaveBeenCalledWith(`${timestamp} [WARN] ${message}`);
+  });
 
-    it("should log with error level", () => {
-        const message = "This is an error message";
-        const timestamp = moment(new Date()).format(momentFormat);
+  it("should log with error level", () => {
+    const message = "This is an error message";
+    const timestamp = moment(new Date()).format(momentFormat);
 
-        loggerService.error(message);
+    loggerService.error(message);
 
-        expect(consoleLogSpy).toHaveBeenCalledWith(`${timestamp} [ERROR] ${message}`);
-    });
+    expect(consoleLogSpy).toHaveBeenCalledWith(`${timestamp} [ERROR] ${message}`);
+  });
 
-    it("should return the same instance (singleton pattern) ", () => {
-        const anotherLoggerService = LoggerService.getInstance();
+  it("should return the same instance (singleton pattern) ", () => {
+    const anotherLoggerService = LoggerService.getInstance();
 
-        expect(loggerService).toBe(anotherLoggerService);
-    });
-})
+    expect(loggerService).toBe(anotherLoggerService);
+  });
+});
