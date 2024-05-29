@@ -48,6 +48,7 @@ jobs:
     - name: Set up environment variables
       run: echo "REDIS_URL=redis://localhost:6379" >> $GITHUB_ENV
 
+    - run: npm run lint
     - run: npm run build --if-present
     - run: npm test
       env:
