@@ -2,7 +2,6 @@
 import Redis from "ioredis";
 import { EventEmitter } from "events";
 
-import { loggerService } from "./log";
 interface IRedisConfig {
   redisURL: string;
 }
@@ -11,8 +10,6 @@ export class RedisStorage extends EventEmitter {
   private readonly redisConfig: IRedisConfig;
 
   private redisClient: Redis;
-
-  private isInitialized = false;
 
   constructor(redisConfig: IRedisConfig) {
     super();
@@ -30,7 +27,6 @@ export class RedisStorage extends EventEmitter {
   private async waitToConnect() {
     return new Promise<void>(resolve => {
       this.redisClient.on("connect", () => {
-        this.isInitialized = true;
 
         return resolve();
       });
@@ -40,9 +36,7 @@ export class RedisStorage extends EventEmitter {
   private async setupListeners() {
     // for future use
     this.redisClient.on("ready", () => {});
-    this.redisClient.on("error", e => {
-      loggerService.error(`an error occured: ${JSON.stringify(e)}`);
-    });
+    this.redisClient.on("error", e => {});
     this.redisClient.on("close", async () => {});
     this.redisClient.on("reconnecting", () => {});
     /* Gets fired after 'close' when no more reconnect is there */
@@ -52,10 +46,6 @@ export class RedisStorage extends EventEmitter {
 
   public async close(): Promise<void> {
     this.redisClient.quit();
-  }
-
-  public initialized(): boolean {
-    return this.isInitialized;
   }
 
   public async get(key: string): Promise<string> {
@@ -83,9 +73,5 @@ export class RedisStorage extends EventEmitter {
 
   public async getTTL(key: string): Promise<number> {
     return this.redisClient.ttl(key);
-  }
-
-  public async expireKey(key: string): Promise<number> {
-    return this.redisClient.expire(key, 0);
   }
 }
