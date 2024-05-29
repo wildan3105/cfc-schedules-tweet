@@ -7,6 +7,7 @@ export interface RedisFixture {
 
 export interface RedisWithReminder extends RedisFixture {
   reminder_time: Date;
+  hours_to_match: number;
 }
 
 export interface IPublishedMessage {

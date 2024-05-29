@@ -64,10 +64,11 @@ export class MatchFetcher {
   }
 
   private convertToReminders(data: RedisFixture[]): RedisWithReminder[] {
-    return data.reduce((acc, c) => {
+    return data.reduce((acc: RedisWithReminder[], c) => {
       remindInNHours.forEach(hours => {
         acc.push({
           reminder_time: adjustHours("substract", hours, c.date_time),
+          hours_to_match: hours,
           ...c
         });
       });
