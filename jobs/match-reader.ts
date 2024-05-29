@@ -1,10 +1,10 @@
 import { RedisStorage } from "../modules/redis";
 import { injectEnv } from "../libs/inject-env";
 import { RedisTerms } from "../constants/redis";
-import { Time } from "../constants/time-conversion";
+import { Time, remindInNHours } from "../constants/time-conversion";
 import { calculateDateDiffsInHours } from "../libs/calculation";
 import { loggerService } from "../modules/log";
-import { IPublishedMessage, RedisFixture } from "../interfaces/redis";
+import { IPublishedMessage, RedisFixture, RedisWithReminder } from "../interfaces/redis";
 
 injectEnv();
 
@@ -25,28 +25,25 @@ export class MatchReader {
       }
 
       const now = new Date();
-      const upcomingMatch = new Date(matches[0].date_time);
-      const diffInHours = calculateDateDiffsInHours(now, upcomingMatch);
+      const upcomingMatch = matches[0];
+      const diffInHours = calculateDateDiffsInHours(now, upcomingMatch.reminder_time);
 
-      loggerService.info(
-        `Upcoming match ${JSON.stringify(matches[0])} will be played in ${diffInHours} hour(s)`
-      );
-
-      if (diffInHours <= Time.hoursInADay) {
-        await this.publishMatch(matches[0], diffInHours);
-
-        if (diffInHours === 1) {
-          await this.removePublishedMatch(matches);
-        }
+      if (diffInHours <= 1) {
+        await this.publishMatch(upcomingMatch, upcomingMatch.hours_to_match);
+        await this.removePublishedMatch(upcomingMatch);
       }
     } catch (e) {
       loggerService.error(`Failed to get matches and publish: ${JSON.stringify(e)}`);
     }
   }
 
-  private async fetchMatches(): Promise<RedisFixture[]> {
+  private async fetchMatches(): Promise<RedisWithReminder[]> {
     const matchData = await this.redis.get(RedisTerms.keyName);
-    return JSON.parse(matchData);
+    const parsedData: RedisWithReminder[] = JSON.parse(matchData);
+
+    parsedData.sort((a, b) => new Date(a.reminder_time).getTime() - new Date(b.reminder_time).getTime());
+
+    return parsedData;
   }
 
   private isValidMatchList(matches: RedisFixture[]): boolean {
@@ -61,11 +58,17 @@ export class MatchReader {
     await this.redis.publish(RedisTerms.channelName, JSON.stringify(msg));
   }
 
-  private async removePublishedMatch(matches: RedisFixture[]): Promise<void> {
-    matches.shift();
-    const currentTTL = await this.redis.getTTL(RedisTerms.keyName);
-    await this.redis.set(RedisTerms.keyName, JSON.stringify(matches), currentTTL);
-  }
+  private async removePublishedMatch(match: RedisWithReminder): Promise<void> {
+    const [currentTTL, matchData] = await Promise.all([
+        this.redis.getTTL(RedisTerms.keyName),
+        this.redis.get(RedisTerms.keyName)
+    ]);
+
+    const matches: RedisWithReminder[] = JSON.parse(matchData);
+    const filteredMatches = matches.filter((f) => f.reminder_time !== match.reminder_time);
+
+    await this.redis.set(RedisTerms.keyName, JSON.stringify(filteredMatches), currentTTL);
+}
 }
 
 const handleUncaughtException = (e: Error) => {
