@@ -1,6 +1,6 @@
 import * as moment from "moment";
 
-class LoggerService {
+export class LoggerService {
   private static instance: LoggerService;
 
   public static getInstance(): LoggerService {
