@@ -4,10 +4,9 @@ import { RedisStorage } from "../modules/redis";
 import { HTTP } from "../modules/http";
 import { RedisTerms } from "../constants/redis";
 
-import { lowerLimitToFetchAPI, remindInNHours } from "../constants/time-conversion";
+import { lowerLimitToFetchAPI } from "../constants/time-conversion";
 import { APIResponse } from "../interfaces/serp-api";
 import { RedisWithReminder } from "../interfaces/redis";
-import { calculateDateDiffsInHours } from "../libs/calculation";
 
 jest.mock("../modules/http");
 
@@ -42,7 +41,6 @@ describe("MatchFetcher integration test", () => {
   let redisClient: RedisStorage;
   let matchFetcher: MatchFetcher;
   let mockHttpGet: jest.Mock;
-  let mockSendEmail: jest.Mock;
 
   beforeAll(async () => {
     redisClient = new RedisStorage({
@@ -60,7 +58,6 @@ describe("MatchFetcher integration test", () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     mockHttpGet = HTTP.prototype.get as jest.Mock;
-    mockSendEmail = HTTP.prototype.sendEmail as jest.Mock;
   });
 
   afterEach(async () => {
@@ -128,29 +125,29 @@ describe("MatchFetcher integration test", () => {
       expect(storedData).toBeTruthy();
 
       const jsonData: RedisWithReminder[] = JSON.parse(storedData);
-      expect(jsonData).toHaveLength(expectedMatchesLength * remindInNHours.length);
+      expect(jsonData).toHaveLength(expectedMatchesLength * 2);
       expect(jsonData[0].hours_to_match).toEqual(1);
       expect(jsonData[1].hours_to_match).toEqual(24);
       expect(jsonData[2].hours_to_match).toEqual(1);
       expect(jsonData[3].hours_to_match).toEqual(24);
       expect(jsonData[0].participants).toEqual("@ChelseaFC vs Manchester City");
       expect(jsonData[0].tournament).toEqual("FA Cup");
-      expect(jsonData[0].date_time).toBeTruthy();
+      expect(jsonData[0].match_time).toBeTruthy();
       expect(jsonData[0].reminder_time).toBeTruthy();
       expect(jsonData[0].stadium).toEqual("Wembley");
       expect(jsonData[1].participants).toEqual("@ChelseaFC vs Manchester City");
       expect(jsonData[1].tournament).toEqual("FA Cup");
-      expect(jsonData[1].date_time).toBeTruthy();
+      expect(jsonData[1].match_time).toBeTruthy();
       expect(jsonData[1].reminder_time).toBeTruthy();
       expect(jsonData[1].stadium).toEqual("Wembley");
       expect(jsonData[2].participants).toEqual("@ChelseaFC vs Bayern Munich");
       expect(jsonData[2].tournament).toEqual("Champions League");
-      expect(jsonData[2].date_time).toBeTruthy();
+      expect(jsonData[2].match_time).toBeTruthy();
       expect(jsonData[2].reminder_time).toBeTruthy();
       expect(jsonData[2].stadium).toEqual("Wembley");
       expect(jsonData[3].participants).toEqual("@ChelseaFC vs Bayern Munich");
       expect(jsonData[3].tournament).toEqual("Champions League");
-      expect(jsonData[3].date_time).toBeTruthy();
+      expect(jsonData[3].match_time).toBeTruthy();
       expect(jsonData[3].reminder_time).toBeTruthy();
       expect(jsonData[3].stadium).toEqual("Wembley");
     });
@@ -231,7 +228,7 @@ describe("MatchFetcher integration test", () => {
       expect(storedData).toBeTruthy();
 
       const jsonData: RedisWithReminder[] = JSON.parse(storedData);
-      expect(jsonData).toHaveLength(expectedMatchesLength * remindInNHours.length);
+      expect(jsonData).toHaveLength(expectedMatchesLength * 2);
       expect(jsonData[0].hours_to_match).toEqual(1);
       expect(jsonData[1].hours_to_match).toEqual(24);
       expect(jsonData[2].hours_to_match).toEqual(1);
@@ -240,32 +237,32 @@ describe("MatchFetcher integration test", () => {
       expect(jsonData[5].hours_to_match).toEqual(24);
       expect(jsonData[0].participants).toEqual("@ChelseaFC vs Manchester United");
       expect(jsonData[0].tournament).toEqual("Carabao Cup");
-      expect(jsonData[0].date_time).toBeTruthy();
+      expect(jsonData[0].match_time).toBeTruthy();
       expect(jsonData[0].reminder_time).toBeTruthy();
       expect(jsonData[0].stadium).toEqual("Stamford Bridge");
       expect(jsonData[1].participants).toEqual("@ChelseaFC vs Manchester United");
       expect(jsonData[1].tournament).toEqual("Carabao Cup");
-      expect(jsonData[1].date_time).toBeTruthy();
+      expect(jsonData[1].match_time).toBeTruthy();
       expect(jsonData[1].reminder_time).toBeTruthy();
       expect(jsonData[1].stadium).toEqual("Stamford Bridge");
       expect(jsonData[2].participants).toEqual("@ChelseaFC vs Blackburn");
       expect(jsonData[2].tournament).toEqual("FA Cup");
-      expect(jsonData[2].date_time).toBeTruthy();
+      expect(jsonData[2].match_time).toBeTruthy();
       expect(jsonData[2].reminder_time).toBeTruthy();
       expect(jsonData[2].stadium).toEqual("Wembley");
       expect(jsonData[3].participants).toEqual("@ChelseaFC vs Blackburn");
       expect(jsonData[3].tournament).toEqual("FA Cup");
-      expect(jsonData[3].date_time).toBeTruthy();
+      expect(jsonData[3].match_time).toBeTruthy();
       expect(jsonData[3].reminder_time).toBeTruthy();
       expect(jsonData[3].stadium).toEqual("Wembley");
       expect(jsonData[4].participants).toEqual("@ChelseaFC vs Bayer Leverkusen");
       expect(jsonData[4].tournament).toEqual("Champions League");
-      expect(jsonData[4].date_time).toBeTruthy();
+      expect(jsonData[4].match_time).toBeTruthy();
       expect(jsonData[4].reminder_time).toBeTruthy();
       expect(jsonData[4].stadium).toEqual("Camp Nou");
       expect(jsonData[5].participants).toEqual("@ChelseaFC vs Bayer Leverkusen");
       expect(jsonData[5].tournament).toEqual("Champions League");
-      expect(jsonData[5].date_time).toBeTruthy();
+      expect(jsonData[5].match_time).toBeTruthy();
       expect(jsonData[5].reminder_time).toBeTruthy();
       expect(jsonData[5].stadium).toEqual("Camp Nou");
     });
@@ -328,29 +325,29 @@ describe("MatchFetcher integration test", () => {
       expect(storedData).toBeTruthy();
 
       const jsonData: RedisWithReminder[] = JSON.parse(storedData);
-      expect(jsonData).toHaveLength(expectedMatchesLength * remindInNHours.length);
+      expect(jsonData).toHaveLength(expectedMatchesLength * 2);
       expect(jsonData[0].hours_to_match).toEqual(1);
       expect(jsonData[1].hours_to_match).toEqual(24);
       expect(jsonData[2].hours_to_match).toEqual(1);
       expect(jsonData[3].hours_to_match).toEqual(24);
       expect(jsonData[0].participants).toEqual("Liverpool vs @ChelseaFC");
       expect(jsonData[0].tournament).toEqual("Premier League");
-      expect(jsonData[0].date_time).toBeTruthy();
+      expect(jsonData[0].match_time).toBeTruthy();
       expect(jsonData[0].reminder_time).toBeTruthy();
       expect(jsonData[0].stadium).toEqual("Anfield");
       expect(jsonData[1].participants).toEqual("Liverpool vs @ChelseaFC");
       expect(jsonData[1].tournament).toEqual("Premier League");
-      expect(jsonData[1].date_time).toBeTruthy();
+      expect(jsonData[1].match_time).toBeTruthy();
       expect(jsonData[1].reminder_time).toBeTruthy();
       expect(jsonData[1].stadium).toEqual("Anfield");
       expect(jsonData[2].participants).toEqual("@ChelseaFC vs Bayern Munich");
       expect(jsonData[2].tournament).toEqual("Champions League");
-      expect(jsonData[2].date_time).toBeTruthy();
+      expect(jsonData[2].match_time).toBeTruthy();
       expect(jsonData[2].reminder_time).toBeTruthy();
       expect(jsonData[2].stadium).toEqual("San Siro");
       expect(jsonData[3].participants).toEqual("@ChelseaFC vs Bayern Munich");
       expect(jsonData[3].tournament).toEqual("Champions League");
-      expect(jsonData[3].date_time).toBeTruthy();
+      expect(jsonData[3].match_time).toBeTruthy();
       expect(jsonData[3].reminder_time).toBeTruthy();
       expect(jsonData[3].stadium).toEqual("San Siro");
     });
@@ -359,22 +356,6 @@ describe("MatchFetcher integration test", () => {
       await redisClient.set(RedisTerms.keyName, "fixtures", lowerLimitToFetchAPI + 100);
       await matchFetcher.fetchAndSet();
       expect(mockHttpGet).not.toHaveBeenCalled();
-    });
-
-    it("should call sendReportingEmail when one of the functions inside fetchAndSet() is returning error", async () => {
-      const error = new Error("API failure");
-      mockHttpGet.mockRejectedValueOnce(error);
-
-      mockSendEmail.mockResolvedValueOnce(undefined);
-
-      await matchFetcher.fetchAndSet();
-
-      expect(mockHttpGet).toHaveBeenCalled();
-
-      expect(mockSendEmail).toHaveBeenCalledWith(
-        expect.stringContaining("API failure"),
-        "Match fetcher cron"
-      );
     });
   });
 });

@@ -19,7 +19,7 @@ interface ITweet {
   message: {
     stadium: string;
     participants: string;
-    date_time: string;
+    match_time: string;
     tournament: string;
   };
 }
@@ -58,13 +58,13 @@ export class Subscriber {
   }
 
   private async sendTweet(tweetContent: ITweet): Promise<void> {
-    const matchSchedule = new Date(tweetContent.message.date_time);
+    const matchSchedule = new Date(tweetContent.message.match_time);
     const contentToTransform = {
       hours_to_match: tweetContent.hours_to_match,
       stadium: tweetContent.message.stadium,
       participants: tweetContent.message.participants,
       tournament: tweetContent.message.tournament,
-      date_time: matchSchedule
+      match_time: matchSchedule
     };
     const transformedTweetContent = transformToTweetableContent(contentToTransform);
     const tweetMsg = { text: transformedTweetContent };

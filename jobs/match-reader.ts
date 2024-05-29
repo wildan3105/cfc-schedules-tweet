@@ -1,10 +1,9 @@
 import { RedisStorage } from "../modules/redis";
 import { injectEnv } from "../libs/inject-env";
 import { RedisTerms } from "../constants/redis";
-import { Time, remindInNHours } from "../constants/time-conversion";
 import { calculateDateDiffsInHours } from "../libs/calculation";
 import { loggerService } from "../modules/log";
-import { IPublishedMessage, RedisFixture, RedisWithReminder } from "../interfaces/redis";
+import { IPublishedMessage, RedisWithReminder } from "../interfaces/redis";
 
 injectEnv();
 
@@ -41,16 +40,18 @@ export class MatchReader {
     const matchData = await this.redis.get(RedisTerms.keyName);
     const parsedData: RedisWithReminder[] = JSON.parse(matchData);
 
-    parsedData.sort((a, b) => new Date(a.reminder_time).getTime() - new Date(b.reminder_time).getTime());
+    const sortedData = parsedData.sort(
+      (a, b) => new Date(a.reminder_time).getTime() - new Date(b.reminder_time).getTime()
+    );
 
-    return parsedData;
+    return sortedData;
   }
 
-  private isValidMatchList(matches: RedisFixture[]): boolean {
+  private isValidMatchList(matches: RedisWithReminder[]): boolean {
     return Array.isArray(matches) && matches.length > 0;
   }
 
-  private async publishMatch(match: RedisFixture, diffInHours: number): Promise<void> {
+  private async publishMatch(match: RedisWithReminder, diffInHours: number): Promise<void> {
     const msg: IPublishedMessage = {
       message: match,
       hours_to_match: diffInHours
@@ -60,15 +61,15 @@ export class MatchReader {
 
   private async removePublishedMatch(match: RedisWithReminder): Promise<void> {
     const [currentTTL, matchData] = await Promise.all([
-        this.redis.getTTL(RedisTerms.keyName),
-        this.redis.get(RedisTerms.keyName)
+      this.redis.getTTL(RedisTerms.keyName),
+      this.redis.get(RedisTerms.keyName)
     ]);
 
     const matches: RedisWithReminder[] = JSON.parse(matchData);
-    const filteredMatches = matches.filter((f) => f.reminder_time !== match.reminder_time);
+    const filteredMatches = matches.filter(f => f.reminder_time !== match.reminder_time);
 
     await this.redis.set(RedisTerms.keyName, JSON.stringify(filteredMatches), currentTTL);
-}
+  }
 }
 
 const handleUncaughtException = (e: Error) => {

@@ -38,9 +38,7 @@ export class MatchFetcher {
         await this.processAndStoreData(data);
       }
     } catch (e) {
-      const error = new Error(e);
-      const errorMessage = `Title: <b> ${error.name} </b> <br><br> Message: ${error.message} <br><br> Stack: ${error.stack ? error.stack : ""}`;
-      await this.sendReportingEmail(errorMessage, "Match fetcher cron");
+      throw e;
     }
   }
 
@@ -64,10 +62,10 @@ export class MatchFetcher {
   }
 
   private convertToReminders(data: RedisFixture[]): RedisWithReminder[] {
-    return data.reduce((acc: RedisWithReminder[], c) => {
+    return data.reduce((acc: RedisWithReminder[], c: RedisFixture) => {
       remindInNHours.forEach(hours => {
         acc.push({
-          reminder_time: adjustHours("substract", hours, c.date_time),
+          reminder_time: adjustHours("substract", hours, c.match_time),
           hours_to_match: hours,
           ...c
         });
@@ -96,10 +94,6 @@ export class MatchFetcher {
       fixtures[0] = convertToStandardSerpAPIResults(fixtures[0], false);
     }
     return fixtures;
-  }
-
-  private async sendReportingEmail(content: string, title: string): Promise<void> {
-    await this.httpController.sendEmail(content, title);
   }
 }
 
@@ -133,7 +127,7 @@ if (require.main === module) {
       await matchFetcher.fetchAndSet();
     } catch (e) {
       loggerService.error(
-        `an error occurred when executing match fetcher cron: ${JSON.stringify(e)}`
+        `an error occurred when executing match fetcher cron: ${e}`
       );
       process.exit(1);
     } finally {
