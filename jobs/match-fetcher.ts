@@ -56,7 +56,11 @@ export class MatchFetcher {
 
     const matchWithReminders = this.convertToReminders(convertedData);
 
-    await this.redis.set(RedisTerms.keyName, JSON.stringify(matchWithReminders), defaultTTLInSeconds);
+    await this.redis.set(
+      RedisTerms.keyName,
+      JSON.stringify(matchWithReminders),
+      defaultTTLInSeconds
+    );
   }
 
   private convertToReminders(data: RedisFixture[]): RedisWithReminder[] {
