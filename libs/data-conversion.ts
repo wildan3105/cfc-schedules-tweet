@@ -120,16 +120,15 @@ export function convertToStandardSerpAPIResults(
 }
 
 export function serpApiToRedis(fixtures: Fixture[]): RedisFixture[] {
-  fixtures.forEach(elem => {
-    elem.participants = `${convertToTwitterAccountForChelseaFC(
-      elem.teams[0].name
-    )} vs ${convertToTwitterAccountForChelseaFC(elem.teams[1].name)}`;
-    (elem.tournament = elem.tournament),
-      (elem.date_time = convertDateTimeToUTC(elem.date, elem.time)),
-      (elem.stadium = elem.stadium);
+  return fixtures.map(elem => {
+    return {
+      ...elem,
+      participants: `${convertToTwitterAccountForChelseaFC(elem.teams[0].name)} vs ${convertToTwitterAccountForChelseaFC(elem.teams[1].name)}`,
+      tournament: elem.tournament,
+      match_time: convertDateTimeToUTC(elem.date, elem.time),
+      stadium: elem.stadium
+    };
   });
-
-  return fixtures;
 }
 
 export function adjustHours(opType: Operation, numOfHours: number, date: Date): Date {

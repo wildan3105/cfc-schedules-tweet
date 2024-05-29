@@ -8,7 +8,7 @@ interface ITweetBody {
   hours_to_match: number;
   stadium: string;
   participants: string;
-  date_time: Date;
+  match_time: Date;
   tournament: string;
 }
 
@@ -29,15 +29,15 @@ export function transformToTweetableContent(message: ITweetBody): string {
       headerTitle = "";
   }
 
-  const UKDate = moment(message.date_time).tz(UKTimeZoneName).format("dddd, MMMM DD, YYYY");
-  const UKTime = moment(message.date_time).tz(UKTimeZoneName).format("HH:mm");
+  const UKDate = moment(message.match_time).tz(UKTimeZoneName).format("dddd, MMMM DD, YYYY");
+  const UKTime = moment(message.match_time).tz(UKTimeZoneName).format("HH:mm");
 
   const transformed = {
     header: headerTitle,
     tournament: `${Emojis.tournament} ${message.tournament}`,
     teams: `${Emojis.versus} ${message.participants}`,
     stadium: `${Emojis.stadium} ${message.stadium}`,
-    date_time: `${Emojis.date} ${UKDate} (UK Date)`,
+    match_time: `${Emojis.date} ${UKDate} (UK Date)`,
     time: `${Emojis.time} ${UKTime} (UK Time)`,
     hashtag: `${Team.hashtag} ${convertTournamentToHashTag(message.tournament)}`
   };

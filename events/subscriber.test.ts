@@ -55,7 +55,7 @@ describe("Subscriber integration test", () => {
         message: {
           participants: "Inter vs @ChelseaFC",
           tournament: "Champions League",
-          date_time: futureDate,
+          match_time: futureDate,
           stadium: "San Siro"
         },
         hours_to_match: hoursToMatch
@@ -82,7 +82,7 @@ describe("Subscriber integration test", () => {
         message: {
           participants: "Inter vs @ChelseaFC",
           tournament: "Champions League",
-          date_time: futureDate,
+          match_time: futureDate,
           stadium: "San Siro"
         },
         hours_to_match: hoursToMatch
@@ -115,7 +115,7 @@ describe("Subscriber integration test", () => {
         message: {
           participants: "Inter vs @ChelseaFC",
           tournament: "Champions League",
-          date_time: futureDate,
+          match_time: futureDate,
           stadium: "San Siro"
         },
         hours_to_match: hoursToMatch
@@ -162,7 +162,7 @@ describe("Subscriber integration test", () => {
         message: {
           participants: "Inter vs @ChelseaFC",
           tournament: "Champions League",
-          date_time: futureDate,
+          match_time: futureDate,
           stadium: "San Siro"
         },
         hours_to_match: hoursToMatch
