@@ -126,9 +126,7 @@ if (require.main === module) {
     try {
       await matchFetcher.fetchAndSet();
     } catch (e) {
-      loggerService.error(
-        `an error occurred when executing match fetcher cron: ${e}`
-      );
+      loggerService.error(`an error occurred when executing match fetcher cron: ${e}`);
       process.exit(1);
     } finally {
       loggerService.info(`Match fetcher cron executed.`);
