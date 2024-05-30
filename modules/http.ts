@@ -8,6 +8,11 @@ import { ElasticEmailDefaultContent } from "../constants/elastic-email";
 import { Query } from "../enums/query";
 import { loggerService } from "./log";
 
+interface ClubQuery {
+  club?: string;
+  location?: string;
+}
+
 export class HTTP {
   async post(content: Content) {
     const { TWITTER_BASE_URL } = process.env;
@@ -29,14 +34,14 @@ export class HTTP {
     }
   }
 
-  async get(): Promise<APIResponse | undefined> {
+  async get(q: ClubQuery): Promise<APIResponse | undefined> {
     const { SERPAPI_BASE_URL, SERPAPI_KEY } = process.env;
     try {
       const response: AxiosResponse = await axios.get(SERPAPI_BASE_URL + "/search", {
         params: {
           api_key: SERPAPI_KEY,
-          q: Query.club,
-          location: Query.location
+          q: q.club || Query.club,
+          location: q.location || Query.location
         }
       });
       return response.data;

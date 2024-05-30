@@ -90,7 +90,7 @@ describe("HTTP", () => {
       process.env.SERPAPI_BASE_URL = "https://serpapi.com";
       process.env.SERPAPI_KEY = "test-key";
 
-      mockedAxios.get.mockRejectedValue(new Error('Request failed'));
+      mockedAxios.get.mockRejectedValue(new Error("Request failed"));
 
       const http = new HTTP();
       await http.get({});
