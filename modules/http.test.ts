@@ -74,7 +74,7 @@ describe("HTTP", () => {
       mockedAxios.get.mockResolvedValue({ data: responseData });
 
       const http = new HTTP();
-      const result = await http.get();
+      const result = await http.get({});
 
       expect(mockedAxios.get).toHaveBeenCalledWith("https://serpapi.com/search", {
         params: {
@@ -90,10 +90,10 @@ describe("HTTP", () => {
       process.env.SERPAPI_BASE_URL = "https://serpapi.com";
       process.env.SERPAPI_KEY = "test-key";
 
-      mockedAxios.get.mockRejectedValue(new Error("Request failed"));
+      mockedAxios.get.mockRejectedValue(new Error('Request failed'));
 
       const http = new HTTP();
-      await http.get();
+      await http.get({});
 
       expect(loggerService.error).toHaveBeenCalledWith(
         `There's an error when calling Serp API. Details: {}`
