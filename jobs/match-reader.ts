@@ -25,10 +25,10 @@ export class MatchReader {
 
       const now = new Date();
       const upcomingMatch = matches[0];
-      const upcomingMatchReminder = new Date(upcomingMatch.reminder_time);
-      const diffInHours = calculateDateDiffsInHours(now, upcomingMatchReminder);
+      const upcomingMatchReminderDate = new Date(upcomingMatch.reminder_time);
+      const diffInHours = calculateDateDiffsInHours(now, upcomingMatchReminderDate);
 
-      if (diffInHours <= 1) {
+      if (diffInHours <= 0) {
         await this.publishMatch(upcomingMatch, upcomingMatch.hours_to_match);
         await this.removePublishedMatch(upcomingMatch);
       }
