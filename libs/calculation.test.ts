@@ -1,7 +1,5 @@
 import { calculateDateDiffsInHours } from "./calculation";
 
-const anHourInMillis = 3600000;
-
 describe("testing the behaviour of calculation of two dates", () => {
   test("test the positive difference between now and upcoming date", () => {
     const firstDate = new Date(2022, 10, 10, 10, 0, 0);
