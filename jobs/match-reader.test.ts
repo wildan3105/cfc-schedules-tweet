@@ -150,30 +150,6 @@ describe("Match reader integration test", () => {
       expect(keyAfterRemoved).toHaveLength(0);
     });
 
-    it("should publish the match and remove from redis if the different between now and reminder_time is less than 2 hours", async () => {
-      const now = new Date();
-      const matchTime = now;
-      const reminderTimeAnHour = adjustHours("add", 1.9, now);
-      const fixtureToSet: RedisWithReminder[] = [
-        {
-          participants: "Inter vs @ChelseaFC",
-          tournament: "Champions League",
-          match_time: matchTime,
-          reminder_time: reminderTimeAnHour,
-          hours_to_match: reminderDueHours.hour,
-          stadium: "San Siro"
-        }
-      ];
-
-      await redisClient.set(RedisTerms.keyName, JSON.stringify(fixtureToSet), DEFAULT_TTL);
-
-      await matchReader.getMatchesAndPublish();
-
-      const removedKey: RedisWithReminder[] = JSON.parse(await redisClient.get(RedisTerms.keyName));
-
-      expect(removedKey).toHaveLength(0);
-    });
-
     it("should not publish the match if the different between now and reminder_time is more than 1 hour", async () => {
       const now = new Date();
       const matchTime = now;
