@@ -1,7 +1,7 @@
 export interface RedisFixture {
   participants?: string;
   tournament?: string;
-  match_time?: Date;
+  match_time: Date;
   stadium?: string;
 }
 

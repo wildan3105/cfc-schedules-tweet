@@ -25,14 +25,15 @@ export class MatchReader {
 
       const now = new Date();
       const upcomingMatch = matches[0];
-      const diffInHours = calculateDateDiffsInHours(now, upcomingMatch.reminder_time);
+      const upcomingMatchReminderDate = new Date(upcomingMatch.reminder_time);
+      const diffInHours = calculateDateDiffsInHours(now, upcomingMatchReminderDate);
 
-      if (diffInHours <= 1) {
+      if (diffInHours <= 0) {
         await this.publishMatch(upcomingMatch, upcomingMatch.hours_to_match);
         await this.removePublishedMatch(upcomingMatch);
       }
     } catch (e) {
-      loggerService.error(`Failed to get matches and publish: ${JSON.stringify(e)}`);
+      loggerService.error(`Failed to get matches and publish: ${e}`);
     }
   }
 
@@ -99,9 +100,7 @@ if (require.main === module) {
     try {
       await matchReader.getMatchesAndPublish();
     } catch (e) {
-      loggerService.error(
-        `An error occurred when executing match reader cron: ${JSON.stringify(e)}`
-      );
+      loggerService.error(`An error occurred when executing match reader cron: ${e}`);
       process.exit(1);
     } finally {
       loggerService.info(`Match reader cron executed.`);

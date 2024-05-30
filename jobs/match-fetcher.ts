@@ -44,7 +44,10 @@ export class MatchFetcher {
   }
 
   private async fetchMatchesFromAPI(): Promise<APIResponse> {
-    return await this.httpController.get();
+    return await this.httpController.get({
+      club: process.env.CLUB,
+      location: process.env.LOCATION
+    });
   }
 
   private async processAndStoreData(data: APIResponse): Promise<void> {
@@ -66,7 +69,7 @@ export class MatchFetcher {
     return data.reduce((acc: RedisWithReminder[], c: RedisFixture) => {
       remindInNHours.forEach(hours => {
         acc.push({
-          reminder_time: adjustHours("substract", hours, c.match_time),
+          reminder_time: adjustHours("substract", hours, new Date(c.match_time)),
           hours_to_match: hours,
           ...c
         });

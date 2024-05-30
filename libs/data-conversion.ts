@@ -131,8 +131,8 @@ export function serpApiToRedis(fixtures: Fixture[]): RedisFixture[] {
   });
 }
 
-export function adjustHours(opType: Operation, numOfHours: number, date: Date): Date {
-  const dateCopy = new Date(date.getTime());
+export function adjustHours(opType: Operation, numOfHours: number, fromDate: Date): Date {
+  const dateCopy = new Date(fromDate.getTime());
 
   if (opType === "add") {
     dateCopy.setHours(dateCopy.getHours() + numOfHours);

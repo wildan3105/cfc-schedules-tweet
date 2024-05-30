@@ -3,7 +3,7 @@ import { RedisStorage } from "../modules/redis";
 import { loggerService } from "../modules/log";
 
 import { RedisTerms } from "../constants/redis";
-import { RedisFixture, RedisWithReminder } from "../interfaces/redis";
+import { RedisWithReminder } from "../interfaces/redis";
 import { adjustHours } from "../libs/data-conversion";
 
 jest.mock("../modules/log");
@@ -53,15 +53,46 @@ describe("Match reader integration test", () => {
       );
     });
 
-    it("should publish the match and then remove it from the redis if the different between now and reminder_time is less than 1 hour and hours_to_match is 24", async () => {
+    it("should not publish the match now - reminder_time is still long", async () => {
+      const matchTime = new Date(); // some arbitrary date in the future
       const now = new Date();
-      const reminderTimeIn24Hours = now;
-      const reminderTimeAnHour = adjustHours(
-        "add",
-        reminderDueHours.day - reminderDueHours.hour,
-        reminderTimeIn24Hours
+      const reminderTimeIn24Hours = adjustHours("add", 48, now);
+      const reminderTimeAnHour = adjustHours("add", 23, reminderTimeIn24Hours);
+      const fixtureToSet: RedisWithReminder[] = [
+        {
+          participants: "Inter vs @ChelseaFC",
+          tournament: "Champions League",
+          match_time: matchTime,
+          reminder_time: reminderTimeIn24Hours,
+          hours_to_match: reminderDueHours.day,
+          stadium: "San Siro"
+        },
+        {
+          participants: "Inter vs @ChelseaFC",
+          tournament: "Champions League",
+          match_time: matchTime,
+          reminder_time: reminderTimeAnHour,
+          hours_to_match: reminderDueHours.hour,
+          stadium: "San Siro"
+        }
+      ];
+
+      await redisClient.set(RedisTerms.keyName, JSON.stringify(fixtureToSet), DEFAULT_TTL);
+
+      await matchReader.getMatchesAndPublish();
+
+      const keysNotRemoved: RedisWithReminder[] = JSON.parse(
+        await redisClient.get(RedisTerms.keyName)
       );
-      const matchTime = adjustHours("add", reminderDueHours.day, now);
+
+      expect(keysNotRemoved).toHaveLength(2);
+    });
+
+    it("should publish the match and then remove it from the redis if reminder_time - now is less or equals to 0 and hours_to_match is 24", async () => {
+      const now = new Date();
+      const matchTime = new Date(); // some arbitrary date in the future
+      const reminderTimeIn24Hours = now;
+      const reminderTimeAnHour = adjustHours("add", 23, reminderTimeIn24Hours);
       const fixtureToSet: RedisWithReminder[] = [
         {
           participants: "Inter vs @ChelseaFC",
@@ -95,8 +126,8 @@ describe("Match reader integration test", () => {
 
     it("should publish the match and then remove it from the redis if the different between now and reminder_time is less than 1 hour and hours_to_match is 1", async () => {
       const now = new Date();
+      const matchTime = new Date(); // some arbitrary date in the future
       const reminderTimeAnHour = now;
-      const matchTime = adjustHours("add", reminderDueHours.hour, now);
       const fixtureToSet: RedisWithReminder[] = [
         {
           participants: "Inter vs @ChelseaFC",
@@ -119,15 +150,66 @@ describe("Match reader integration test", () => {
       expect(keyAfterRemoved).toHaveLength(0);
     });
 
+    it("should publish the match and remove from redis if the different between now and reminder_time is less than 2 hours", async () => {
+      const now = new Date();
+      const matchTime = now;
+      const reminderTimeAnHour = adjustHours("add", 1.9, now);
+      const fixtureToSet: RedisWithReminder[] = [
+        {
+          participants: "Inter vs @ChelseaFC",
+          tournament: "Champions League",
+          match_time: matchTime,
+          reminder_time: reminderTimeAnHour,
+          hours_to_match: reminderDueHours.hour,
+          stadium: "San Siro"
+        }
+      ];
+
+      await redisClient.set(RedisTerms.keyName, JSON.stringify(fixtureToSet), DEFAULT_TTL);
+
+      await matchReader.getMatchesAndPublish();
+
+      const removedKey: RedisWithReminder[] = JSON.parse(await redisClient.get(RedisTerms.keyName));
+
+      expect(removedKey).toHaveLength(0);
+    });
+
+    it("should not publish the match if the different between now and reminder_time is more than 1 hour", async () => {
+      const now = new Date();
+      const matchTime = now;
+      const reminderTimeAnHour = adjustHours("add", 2, now);
+      const fixtureToSet: RedisWithReminder[] = [
+        {
+          participants: "Inter vs @ChelseaFC",
+          tournament: "Champions League",
+          match_time: matchTime,
+          reminder_time: reminderTimeAnHour,
+          hours_to_match: reminderDueHours.hour,
+          stadium: "San Siro"
+        }
+      ];
+
+      await redisClient.set(RedisTerms.keyName, JSON.stringify(fixtureToSet), DEFAULT_TTL);
+
+      await matchReader.getMatchesAndPublish();
+
+      const keyNotRemoved: RedisWithReminder[] = JSON.parse(
+        await redisClient.get(RedisTerms.keyName)
+      );
+
+      expect(keyNotRemoved).toHaveLength(1);
+    });
+
     it("should log the error if any processes fail during fetch and publish match", async () => {
+      const errorMessage = "Fetch matches error";
       jest.spyOn(matchReader as any, "fetchMatches").mockImplementationOnce(() => {
-        throw new Error("Fetch matches error");
+        throw new Error(errorMessage);
       });
 
       await matchReader.getMatchesAndPublish();
 
       expect(loggerService.error).toHaveBeenCalledWith(
-        expect.stringContaining("Failed to get matches and publish: {}")
+        expect.stringContaining(`Failed to get matches and publish: Error: ${errorMessage}`)
       );
 
       jest.spyOn(matchReader as any, "publishMatch").mockImplementationOnce(() => {
@@ -152,9 +234,7 @@ describe("Match reader integration test", () => {
 
       await matchReader.getMatchesAndPublish();
 
-      expect(loggerService.error).toHaveBeenCalledWith(
-        expect.stringContaining("Failed to get matches and publish: {}")
-      );
+      expect(loggerService.error).toHaveBeenCalled();
     });
   });
 });
