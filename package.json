@@ -26,7 +26,14 @@
     "subscriber-js": "node build/events/subscriber.js",
     "lint": "eslint ./**/*.ts",
     "format": "prettier --config .prettierrc --write './**/*.ts'",
-    "test": "jest --detectOpenHandles ./**/*.test.ts"
+    "test": "jest --detectOpenHandles ./**/*.test.ts",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "husky": {
     "hooks": {
