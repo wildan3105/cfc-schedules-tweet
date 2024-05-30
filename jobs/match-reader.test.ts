@@ -3,7 +3,7 @@ import { RedisStorage } from "../modules/redis";
 import { loggerService } from "../modules/log";
 
 import { RedisTerms } from "../constants/redis";
-import { RedisFixture, RedisWithReminder } from "../interfaces/redis";
+import { RedisWithReminder } from "../interfaces/redis";
 import { adjustHours } from "../libs/data-conversion";
 
 jest.mock("../modules/log");
