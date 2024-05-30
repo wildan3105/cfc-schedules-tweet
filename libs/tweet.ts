@@ -1,16 +1,9 @@
 import * as moment from "moment-timezone";
 import { Emojis } from "../enums/emojis";
 import { Team } from "../constants/team";
+import { ITweetBody } from "../interfaces/tweet";
 
 const UKTimeZoneName = "Europe/London";
-
-interface ITweetBody {
-  hours_to_match: number;
-  stadium: string;
-  participants: string;
-  match_time: Date;
-  tournament: string;
-}
 
 function convertTournamentToHashTag(tournament: string): string {
   return `#${tournament.replace(/ /g, "")}`;

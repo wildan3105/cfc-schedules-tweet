@@ -14,3 +14,11 @@ export interface ITweet {
     tournament: string;
   };
 }
+
+export interface ITweetBody {
+  hours_to_match: number;
+  stadium: string;
+  participants: string;
+  match_time: Date;
+  tournament: string;
+}
