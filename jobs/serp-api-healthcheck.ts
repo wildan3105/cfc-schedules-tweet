@@ -77,7 +77,7 @@ class SerpAPIHealthCheck {
   }
 
   public async getMatches(): Promise<SportsResults> {
-    const serpAPIResponse = await this.httpController.get();
+    const serpAPIResponse = await this.httpController.get({});
     return serpAPIResponse.sports_results;
   }
 }

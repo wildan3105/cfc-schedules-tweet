@@ -25,12 +25,11 @@
     "subscriber": "ts-node-dev --poll --transpile-only --respawn events/subscriber.ts --watch **/*.ts",
     "subscriber-js": "node build/events/subscriber.js",
     "lint": "eslint ./**/*.ts",
-    "format": "prettier --config .prettierrc --write './**/*.ts'",
+    "format": "sh -c 'prettier --config .prettierrc --write \"${1:-'./**/*.ts'}\"' --",
     "test": "jest --detectOpenHandles ./**/*.test.ts"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run format",
       "pre-push": "npm run lint && npm run test"
     }
   },

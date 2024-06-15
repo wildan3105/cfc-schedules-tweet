@@ -9,6 +9,7 @@ import { Team } from "../constants/team";
 import { Time, defaultTimeFormat, TBDFormat } from "../constants/time-conversion";
 
 const MOMENT_DEFAULT_FORMAT = "MMM D";
+type Operation = "add" | "substract";
 
 function cleanseDate(date: string): string {
   const excludedMomentFormats = [
@@ -105,7 +106,7 @@ export function convertToStandardSerpAPIResults(
     date = data.date.toLowerCase().trim();
   }
   if (date.includes("tomorrow")) {
-    date = moment(addHours(24, new Date())).format(MOMENT_DEFAULT_FORMAT);
+    date = moment(adjustHours("add", 24, new Date())).format(MOMENT_DEFAULT_FORMAT);
   } else if (date.includes("today")) {
     date = moment(new Date()).format(MOMENT_DEFAULT_FORMAT);
   }
@@ -119,22 +120,25 @@ export function convertToStandardSerpAPIResults(
 }
 
 export function serpApiToRedis(fixtures: Fixture[]): RedisFixture[] {
-  fixtures.forEach(elem => {
-    elem.participants = `${convertToTwitterAccountForChelseaFC(
-      elem.teams[0].name
-    )} vs ${convertToTwitterAccountForChelseaFC(elem.teams[1].name)}`;
-    (elem.tournament = elem.tournament),
-      (elem.date_time = convertDateTimeToUTC(elem.date, elem.time)),
-      (elem.stadium = elem.stadium);
+  return fixtures.map(elem => {
+    return {
+      ...elem,
+      participants: `${convertToTwitterAccountForChelseaFC(elem.teams[0].name)} vs ${convertToTwitterAccountForChelseaFC(elem.teams[1].name)}`,
+      tournament: elem.tournament,
+      match_time: convertDateTimeToUTC(elem.date, elem.time),
+      stadium: elem.stadium
+    };
   });
-
-  return fixtures;
 }
 
-export function addHours(numOfHours: number, date: Date): Date {
-  const dateCopy = new Date(date.getTime());
+export function adjustHours(opType: Operation, numOfHours: number, fromDate: Date): Date {
+  const dateCopy = new Date(fromDate.getTime());
 
-  dateCopy.setHours(dateCopy.getHours() + numOfHours);
+  if (opType === "add") {
+    dateCopy.setHours(dateCopy.getHours() + numOfHours);
+  } else if (opType === "substract") {
+    dateCopy.setHours(dateCopy.getHours() - numOfHours);
+  }
 
   return dateCopy;
 }

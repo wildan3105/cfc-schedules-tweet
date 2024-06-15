@@ -2,9 +2,10 @@ import { injectEnv } from "../libs/inject-env";
 import { RedisTerms } from "../constants/redis";
 import { HTTP } from "../modules/http";
 import { transformToTweetableContent } from "../libs/tweet";
-import { remindInNHours } from "../constants/time-conversion";
 import { RedisStorage } from "../modules/redis";
 import { loggerService } from "../modules/log";
+import { IPublishedMessage } from "../interfaces/redis";
+import { ITweet } from "../interfaces/tweet";
 
 injectEnv();
 
@@ -13,16 +14,6 @@ const { REDIS_URL } = process.env;
 const redisConfig = {
   redisURL: REDIS_URL
 };
-
-interface ITweet {
-  hours_to_match: number;
-  message: {
-    stadium: string;
-    participants: string;
-    date_time: string;
-    tournament: string;
-  };
-}
 
 export class Subscriber {
   private httpController: HTTP;
@@ -43,28 +34,35 @@ export class Subscriber {
 
   private async handleMessage(_: string, message: string): Promise<void> {
     try {
-      const parsedMessage = JSON.parse(message);
-      loggerService.info(`New message received: ${JSON.stringify(parsedMessage)}`);
+      const parsedMessage: IPublishedMessage = JSON.parse(message);
 
-      if (this.shouldSendReminder(parsedMessage.hours_to_match)) {
-        loggerService.info(
-          `Attempting to tweet a match that's about to begin in ${parsedMessage.hours_to_match} hours`
-        );
-        await this.sendTweet(parsedMessage);
-      }
+      loggerService.info(`New message received: ${JSON.stringify(parsedMessage)}`);
+      loggerService.info(
+        `Attempting to tweet a match that's about to begin in ${parsedMessage.hours_to_match} hours`
+      );
+
+      await this.sendTweet({
+        hours_to_match: parsedMessage.hours_to_match,
+        message: {
+          stadium: parsedMessage.message.stadium,
+          participants: parsedMessage.message.participants,
+          match_time: parsedMessage.message.match_time,
+          tournament: parsedMessage.message.tournament
+        }
+      });
     } catch (e) {
       loggerService.error(`Failed to handle message: ${JSON.stringify(e)}`);
     }
   }
 
   private async sendTweet(tweetContent: ITweet): Promise<void> {
-    const matchSchedule = new Date(tweetContent.message.date_time);
+    const matchSchedule = new Date(tweetContent.message.match_time);
     const contentToTransform = {
       hours_to_match: tweetContent.hours_to_match,
       stadium: tweetContent.message.stadium,
       participants: tweetContent.message.participants,
       tournament: tweetContent.message.tournament,
-      date_time: matchSchedule
+      match_time: matchSchedule
     };
     const transformedTweetContent = transformToTweetableContent(contentToTransform);
     const tweetMsg = { text: transformedTweetContent };
@@ -74,10 +72,6 @@ export class Subscriber {
     } catch (e) {
       loggerService.error(`Failed to send tweet: ${JSON.stringify(e)}`);
     }
-  }
-
-  private shouldSendReminder(reminderTime: number): boolean {
-    return remindInNHours.includes(reminderTime);
   }
 }
 

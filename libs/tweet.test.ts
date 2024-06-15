@@ -6,7 +6,7 @@ const templateBody = {
   stadium: "Stamford Bridge",
   participants: "Chelsea vs Atletico",
   tournament: "Champions League",
-  date_time: fixedDate
+  match_time: fixedDate
 };
 
 describe("tweet-related libs testing", () => {
