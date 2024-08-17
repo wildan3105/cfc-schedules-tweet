@@ -20,7 +20,7 @@ class SerpAPIHealthCheck {
     if (matches.game_spotlight) {
       html += `<h2>Game Spotlight</h2>`;
       html += `<p>League: ${matches.game_spotlight.league}</p>`;
-      html += `<p>Stadium: ${matches.game_spotlight.stadium}</p>`;
+      html += `<p>Stadium: ${matches.game_spotlight.stadium ? matches.game_spotlight.stadium : matches.game_spotlight.venue}</p>`;
       if (matches.game_spotlight.stage) {
         html += `<p>Stage: ${matches.game_spotlight.stage}</p>`;
       }
@@ -53,7 +53,7 @@ class SerpAPIHealthCheck {
         if (game.stage) {
           html += ` - ${game.stage}`;
         }
-        html += `<p>Stadium: ${game.stadium}</p>`;
+        html += `<p>Stadium: ${game.stadium ? game.stadium : game.venue}</p>`;
         html += `<p>Date: ${game.date}</p>`;
         html += `<p>Time: ${game.time}</p>`;
 

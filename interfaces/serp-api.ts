@@ -6,6 +6,7 @@ export interface APIResponse {
 }
 
 export interface Fixture {
+  venue?: string;
   teams?: Teams[];
   tournament?: string;
   stadium?: string;
@@ -19,8 +20,9 @@ export interface Fixture {
 }
 
 export interface GameSpotlight {
+  venue?: string;
   teams: Teams[];
-  stadium: string;
+  stadium?: string;
   league?: string;
   tournament?: string;
   stage?: string;
