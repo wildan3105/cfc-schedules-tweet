@@ -125,7 +125,7 @@ export function serpApiToRedis(fixtures: Fixture[]): RedisFixture[] {
     )} vs ${convertToTwitterAccountForChelseaFC(elem.teams[1].name)}`;
     (elem.tournament = elem.tournament),
       (elem.date_time = convertDateTimeToUTC(elem.date, elem.time)),
-      (elem.stadium = elem.stadium);
+      (elem.stadium = elem.stadium ? elem.stadium : elem.venue);
   });
 
   return fixtures;
