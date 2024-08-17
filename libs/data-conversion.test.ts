@@ -264,6 +264,33 @@ describe("serpApiToRedis to return the correct format of data that'll be fed int
   });
 });
 
+describe("serpApiToRedis to return the correct format of data that'll be fed into redis if stadium is not provided (fallback to venue)", () => {
+  test("serpApiToReds to return correct format from serp api data - tournament is provided", async () => {
+    const serpApiData = [
+      {
+        teams: [
+          {
+            name: "Chelsea"
+          },
+          {
+            name: "Liverpool"
+          }
+        ],
+        tournament: "Carabao Cup",
+        date: "Jul 19",
+        time: "10:00 AM",
+        venue: "Stamford Bridge"
+      }
+    ];
+    const convertedData = serpApiToRedis(serpApiData);
+    expect(convertedData).toBeDefined();
+    expect(typeof convertedData).toBe("object");
+    expect(convertedData).toHaveLength(1);
+    expect(convertedData[0].tournament).toBe("Carabao Cup");
+    expect(convertedData[0].stadium).toBe(serpApiData[0].venue);
+  });
+});
+
 describe("addHours to return the correct date after adding N hours from certain date", () => {
   test("addHours to return the correct date after added 7 hours", async () => {
     const now = new Date();
