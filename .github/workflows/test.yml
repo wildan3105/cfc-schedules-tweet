@@ -1,8 +1,6 @@
 name: Unit and integration test
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
