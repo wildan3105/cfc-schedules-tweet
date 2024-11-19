@@ -9,7 +9,7 @@
     "ioredis": "^5.1.0",
     "moment": "^2.29.4",
     "moment-parseformat": "^4.0.0",
-    "moment-timezone": "^0.5.45",
+    "moment-timezone": "^0.5.46",
     "oauth-1.0a": "^2.2.6",
     "ts-node-dev": "^2.0.0"
   },
