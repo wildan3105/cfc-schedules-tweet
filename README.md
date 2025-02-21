@@ -37,3 +37,8 @@ npm run sub
 ### Cron scheduling
 - `match-fetcher` -> runs **every hour**
 - `match-reader`  -> runs **every 10 minutes**
+
+### Test
+```bash
+npm run test
+```
