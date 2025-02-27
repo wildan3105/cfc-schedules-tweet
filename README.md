@@ -1,3 +1,5 @@
+⚠️ Maintenance mode ⚠️
+
 ### cfc-schedules-tweet
 
 Send tweets ahead of Chelsea FC's match!
